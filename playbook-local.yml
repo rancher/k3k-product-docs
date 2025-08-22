@@ -1,0 +1,36 @@
+site:
+  title: 'SUSE® Virtual Clusters'
+  url: /
+  start_page: latest@rke2:en:introduction.adoc
+  robots: disallow
+content:
+  sources:
+  - url: .
+    start_path: versions/latest
+ui:
+  bundle:
+    url: https://github.com/SUSEdoc/dsc-style-bundle/blob/main/default-ui/ui-bundle.zip?raw=true
+    snapshot: true
+  supplemental_files: ./dsc-style-bundle/supplemental-files/rancher
+asciidoc:
+  attributes:
+    page-draft-preview-only: 'true'
+    ss-build-type: 'product'
+    ss-rancher-product-name: 'SUSE® Virtual Clusters'
+    ss-rancher-product-short-name: 'SUSE® Virtual Clusters'
+    page-pagination: ''
+    tabs-sync-option: ''
+  extensions:
+    - '@asciidoctor/tabs'
+antora:
+  extensions:
+    - require: '@antora/lunr-extension'
+      index_latest_only: true
+    - require: '@sntke/antora-mermaid-extension' # <1>
+      mermaid_library_url: https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs # <2>
+      script_stem: header-scripts # <3>
+      mermaid_initialize_options: # <4>
+        start_on_load: true
+
+output:
+  dir: build/site
