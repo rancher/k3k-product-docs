@@ -1,0 +1,75 @@
+* xref:introduction.adoc[]
+* xref:advanced-usage.adoc[]
+* xref:architecture.adoc[]
+* xref:development.adoc[]
+* xref:virtualclusterpolicy.adoc[] 
+
+* Deployment
+** xref:deploy/airgap.adoc[]
+** xref:deploy/choose-mode.adoc[]
+** xref:install/registry_mirror.adoc[]
+** xref:install/containerd_registry_configuration.adoc[]
+** xref:install/airgap.adoc[]
+** xref:install/windows_airgap.adoc[]
+** xref:install/server_roles.adoc[]
+** xref:install/packaged_components.adoc[]
+** xref:install/uninstall.adoc[]
+
+* Upgrades
+** xref:upgrade/upgrade.adoc[]
+** xref:upgrade/manual_upgrade.adoc[]
+** xref:upgrade/automated_upgrade.adoc[]
+
+* Security
+** xref:security/about_hardened_images.adoc[]
+** xref:security/hardening_guide.adoc[]
+** xref:security/cis_self_assessment16.adoc[]
+** xref:security/cis_self_assessment123.adoc[]
+** xref:security/fips_support.adoc[]
+** xref:security/pod_security_policies.adoc[]
+** xref:security/pod_security_standards.adoc[]
+** xref:security/secrets_encryption.adoc[]
+** xref:security/selinux.adoc[]
+** xref:security/certificates.adoc[]
+** xref:security/token.adoc[]
+
+* Datastore
+** xref:datastore/embedded.adoc[]
+** xref:datastore/external.adoc[]
+** xref:datastore/backup_restore.adoc[]
+
+* xref:architecture.adoc[Architecture]
+
+* xref:cluster_access.adoc[]
+
+* xref:import_images.adoc[]
+
+* Networking
+** xref:networking/basic_network_options.adoc[]
+** xref:networking/multus_sriov.adoc[]
+** xref:networking/networking_services.adoc[]
+
+* xref:helm.adoc[]
+
+* xref:advanced.adoc[]
+
+* References
+** xref:reference/cli_tools.adoc[]
+** xref:reference/linux_agent_config.adoc[]
+** xref:reference/logging.adoc[]
+** xref:reference/metrics.adoc[]
+** xref:reference/resource_profiling.adoc[]
+** xref:reference/server_config.adoc[]
+** xref:reference/windows_agent_config.adoc[]
+
+* Release Notes
+** xref:release-notes/v1.24.X.adoc[]
+** xref:release-notes/v1.25.X.adoc[]
+** xref:release-notes/v1.26.X.adoc[]
+** xref:release-notes/v1.27.X.adoc[]
+** xref:release-notes/v1.28.X.adoc[]
+** xref:release-notes/v1.29.X.adoc[]
+** xref:release-notes/v1.30.X.adoc[]
+** xref:release-notes/v1.31.X.adoc[]
+
+* xref:known_issues.adoc[]
