@@ -1,12 +1,11 @@
 {
-  "devDependencies": {
-    "@asciidoctor/tabs": "^1.0.0-beta.6",
-    "@sntke/antora-mermaid-extension": "^0.0.6",
-    "antora": "3.1.9"
-  },
-  "dependencies": {
-    "@antora/lunr-extension": "^1.0.0-alpha.8",
-    "http-server": "^14.1.1",
-    "nodejieba": "^3.4.2"
-  }
+	"devDependencies": {
+		"@asciidoctor/tabs": "^1.0.0-beta.6",
+		"@sntke/antora-mermaid-extension": "^0.0.6",
+		"antora": "3.1.9"
+	},
+	"dependencies": {
+		"@antora/lunr-extension": "^1.0.0-alpha.8",
+		"http-server": "^14.1.1"
+	}
 }

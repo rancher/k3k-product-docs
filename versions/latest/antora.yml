@@ -1,4 +1,4 @@
-name: SUSE® Virtual Clusters
+name: virtual-clusters
 title: SUSE® Virtual Clusters
 version: latest
 display_version: 'Latest'
@@ -10,4 +10,3 @@ asciidoc:
     rancher-product-name: SUSE® Rancher Prime
 nav:
 - modules/en/nav.adoc
-- modules/zh/nav.adoc
