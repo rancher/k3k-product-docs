@@ -2,20 +2,15 @@
 
 This guide walks through the various ways to create and manage virtual clusters in K3K. We'll cover common use cases using both the *Custom Resource Definitions (CRDs)* and the *K3K CLI*, so you can choose the method that fits your workflow.
 
-____
-📘 For full reference:
+----
+For full reference:
 
-* xref:../crds/crd-docs.adoc[CRD Reference Documentation]
-* xref:../cli/cli-docs.adoc[CLI Reference Documentation]
-* xref:../advanced-usage.adoc[Full example]
-____
+* xref:/references/apis.adoc[CRD Reference Documentation]
+* xref:/references/cli-env-variables.adoc[CLI Reference Documentation]
+* xref:/advanced-usage.adoc[Full example]
+----
 
-____
-[!NOTE]
-🚧 Some features are currently only available via the CRD interface. CLI support may be added in the future.
-____
-
-'''
+NOTE: Some features are currently available only via the CRD interface. CLI support may be added in the future.
 
 == Use Case: Create and Expose a Basic Virtual Cluster
 
@@ -44,8 +39,6 @@ This will create a virtual cluster in `shared` mode and expose it via an ingress
 === CLI Method
 
 _No CLI method available yet_
-
-'''
 
 == Use Case: Create a Virtual Cluster with Persistent Storage (*Default*)
 
@@ -83,8 +76,6 @@ ____
 The `k3kcli` does not support configuring the `storageRequestSize` yet.
 ____
 
-'''
-
 == Use Case: Create a Highly Available Virtual Cluster in `shared` mode
 
 === CRD Method
@@ -110,8 +101,6 @@ k3kcli cluster create \
   k3kcluster-ha
 ----
 
-'''
-
 == Use Case: Create a Highly Available Virtual Cluster in `virtual` mode
 
 === CRD Method
@@ -130,10 +119,7 @@ spec:
 
 This will create a virtual cluster with 3 servers and 3 agents and a default 1Gi volume for persistence.
 
-____
-[!NOTE]
-Agents only exist for `virtual` mode.
-____
+NOTE: Agents exist ONLY for `virtual` mode.
 
 === CLI Method
 
@@ -145,8 +131,6 @@ k3kcli cluster create \
   --mode virtual \
   k3kcluster-virtual
 ----
-
-'''
 
 == Use Case: Create an Ephemeral Virtual Cluster
 
@@ -174,8 +158,6 @@ k3kcli cluster create \
   k3kcluster-ephemeral
 ----
 
-'''
-
 == Use Case: Create a Virtual Cluster with a Custom Kubernetes Version
 
 === CRD Method
@@ -192,10 +174,7 @@ spec:
 
 This sets the virtual cluster's Kubernetes version explicitly.
 
-____
-[!NOTE]
-Only https://k3s.io[K3s] distributions are supported. You can find compatible versions on the K3s GitHub https://github.com/k3s-io/k3s/releases[release page].
-____
+NOTE: Only https://k3s.io[K3s] distributions are supported. You can find compatible versions on the K3s GitHub https://github.com/k3s-io/k3s/releases[release page].
 
 === CLI Method
 
@@ -205,8 +184,6 @@ k3kcli cluster create \
   --version v1.33.1-k3s1 \
   k3kcluster-custom-k8s
 ----
-
-'''
 
 == Use Case: Create a Virtual Cluster with Custom Resource Limits
 
@@ -234,8 +211,6 @@ This configures the CPU and memory limit for the virtual cluster.
 
 _No CLI method available yet_
 
-'''
-
 == Use Case: Create a Virtual Cluster on specific host nodes
 
 === CRD Method
@@ -253,16 +228,11 @@ spec:
 
 This places the virtual cluster on nodes with the label `disktype: ssd`.
 
-____
-[!NOTE]
-In `shared` mode workloads are also scheduled on the selected nodes
-____
+NOTE: In `shared` mode, workloads are also scheduled on the selected nodes.
 
 === CLI Method
 
 _No CLI method available yet_
-
-'''
 
 == Use Case: Create a Virtual Cluster with a Rancher Host Cluster Kubeconfig
 
@@ -281,8 +251,6 @@ k3kcli cluster create \
   --kubeconfig-server https://abc.xyz \
   k3kcluster-host-rancher
 ----
-
-'''
 
 == Use Case: Create a Virtual Cluster Behind an HTTP Proxy
 
@@ -305,10 +273,7 @@ spec:
 
 This configures an HTTP proxy for both servers and agents in the virtual cluster.
 
-____
-[!NOTE] +
-This can be leveraged to pass *any custom environment variables* to the servers and agents -- not just proxy settings.
-____
+NOTE: This can be leveraged to pass *any custom environment variables* to the servers and agents, not just proxy settings.
 
 === CLI Method
 
@@ -319,8 +284,6 @@ k3kcli cluster create  \
   --agent-envs HTTP_PROXY=http://abc.xyz \
   k3kcluster-http-proxy
 ----
-
-'''
 
 == How to: Connect to a Virtual Cluster
 

@@ -1,10 +1,8 @@
 = Troubleshooting
 
-This guide walks through common troubleshooting steps for working with K3K virtual clusters.
+This section contains common troubleshooting steps for K3K virtual clusters.
 
-'''
-
-== `too many open files` error
+== `Too many open files` error
 
 The `k3k-kubelet` or `k3kcluster-server-` run into the following issue:
 
@@ -43,8 +41,6 @@ sudo sysctl -p
 
 You can find more details in this https://www.suse.com/support/kb/doc/?id=000020048[KB document].
 
-'''
-
 == Inspect Controller Logs for Failure Diagnosis
 
 To view logs for a failed virtual cluster:
@@ -55,8 +51,6 @@ kubectl logs -n k3k-system -l app.kubernetes.io/name=k3k
 ----
 
 This retrieves logs from K3k controller components.
-
-'''
 
 == Inspect Cluster Logs for Failure Diagnosis
 
@@ -69,11 +63,7 @@ kubectl logs -n <cluster_namespace> -l cluster=<cluster_name>
 
 This retrieves logs from K3k cluster components (`agents, server and virtual-kubelet`).
 
-____
-💡 You can also use `kubectl describe cluster <cluster_name>` to check for recent events and status conditions.
-____
-
-'''
+NOTE: You can also use `kubectl describe cluster <cluster_name>` to check for recent events and status conditions.
 
 == Virtual Cluster Not Starting or Stuck in Pending
 
