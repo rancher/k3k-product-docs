@@ -2,16 +2,16 @@
 
 == Packages
 
-* <<k3kiov1alpha1,k3k.io/v1alpha1>>
+* k3k.io/v1alpha1
 
 == k3k.io/v1alpha1
 
 === Resource Types
 
-* <<cluster,Cluster>>
-* <<clusterlist,ClusterList>>
-* <<virtualclusterpolicy,VirtualClusterPolicy>>
-* <<virtualclusterpolicylist,VirtualClusterPolicyList>>
+* Cluster
+* ClusterList
+* VirtualClusterPolicy
+* VirtualClusterPolicyList
 
 ==== Addon
 
@@ -19,7 +19,7 @@ Addon specifies a Secret containing YAML to be deployed on cluster startup.
 
 _Appears in:_
 
-* <<clusterspec,ClusterSpec>>
+* ClusterSpec
 
 |===
 | Field | Description | Default | Validation
@@ -43,7 +43,7 @@ k3k uses this to provision and manage these virtual clusters.
 
 _Appears in:_
 
-* <<clusterlist,ClusterList>>
+* ClusterList
 
 |===
 | Field | Description | Default | Validation
@@ -63,7 +63,7 @@ _Appears in:_
 |
 |
 
-| `spec` _<<clusterspec,ClusterSpec>>_
+| `spec` 
 | Spec defines the desired state of the Cluster.
 | {  }
 |
@@ -91,7 +91,7 @@ ClusterList is a list of Cluster resources.
 |
 |
 
-| `items` _<<cluster,Cluster>> array_
+| `items` 
 |
 |
 |
@@ -109,8 +109,8 @@ _Validation:_
 
 _Appears in:_
 
-* <<clusterspec,ClusterSpec>>
-* <<virtualclusterpolicyspec,VirtualClusterPolicySpec>>
+* ClusterSpec
+* VirtualClusterPolicySpec
 
 ==== ClusterPhase
 
@@ -120,7 +120,7 @@ ClusterPhase is a high-level summary of the cluster's current lifecycle state.
 
 _Appears in:_
 
-* <<clusterstatus,ClusterStatus>>
+* ClusterStatus
 
 ==== ClusterSpec
 
@@ -128,7 +128,7 @@ ClusterSpec defines the desired state of a virtual Kubernetes cluster.
 
 _Appears in:_
 
-* <<cluster,Cluster>>
+* Cluster
 
 |===
 | Field | Description | Default | Validation
@@ -140,7 +140,7 @@ If not specified, the Kubernetes version of the host node will be used.
 |
 |
 
-| `mode` _<<clustermode,ClusterMode>>_
+| `mode` 
 | Mode specifies the cluster provisioning mode: "shared" or "virtual". +
 Defaults to "shared". This field is immutable.
 | shared
@@ -181,14 +181,14 @@ This field is immutable.
 |
 |
 
-| `persistence` _<<persistenceconfig,PersistenceConfig>>_
+| `persistence` 
 | Persistence specifies options for persisting etcd data. +
 Defaults to dynamic persistence, which uses a PersistentVolumeClaim to provide data persistence. +
 A default StorageClass is required for dynamic persistence.
 |
 |
 
-| `expose` _<<exposeconfig,ExposeConfig>>_
+| `expose` 
 | Expose specifies options for exposing the API server. +
 By default, it's only exposed as a ClusterIP.
 |
@@ -239,7 +239,7 @@ Example: ["--node-name=my-agent-node"]
 |
 |
 
-| `addons` _<<addon,Addon>> array_
+| `addons` 
 | Addons specifies secrets containing raw YAML to deploy on cluster startup.
 |
 |
@@ -260,7 +260,7 @@ are mirrored into the virtual cluster.
 |
 |
 
-| `customCAs` _<<customcas,CustomCAs>>_
+| `customCAs` 
 | CustomCAs specifies the cert/key pairs for custom CA certificates.
 |
 |
@@ -273,7 +273,7 @@ It can represent either a TLS key pair or a single private key.
 
 _Appears in:_
 
-* <<credentialsources,CredentialSources>>
+* CredentialSources
 
 |===
 | Field | Description | Default | Validation
@@ -294,37 +294,37 @@ TLS key pairs and single signing keys.
 
 _Appears in:_
 
-* <<customcas,CustomCAs>>
+* CustomCAs
 
 |===
 | Field | Description | Default | Validation
 
-| `serverCA` _<<credentialsource,CredentialSource>>_
+| `serverCA`
 | ServerCA specifies the server-ca cert/key pair.
 |
 |
 
-| `clientCA` _<<credentialsource,CredentialSource>>_
+| `clientCA`
 | ClientCA specifies the client-ca cert/key pair.
 |
 |
 
-| `requestHeaderCA` _<<credentialsource,CredentialSource>>_
+| `requestHeaderCA`
 | RequestHeaderCA specifies the request-header-ca cert/key pair.
 |
 |
 
-| `etcdServerCA` _<<credentialsource,CredentialSource>>_
+| `etcdServerCA`
 | ETCDServerCA specifies the etcd-server-ca cert/key pair.
 |
 |
 
-| `etcdPeerCA` _<<credentialsource,CredentialSource>>_
+| `etcdPeerCA` 
 | ETCDPeerCA specifies the etcd-peer-ca cert/key pair.
 |
 |
 
-| `serviceAccountToken` _<<credentialsource,CredentialSource>>_
+| `serviceAccountToken` 
 | ServiceAccountToken specifies the service-account-token key.
 |
 |
@@ -336,7 +336,7 @@ CustomCAs specifies the cert/key pairs for custom CA certificates.
 
 _Appears in:_
 
-* <<clusterspec,ClusterSpec>>
+* ClusterSpec
 
 |===
 | Field | Description | Default | Validation
@@ -346,7 +346,7 @@ _Appears in:_
 |
 |
 
-| `sources` _<<credentialsources,CredentialSources>>_
+| `sources` 
 | Sources defines the sources for all required custom CA certificates.
 |
 |
@@ -358,22 +358,22 @@ ExposeConfig specifies options for exposing the API server.
 
 _Appears in:_
 
-* <<clusterspec,ClusterSpec>>
+* ClusterSpec
 
 |===
 | Field | Description | Default | Validation
 
-| `ingress` _<<ingressconfig,IngressConfig>>_
+| `ingress` 
 | Ingress specifies options for exposing the API server through an Ingress.
 |
 |
 
-| `loadbalancer` _<<loadbalancerconfig,LoadBalancerConfig>>_
+| `loadbalancer` 
 | LoadBalancer specifies options for exposing the API server through a LoadBalancer service.
 |
 |
 
-| `nodePort` _<<nodeportconfig,NodePortConfig>>_
+| `nodePort` 
 | NodePort specifies options for exposing the API server through NodePort.
 |
 |
@@ -385,7 +385,7 @@ IngressConfig specifies options for exposing the API server through an Ingress.
 
 _Appears in:_
 
-* <<exposeconfig,ExposeConfig>>
+* ExposeConfig
 
 |===
 | Field | Description | Default | Validation
@@ -407,7 +407,7 @@ LoadBalancerConfig specifies options for exposing the API server through a LoadB
 
 _Appears in:_
 
-* <<exposeconfig,ExposeConfig>>
+* ExposeConfig
 
 |===
 | Field | Description | Default | Validation
@@ -433,7 +433,7 @@ NodePortConfig specifies options for exposing the API server through NodePort.
 
 _Appears in:_
 
-* <<exposeconfig,ExposeConfig>>
+* ExposeConfig
 
 |===
 | Field | Description | Default | Validation
@@ -459,12 +459,12 @@ PersistenceConfig specifies options for persisting etcd data.
 
 _Appears in:_
 
-* <<clusterspec,ClusterSpec>>
+* ClusterSpec
 
 |===
 | Field | Description | Default | Validation
 
-| `type` _<<persistencemode,PersistenceMode>>_
+| `type` 
 | Type specifies the persistence mode.
 | dynamic
 |
@@ -490,7 +490,7 @@ PersistenceMode is the storage mode of a Cluster.
 
 _Appears in:_
 
-* <<persistenceconfig,PersistenceConfig>>
+* PersistenceConfig
 
 ==== PodSecurityAdmissionLevel
 
@@ -504,7 +504,7 @@ _Validation:_
 
 _Appears in:_
 
-* <<virtualclusterpolicyspec,VirtualClusterPolicySpec>>
+* VirtualClusterPolicySpec
 
 ==== VirtualClusterPolicy
 
@@ -513,7 +513,7 @@ for clusters within a clusterpolicy.
 
 _Appears in:_
 
-* <<virtualclusterpolicylist,VirtualClusterPolicyList>>
+* VirtualClusterPolicyList
 
 |===
 | Field | Description | Default | Validation
@@ -533,7 +533,7 @@ _Appears in:_
 |
 |
 
-| `spec` _<<virtualclusterpolicyspec,VirtualClusterPolicySpec>>_
+| `spec` 
 | Spec defines the desired state of the VirtualClusterPolicy.
 | {  }
 |
@@ -561,7 +561,7 @@ VirtualClusterPolicyList is a list of VirtualClusterPolicy resources.
 |
 |
 
-| `items` _<<virtualclusterpolicy,VirtualClusterPolicy>> array_
+| `items`
 |
 |
 |
@@ -573,7 +573,7 @@ VirtualClusterPolicySpec defines the desired state of a VirtualClusterPolicy.
 
 _Appears in:_
 
-* <<virtualclusterpolicy,VirtualClusterPolicy>>
+* VirtualClusterPolicy
 
 |===
 | Field | Description | Default | Validation
@@ -599,7 +599,7 @@ to set defaults and constraints (min/max)
 |
 |
 
-| `allowedMode` _<<clustermode,ClusterMode>>_
+| `allowedMode` 
 | AllowedMode specifies the allowed cluster provisioning mode. Defaults to "shared".
 | shared
 | Enum: [shared virtual] +
@@ -610,7 +610,7 @@ to set defaults and constraints (min/max)
 |
 |
 
-| `podSecurityAdmissionLevel` _<<podsecurityadmissionlevel,PodSecurityAdmissionLevel>>_
+| `podSecurityAdmissionLevel` 
 | PodSecurityAdmissionLevel specifies the pod security admission level applied to the pods in the namespace.
 |
 | Enum: [privileged baseline restricted] +
