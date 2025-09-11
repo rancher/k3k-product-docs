@@ -1,2 +1,21 @@
+* xref:introduction.adoc[Introduction]
+
 * xref:architecture.adoc[Architecture]
+
 * xref:development.adoc[Development]
+
+* xref:advanced-usage.adoc[Advanced Usage]
+
+* xref:virtualclusterpolicy.adoc[VirtualClusterPolicy]
+
+* How-to guides
+** xref:airgap.adoc[Installing Virtual Clusters in an air-gapped environment]
+** xref:choose-mode.adoc[Choosing between Shared and Virtual Mode]
+** xref:create-virtual-clusters.adoc[Creating a Virtual Cluster]
+** xref:expose-workloads.adoc[Exposing workloads outside a Virtual Cluster]
+
+* References
+** xref:references/apis.adoc[Customer Resource Definitions (CRDs)]
+** xref:references/cli-env-variables.adoc[CLI Environment Variables]
+
+* xref:howtos/troubleshooting.adoc[Troubleshooting]
