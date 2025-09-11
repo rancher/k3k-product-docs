@@ -1,30 +1,30 @@
-== k3kcli policy delete
+// == k3kcli policy delete
 
-Delete an existing policy
+// Delete an existing policy
 
-----
-k3kcli policy delete [flags]
-----
+// ----
+// k3kcli policy delete [flags]
+// ----
 
-=== Examples
+// === Examples
 
-----
-k3kcli policy delete [command options] NAME
-----
+// ----
+// k3kcli policy delete [command options] NAME
+// ----
 
-=== Options
+// === Options
 
-----
-  -h, --help   help for delete
-----
+// ----
+//   -h, --help   help for delete
+// ----
 
-=== Options inherited from parent commands
+// === Options inherited from parent commands
 
-----
-      --debug               Turn on debug logs
-      --kubeconfig string   kubeconfig path ($HOME/.kube/config or $KUBECONFIG if set)
-----
+// ----
+//       --debug               Turn on debug logs
+//       --kubeconfig string   kubeconfig path ($HOME/.kube/config or $KUBECONFIG if set)
+// ----
 
-=== SEE ALSO
+// === SEE ALSO
 
-* xref:k3kcli_policy.adoc[k3kcli policy]	 - policy command
+// * xref:k3kcli_policy.adoc[k3kcli policy]	 - policy command
