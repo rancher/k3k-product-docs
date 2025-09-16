@@ -4,9 +4,9 @@ This document provides advanced usage information for k3k, including detailed us
 
 == Customizing the Cluster Resource
 
-The `Cluster` resource provides a variety of fields for customizing the behavior of your virtual clusters. You can check the xref:/references/apis.adoc[CRD documentation] for the full specs.
+The `Cluster` resource provides a variety of fields for customizing the behavior of your virtual clusters. See xref:/references/crds.adoc[CRD documentation] for the full specifications.
 
-NOTE: Most of these customization options can also be configured using the `k3kcli` tool. Refer to xref:/references/cli-env-variables.adoc[k3kcli documentation] for more details.
+NOTE: Most of these customization options can also be configured using the `k3kcli` tool. Refer to xref:/references/k3kcli.adoc[k3kcli documentation] for more details.
 
 This example creates a "shared" mode K3k cluster with:
 
@@ -103,7 +103,7 @@ The `serverArgs` field allows you to specify additional arguments to be passed t
 
 == Using the cli
 
-You can check the xref:/references/cli-env-variables.adoc[k3kcli documentation] for the full specs.
+You can check the xref:/references/k3kcli.adoc[k3kcli documentation] for the full specs.
 
 === No storage provider:
 
@@ -114,7 +114,8 @@ You can check the xref:/references/cli-env-variables.adoc[k3kcli documentation] 
   k3kcli cluster create --persistence-type ephemeral my-cluster
 ----
 
-_Important Notes:_
-
+[IMPORTANT]
+====
 * Using `--persistence-type ephemeral` will result in data loss if the nodes are restarted.
 * It is highly recommended to use `--persistence-type dynamic` with a configured storage class.
+====
