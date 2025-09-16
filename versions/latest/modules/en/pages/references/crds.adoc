@@ -1,19 +1,37 @@
 = API Reference
 
-== Packages
-
-* k3k.io/v1alpha1
-
-== k3k.io/v1alpha1
+== k3k.io/v1alpha1 package
 
 === Resource Types
 
-* Cluster
-* ClusterList
-* VirtualClusterPolicy
-* VirtualClusterPolicyList
+* <<Addon, Addon>>
+* <<cluster, Cluster>>
+* <<ClusterList, ClusterList>>
+* <<ClusterMode, ClusterMode>>
+* <<ClusterPhase, ClusterPhase>>
+* <<ClusterSpec, ClusterSpec>>
+* <<ConfigMapSyncConfig, ConfigMapSyncConfig>>
+* <<CredentialSource, CredentialSource>>
+* <<CredentialSources, CredentialSources>>
+* <<CustomCAs, CustomCAs>>
+* <<ExposeConfig, ExposeConfig>>
+* <<IngressConfig, IngressConfig>>
+* <<IngressSyncConfig, IngressSyncConfig>>
+* <<LoadBalancerConfig, LoadBalancerConfig>>
+* <<NodePortConfig, NodePortConfig>>
+* <<PersistenceConfig, PersistenceConfig>>
+* <<PersistenceMode, PersistenceMode>>
+* <<PersistentVolumeClaimSyncConfig, PersistentVolumeClaimSyncConfig>>
+* <<PodSecurityAdmissionLevel, PodSecurityAdmissionLevel>>
+* <<PriorityClassSyncConfig, PriorityClassSyncConfig>>
+* <<SecretSyncConfig, SecretSyncConfig>>
+* <<ServiceSyncConfig, ServiceSyncConfig>>
+* <<SyncConfig, SyncConfig>>
+* <<VirtualClusterPolicy, VirtualClusterPolicy>>
+* <<VirtualClusterPolicyList, VirtualClusterPolicyList>>
+* <<VirtualClusterPolicySpec, VirtualClusterPolicySpec>>
 
-==== Addon
+==== Addon [[Addon]]
 
 Addon specifies a Secret containing YAML to be deployed on cluster startup.
 
@@ -35,7 +53,7 @@ _Appears in:_
 |
 |===
 
-==== Cluster
+==== Cluster [[cluster]]
 
 Cluster defines a virtual Kubernetes cluster managed by k3k.
 It specifies the desired state of a virtual cluster, including version, node configuration, and networking.
@@ -69,7 +87,7 @@ _Appears in:_
 |
 |===
 
-==== ClusterList
+==== ClusterList [[ClusterList]]
 
 ClusterList is a list of Cluster resources.
 
@@ -97,7 +115,7 @@ ClusterList is a list of Cluster resources.
 |
 |===
 
-==== ClusterMode
+==== ClusterMode [[ClusterMode]]
 
 _Underlying type:_ _string_
 
@@ -112,7 +130,7 @@ _Appears in:_
 * ClusterSpec
 * VirtualClusterPolicySpec
 
-==== ClusterPhase
+==== ClusterPhase [[ClusterPhase]]
 
 _Underlying type:_ _string_
 
@@ -122,7 +140,7 @@ _Appears in:_
 
 * ClusterStatus
 
-==== ClusterSpec
+==== ClusterSpec [[ClusterSpec]]
 
 ClusterSpec defines the desired state of a virtual Kubernetes cluster.
 
@@ -264,16 +282,43 @@ are mirrored into the virtual cluster.
 | CustomCAs specifies the cert/key pairs for custom CA certificates.
 |
 |
+
+| `sync` 
+| Sync specifies the resources types that will be synced from virtual cluster to host cluster.
+|{}
+|
 |===
 
-==== CredentialSource
+==== ConfigMapSyncConfig [[ConfigMapSyncConfig]]
+
+ConfigMapSyncConfig specifies the sync options for services.
+
+_Appears in:_
+
+* <<SyncConfig, SyncConfig>>
+
+|===
+| Field | Description | Default | Validation
+
+| `enabled` _boolean_
+| Enabled is an on/off switch for syncing resources.
+|
+|
+
+|`selector` _object (keys:string, values:string)_
+|Selector specifies set of labels of the resources that will be synced. If empty, then all resources of the given type will be synced.
+|
+|
+|===
+
+==== CredentialSource [[CredentialSource]]
 
 CredentialSource defines where to get a credential from.
 It can represent either a TLS key pair or a single private key.
 
 _Appears in:_
 
-* CredentialSources
+* <<CredentialSources, CredentialSources>>
 
 |===
 | Field | Description | Default | Validation
@@ -287,7 +332,7 @@ The controller expects specific keys inside based on the credential type: +
 |
 |===
 
-==== CredentialSources
+==== CredentialSources [[CredentialSources]]
 
 CredentialSources lists all the required credentials, including both
 TLS key pairs and single signing keys.
@@ -330,7 +375,7 @@ _Appears in:_
 |
 |===
 
-==== CustomCAs
+==== CustomCAs [[CustomCAs]]
 
 CustomCAs specifies the cert/key pairs for custom CA certificates.
 
@@ -352,7 +397,7 @@ _Appears in:_
 |
 |===
 
-==== ExposeConfig
+==== ExposeConfig [[ExposeConfig]]
 
 ExposeConfig specifies options for exposing the API server.
 
@@ -379,7 +424,7 @@ _Appears in:_
 |
 |===
 
-==== IngressConfig
+==== IngressConfig [[IngressConfig]]
 
 IngressConfig specifies options for exposing the API server through an Ingress.
 
@@ -401,7 +446,29 @@ _Appears in:_
 |
 |===
 
-==== LoadBalancerConfig
+==== IngressSyncConfig [[IngressSyncConfig]]
+
+IngressSyncConfig specifies the sync options for services.
+
+_Appears in:_
+
+* <<SyncConfig, SyncConfig>>
+
+|===
+| Field | Description | Default | Validation
+
+| `enabled` _boolean_
+| Enabled is an on/off switch for syncing resources.
+|
+|
+
+| `selector` _object (keys:string, values:string)_
+| Selector specifies set of labels of the resources that will be synced. If empty, then all resources of the given type will be synced.
+|
+|
+|===
+
+==== LoadBalancerConfig [[LoadBalancerConfig]]
 
 LoadBalancerConfig specifies options for exposing the API server through a LoadBalancer service.
 
@@ -427,7 +494,7 @@ If 0 or negative, the port will not be exposed.
 |
 |===
 
-==== NodePortConfig
+==== NodePortConfig [[NodePortConfig]]
 
 NodePortConfig specifies options for exposing the API server through NodePort.
 
@@ -453,7 +520,7 @@ If out of range, the port will not be exposed.
 |
 |===
 
-==== PersistenceConfig
+==== PersistenceConfig [[PersistenceConfig]]
 
 PersistenceConfig specifies options for persisting etcd data.
 
@@ -482,7 +549,7 @@ This field is only relevant in "dynamic" mode.
 |
 |===
 
-==== PersistenceMode
+==== PersistenceMode [[PersistenceMode]]
 
 _Underlying type:_ _string_
 
@@ -492,7 +559,33 @@ _Appears in:_
 
 * PersistenceConfig
 
-==== PodSecurityAdmissionLevel
+==== PersistentVolumeClaimSyncConfig [[PersistentVolumeClaimSyncConfig]]
+
+PersistentVolumeClaimSyncConfig specifies the sync options for services.
+
+_Appears in:_
+
+* <<SyncConfig, SyncConfig>>
+
+|===
+| Field | Description | Default | Validation
+
+| `enabled` _boolean_
+| ServerPort is the port on each node on which the K3s server is exposed when type is NodePort. +
+If not specified, a random port between 30000-32767 will be allocated. +
+If out of range, the port will not be exposed.
+|
+|
+
+| `etcdPort` _integer_
+| ETCDPort is the port on each node on which the ETCD service is exposed when type is NodePort. +
+If not specified, a random port between 30000-32767 will be allocated. +
+If out of range, the port will not be exposed.
+|
+|
+|===
+
+==== PodSecurityAdmissionLevel [[PodSecurityAdmissionLevel]]
 
 _Underlying type:_ _string_
 
@@ -506,7 +599,116 @@ _Appears in:_
 
 * VirtualClusterPolicySpec
 
-==== VirtualClusterPolicy
+==== PriorityClassSyncConfig [[PriorityClassSyncConfig]]
+
+PriorityClassSyncConfig specifies the sync options for services.
+
+_Appears in:_
+
+* <<SyncConfig, SyncConfig>>
+
+|===
+| Field | Description | Default | Validation
+
+| `enabled` _boolean_
+| Enabled is an on/off switch for syncing resources.
+|
+|
+
+| `selector` _object (keys:string, values:string)_
+| Selector specifies set of labels of the resources that will be synced. If empty then all resources of the given type will be synced.
+|
+|
+|===
+
+==== SecretSyncConfig [[SecretSyncConfig]]
+
+SecretSyncConfig specifies the sync options for services.
+
+_Appears in:_
+
+* <<SyncConfig, SyncConfig>>
+
+|===
+| Field | Description | Default | Validation
+
+| `enabled` _boolean_
+| Enabled is an on/off switch for syncing resources.
+|
+|
+
+| `selector` _object (keys:string, values:string)_
+| Selector specifies set of labels of the resources that will be synced. If empty then all resources of the given type will be synced.
+|
+|
+|===
+
+==== ServiceSyncConfig [[ServiceSyncConfig]]
+
+ServiceSyncConfig specifies the sync options for services.
+
+_Appears in:_
+
+* <<SyncConfig, SyncConfig>>
+
+|===
+| Field | Description | Default | Validation
+
+| `enabled` _boolean_
+| Enabled is an on/off switch for syncing resources.
+|
+|
+
+| `selector` _object (keys:string, values:string)_
+| Selector specifies set of labels of the resources that will be synced. If empty then all resources of the given type will be synced.
+|
+|
+|===
+
+==== SyncConfig [[SyncConfig]]
+
+SyncConfig will contain the resources that should be synced from virtual cluster to host cluster.
+
+_Appears in:_
+
+* <<ClusterSpec, ClusterSpec>>
+* <<VirtualClusterPolicySpec, VirtualClusterPolicySpec>>
+
+|===
+| Field | Description | Default | Validation
+
+|services <<ServiceSyncConfig, ServiceSyncConfig>>
+|Services resources sync configuration.
+|{ enabled:true }
+|
+
+|configmaps <<ConfigMapSyncConfig, ConfigMapSyncConfig>>
+|ConfigMaps resources sync configuration.
+|{ enabled:true }
+|
+
+|secrets <<SecretSyncConfig, SecretSyncConfig>>
+|Secrets resources sync configuration.	
+|{ enabled:true }
+|
+
+|ingresses <<IngressSyncConfig, IngressSyncConfig>>
+|Ingresses resources sync configuration.	
+|{ enabled:false }
+|
+
+|persistentVolumeClaims <<PersistentVolumeClaimSyncConfig, PersistentVolumeClaimSyncConfig>>
+|PersistentVolumeClaims resources sync configuration.	
+|{ enabled:false }
+|
+
+|priorityClasses <<PriorityClassSyncConfig, PriorityClassSyncConfig>>
+|PriorityClasses resources sync configuration.	
+|{ enabled:false }
+|
+|===
+
+==== VirtualClusterPolicy [[VirtualClusterPolicy]]
 
 VirtualClusterPolicy allows defining common configurations and constraints
 for clusters within a clusterpolicy.
@@ -539,7 +741,7 @@ _Appears in:_
 |
 |===
 
-==== VirtualClusterPolicyList
+==== VirtualClusterPolicyList [[VirtualClusterPolicyList]]
 
 VirtualClusterPolicyList is a list of VirtualClusterPolicy resources.
 
@@ -567,7 +769,7 @@ VirtualClusterPolicyList is a list of VirtualClusterPolicy resources.
 |
 |===
 
-==== VirtualClusterPolicySpec
+==== VirtualClusterPolicySpec [[VirtualClusterPolicySpec]]
 
 VirtualClusterPolicySpec defines the desired state of a VirtualClusterPolicy.
 

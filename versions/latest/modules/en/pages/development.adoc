@@ -60,7 +60,7 @@ By default the `rancher` repository will be used, but you can customize this to 
 REPO=ghcr.io/userorg make
 ----
 
-To customize the tag you can also explicitly set the VERSION:
+To customize the tag, you can also explicitly set the VERSION:
 
 ----
 VERSION=dev-$(date -u '+%Y%m%d%H%M') make
@@ -84,7 +84,7 @@ The required binaries for `envtest` are installed with https://pkg.go.dev/sigs.k
 
 == CRDs and Docs
 
-We are using Kubebuilder and `controller-gen` to build the needed CRDs. To generate the specs you can run `make generate`.
+We are using Kubebuilder and `controller-gen` to build the needed CRDs. To generate the specifications, you can run `make generate`.
 
 Remember also to update the CRDs documentation running the `make docs` command.
 
@@ -92,22 +92,22 @@ Remember also to update the CRDs documentation running the `make docs` command.
 
 This document provides a guide on how to install k3k on https://k3d.io[k3d].
 
-=== Installing k3d
+=== Install k3d
 
-Since k3d uses docker under the hood, we need to expose the ports on the host that we'll then use for the NodePort in virtual cluster creation.
+Since k3d uses docker under the hood, you need to expose the ports on the host. These ports will then be used for the NodePort during virtual cluster creation.
 
-Create the k3d cluster in the following way:
+- Create the k3d cluster in the following way:
 
 [,bash]
 ----
 k3d cluster create k3k -p "30000-30010:30000-30010@server:0"
 ----
 
-With this syntax ports from 30000 to 30010 will be exposed on the host.
+With this command, ports from 30000 to 30010 will be exposed on the host.
 
 === Install k3k
 
-Install now k3k as usual:
+- Run the following commands to install k3k:
 
 [,bash]
 ----
@@ -117,15 +117,15 @@ helm install --namespace k3k-system --create-namespace k3k k3k/k3k
 
 === Create a virtual cluster
 
-Once the k3k controller is up and running, create a namespace where to create our first virtual cluster.
-
+. Once the k3k controller is up and running, create a namespace to create your first virtual cluster.
++
 [,bash]
 ----
 kubectl create ns k3k-mycluster
 ----
 
-Create then the virtual cluster exposing through NodePort one of the ports that we set up in the previous step:
-
+. Next, through NodePort, create the virtual cluster exposing one of the ports you set up in the previous step:
++
 [,bash]
 ----
 cat <<EOF | kubectl apply -f -
@@ -141,15 +141,15 @@ spec:
 EOF
 ----
 
-Check when the cluster is ready:
-
+. Check when the cluster is ready:
++
 [,bash]
 ----
 kubectl get po -n k3k-mycluster
 ----
 
-Last thing to do is to get the kubeconfig to connect to the virtual cluster we've just created:
-
+. Connect the kubeconfig to the newly created virtual cluster:
++
 [,bash]
 ----
 k3kcli kubeconfig generate --name mycluster --namespace k3k-mycluster --kubeconfig-server localhost:30001

@@ -13,9 +13,10 @@
 ** xref:howtos/choose-mode.adoc[Choosing between Shared and Virtual Mode]
 ** xref:howtos/create-virtual-clusters.adoc[Creating a Virtual Cluster]
 ** xref:howtos/expose-workloads.adoc[Exposing workloads outside a Virtual Cluster]
+** xref:howtos/adding-custom-cert.adoc[Adding custom certificates for k3s from k3k cluster]
 
 * References
-** xref:references/apis.adoc[Customer Resource Definitions (CRDs)]
-** xref:references/cli-env-variables.adoc[CLI Environment Variables]
+** xref:references/crds.adoc[Customer Resource Definitions (CRDs)]
+** xref:references/k3kcli.adoc[k3kcli]
 
 * xref:howtos/troubleshooting.adoc[Troubleshooting]
