@@ -8,6 +8,8 @@
 
 * xref:virtualclusterpolicy.adoc[VirtualClusterPolicy]
 
+* xref:k3k.adoc[K3k: Kubernetes in Kubernetes]
+
 * How-to guides
 ** xref:howtos/airgap.adoc[Installing Virtual Clusters in an air-gapped environment]
 ** xref:howtos/choose-mode.adoc[Choosing between Shared and Virtual Mode]
