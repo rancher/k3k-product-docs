@@ -161,7 +161,7 @@ k3kcli cluster delete mycluster
 
 == Architecture
 
-For a detailed explanation of the `K3k` architecture, please refer to the xref:./architecture.adoc[Architecture documentation].
+For a detailed explanation of the `K3k` architecture, please refer to the xref:architecture.adoc[Architecture documentation].
 
 == Advanced Usage
 
