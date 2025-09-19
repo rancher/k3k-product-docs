@@ -32,7 +32,7 @@ This section provides instructions on how to install K3k and the k3kcli.
 * An existing https://docs.rke2.io/install/quickstart[RKE2] Kubernetes cluster (recommended).
 * A configured storage provider with a default storage class.
 
-Note: If you do not have a storage provider, you can configure the cluster to use ephemeral or static storage. Please consult the https://github.com/rancher/k3k/blob/main/docs/advanced-usage.md#using-the-cli[k3kcli advance usage] for instructions on using these options.
+NOTE: If you do not have a storage provider, you can configure the cluster to use ephemeral or static storage. Please consult the https://github.com/rancher/k3k/blob/main/docs/advanced-usage.md#using-the-cli[k3kcli advance usage] for instructions on using these options.
 
 === Install the K3k controller
 
