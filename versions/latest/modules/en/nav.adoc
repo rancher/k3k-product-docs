@@ -1,5 +1,7 @@
 * xref:introduction.adoc[Introduction]
 
+* xref:k3k.adoc[K3k: Kubernetes in Kubernetes]
+
 * xref:architecture.adoc[Architecture]
 
 * xref:development.adoc[Development]
@@ -7,8 +9,6 @@
 * xref:advanced-usage.adoc[Advanced Usage]
 
 * xref:virtualclusterpolicy.adoc[VirtualClusterPolicy]
-
-* xref:k3k.adoc[K3k: Kubernetes in Kubernetes]
 
 * How-to guides
 ** xref:howtos/airgap.adoc[Installing Virtual Clusters in an air-gapped environment]
