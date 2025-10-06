@@ -2,7 +2,7 @@
 
 K3k, Kubernetes in Kubernetes, is a tool that empowers you to create and manage isolated K3s clusters within your existing Kubernetes environment. It enables efficient multi-tenancy, streamlined experimentation, and robust resource isolation, minimizing infrastructure costs by allowing you to run multiple lightweight Kubernetes clusters on the same physical host. K3k offers both "shared" mode, optimizing resource utilization, and "virtual" mode, providing complete isolation with dedicated K3s server pods. This allows you to access a full Kubernetes experience without the overhead of managing separate physical resources.
 
-K3k integrates seamlessly with Rancher for simplified management of your embedded clusters.
+K3k integrates with Rancher for simplified management of your embedded clusters.
 
 == Features and Benefits
 
