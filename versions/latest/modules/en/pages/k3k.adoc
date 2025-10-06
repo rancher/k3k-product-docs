@@ -159,7 +159,7 @@ For a detailed explanation of the `K3k` architecture, please refer to the xref:a
 
 == Advanced Usage
 
-For more in-depth examples and information on advanced K3k usage, including details on shared vs. virtual modes, resource management, and other configuration options, please see the xref:advanced-usage.adoc[Advanced Usage documentation].
+For more in-depth examples and information on advanced K3k usage, including details on the differences between shared and virtual modes, resource management, and other configuration options, please see the xref:advanced-usage.adoc[Advanced Usage documentation].
 
 == Development
 
