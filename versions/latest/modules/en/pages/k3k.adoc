@@ -8,7 +8,7 @@ K3k integrates with Rancher for simplified management of your embedded clusters.
 
 * *Resource Isolation*: Enables workload isolation and prevents resource contention between teams or applications. K3k allows you to define resource limits and quotas for each embedded cluster, so that one team's workloads won't impact another's performance.
 
-* *Simplified Multi-Tenancy*: Easily create dedicated Kubernetes environments for different users or projects, simplifying access control and management. Provide each team with their own isolated cluster, complete with its own namespaces, RBAC, and resource quotas, without the complexity of managing multiple physical clusters.
+* *Simplified Multi-Tenancy*: Easily create dedicated Kubernetes environments for different users or projects, simplifying access control and management. Provide each team with their own cluster, complete with its own namespaces, RBAC, and resource quotas, without the complexity of managing multiple physical clusters.
 
 * *Lightweight and Fast*: Leverage the lightweight nature of K3s to spin up and tear down clusters quickly, accelerating development and testing cycles. Spin up a new K3k cluster in seconds, test your application in a clean environment, and tear it down just as quickly, streamlining your CI/CD pipeline.
 
