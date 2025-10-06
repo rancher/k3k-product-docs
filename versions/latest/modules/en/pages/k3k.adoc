@@ -62,7 +62,7 @@ wget -qO k3kcli https://github.com/rancher/k3k/releases/download/{latest-version
   sudo mv k3kcli /usr/local/bin
 ----
 
-You should now be able to run:
+Now run:
 
 [,bash]
 ----
