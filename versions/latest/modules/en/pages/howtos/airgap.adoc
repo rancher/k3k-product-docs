@@ -1,4 +1,6 @@
 = K3k Air Gap Installation Guide
+:revdate: 2025-09-10
+:page-revdate: {revdate}
 
 Applicable K3k modes: `virtual`, `shared`
 

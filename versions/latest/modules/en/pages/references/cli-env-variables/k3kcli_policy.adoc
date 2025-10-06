@@ -1,4 +1,6 @@
 // == k3kcli policy
+:revdate: 2025-09-11
+:page-revdate: {revdate}
 
 // policy command
 

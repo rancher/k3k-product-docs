@@ -1,4 +1,6 @@
 = Architecture
+:revdate: 2025-09-16
+:page-revdate: {revdate}
 
 Virtual Clusters are isolated Kubernetes clusters provisioned on a physical cluster. K3k leverages link:https://k3s.io/[K3s] as the control plane of the Kubernetes cluster because of its lightweight footprint.
 

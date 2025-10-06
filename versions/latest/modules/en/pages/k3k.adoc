@@ -1,4 +1,6 @@
-= k3k: Kubernetes in Kubernetes
+= K3k: Kubernetes in Kubernetes
+:revdate: 2025-10-06
+:page-revdate: {revdate}
 
 K3k, Kubernetes in Kubernetes, is a tool that empowers you to create and manage isolated K3s clusters within your existing Kubernetes environment. It enables efficient multi-tenancy, streamlined experimentation, and robust resource isolation, minimizing infrastructure costs by allowing you to run multiple lightweight Kubernetes clusters on the same physical host. K3k offers both "shared" mode, optimizing resource utilization, and "virtual" mode, providing complete isolation with dedicated K3s server pods. This allows you to access a full Kubernetes experience without the overhead of managing separate physical resources.
 
@@ -47,7 +49,7 @@ helm repo update
 helm install --namespace k3k-system --create-namespace k3k k3k/k3k
 ----
 
-=== Install the k3kcli
+=== Install the `k3kcli`
 
 The `k3kcli` provides a quick and easy way to create K3k clusters and automatically exposes them via a kubeconfig.
 
