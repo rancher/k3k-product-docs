@@ -6,7 +6,7 @@ K3k integrates with Rancher for simplified management of your embedded clusters.
 
 == Features and Benefits
 
-* *Resource Isolation*: Ensure workload isolation and prevent resource contention between teams or applications. K3k allows you to define resource limits and quotas for each embedded cluster, guaranteeing that one team's workloads won't impact another's performance.
+* *Resource Isolation*: Enables workload isolation and prevents resource contention between teams or applications. K3k allows you to define resource limits and quotas for each embedded cluster, so that one team's workloads won't impact another's performance.
 
 * *Simplified Multi-Tenancy*: Easily create dedicated Kubernetes environments for different users or projects, simplifying access control and management. Provide each team with their own isolated cluster, complete with its own namespaces, RBAC, and resource quotas, without the complexity of managing multiple physical clusters.
 
