@@ -91,7 +91,7 @@ k3kcli cluster create mycluster
 ====
 *Creating a K3k Cluster on a Rancher-Managed Host Cluster*
 
-If your host Kubernetes cluster is managed by Rancher (e.g., your kubeconfig's server address includes a Rancher URL), use the `--kubeconfig-server` flag when creating your K3k cluster:
+If your host Kubernetes cluster is managed by Rancher (for example, your kubeconfig's server address includes a Rancher URL), use the `--kubeconfig-server` flag when creating your K3k cluster:
 
 [,bash]
 ----
