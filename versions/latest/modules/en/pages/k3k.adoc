@@ -14,7 +14,7 @@ K3k integrates with Rancher for simplified management of your embedded clusters.
 
 * *Lightweight and Fast*: K3s spins up and tears down clusters quickly, accelerating development and testing cycles. Spin up a new K3k cluster in seconds, test your application in a clean environment, and tear it down just as quickly, streamlining your CI/CD pipeline.
 
-* *Optimized Resource Utilization (Shared Mode)*: Maximize your infrastructure investment by running multiple K3s clusters on the same physical host. K3k's shared mode allows you to efficiently share underlying resources, reducing overhead and minimizing costs.
+* *Optimize Resource Utilization (Shared Mode)*: Efficiently use your infrastructure by running multiple K3s clusters on the same physical host. K3k's shared mode allows efficient sharing of resources.
 
 * *Complete Isolation (Virtual Mode)*: For enhanced security and isolation, K3k's virtual mode provides dedicated K3s server pods for each embedded cluster. This ensures complete separation of workloads and eliminates any potential resource contention or security risks.
 
