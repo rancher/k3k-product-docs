@@ -1,5 +1,7 @@
 * xref:introduction.adoc[Introduction]
 
+* xref:k3k.adoc[K3k: Kubernetes in Kubernetes]
+
 * xref:architecture.adoc[Architecture]
 
 * xref:development.adoc[Development]

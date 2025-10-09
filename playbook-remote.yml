@@ -17,6 +17,7 @@ runtime:
   fetch: true
 asciidoc:
   attributes:
+    latest-version: 'v1.0.0'
     page-draft-preview-only: 'true'
     ss-build-type: 'product'
     ss-rancher-product-name: 'SUSE® Virtual Clusters'

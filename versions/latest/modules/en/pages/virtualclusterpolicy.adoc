@@ -1,4 +1,6 @@
 = VirtualClusterPolicy
+:revdate: 2025-09-16
+:page-revdate: {revdate}
 
 The `VirtualClusterPolicy` Custom Resource in K3k provides a way to define and enforce consistent configurations, security settings, and resource management rules for your virtual clusters and the Namespaces they operate within.
 
