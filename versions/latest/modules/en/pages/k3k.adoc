@@ -117,7 +117,7 @@ INFO[0073] You can start using the cluster with:
         kubectl cluster-info  
 ----
 
-After exporting the generated kubeconfig, you should be able to reach your Kubernetes cluster:
+After exporting the generated kubeconfig, you can reach your Kubernetes cluster:
 
 [,bash]
 ----
