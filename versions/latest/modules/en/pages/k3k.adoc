@@ -165,4 +165,4 @@ For more in-depth examples and information on advanced K3k usage, including deta
 
 == Development
 
-If you're interested in building K3k from source or contributing to the project, please refer to the xref:development.adoc[Development documentation].
+If you're interested in building K3k from source or contributing to the project, refer to the xref:development.adoc[Development documentation].
