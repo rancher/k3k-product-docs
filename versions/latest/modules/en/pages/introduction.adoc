@@ -2,12 +2,12 @@
 :revdate: 2025-09-16
 :page-revdate: {revdate}
 
-== {ss-rancher-product-name}
+== {k3k-product-name}
 
-{ss-rancher-product-name}, a key feature of SUSE Rancher Prime, brings together the lightweight power of the open source engine link:https://github.com/rancher/k3k[K3k] and the enterprise-grade management capabilities of SUSE Virtual Cluster Management.
+{k3k-product-name}, a key feature of SUSE Rancher Prime, brings together the lightweight power of the open source engine link:https://github.com/rancher/k3k[K3k] and the enterprise-grade management capabilities of SUSE Virtual Cluster Management.
 
 This solution is designed to deliver the next generation of *multi-tenancy in Kubernetes*, making it easier for platform teams to manage and for developers to innovate with self-service.
-With {ss-rancher-product-name}, you can spin up lightweight Kubernetes control planes on demand using link:https://k3s.io/[K3s], without the overhead of provisioning and managing full physical clusters.
+With {k3k-product-name}, you can spin up lightweight Kubernetes control planes on demand using link:https://k3s.io/[K3s], without the overhead of provisioning and managing full physical clusters.
 
 This makes it possible to:
 
@@ -16,21 +16,21 @@ This makes it possible to:
 * Empower developers to self-serve and experiment without impacting others.
 * Give platform teams control with policy, governance, and lifecycle management tools.
 
-{ss-rancher-product-name} strikes the right balance between autonomy for developers and control for operators, thereby creating a scalable foundation for modern Kubernetes platforms.
+{k3k-product-name} strikes the right balance between autonomy for developers and control for operators, thereby creating a scalable foundation for modern Kubernetes platforms.
 
 == Key Components
 
 * *SUSE Virtual Cluster Engine*: The open source project powering SUSE Virtual Cluster Engine, K3k, has passed the CNCF Kubernetes conformance tests and is listed in the link:https://www.cncf.io/training/certification/software-conformance/[CNCF Certified Kubernetes® Software Conformance program]. Based on K3s, a lightweight CNCF project, K3k ensures interoperability, compatibility and a consistent Kubernetes experience for workloads and tooling.
 
-* *SUSE Virtual Cluster Management*: Manage {ss-rancher-product-name} at scale directly from SUSE Rancher Manager with an enterprise-ready management interface. 
+* *SUSE Virtual Cluster Management*: Manage {k3k-product-name} at scale directly from SUSE Rancher Manager with an enterprise-ready management interface. 
 Features include:
 - Rancher Integration - Benefit from Rancher RBAC and extend it. Create and manage virtual clusters and policies directly from Rancher. 
 - CAPI Provider - Cluster API support for lifecycle automation.
 - Terraform Provider (pre-release) - Infrastructure-as-Code workflows to scale and standardize cluster management.
 
-== Why {ss-rancher-product-name}?
+== Why {k3k-product-name}?
 
-With {ss-rancher-product-name}, organizations can:
+With {k3k-product-name}, organizations can:
 
 * Deliver true Kubernetes multi-tenancy with two modes, shared and virtual, fitting most production use cases (doc link - how to choose between modes). 
 * Reduce cloud and infrastructure spend through shared worker pools and shared services (doc link - shared mode) from the host back to the virtual cluster. 
