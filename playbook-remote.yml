@@ -19,9 +19,6 @@ asciidoc:
   attributes:
     latest-version: 'v1.0.0'
     page-draft-preview-only: 'true'
-    ss-build-type: 'product'
-    ss-rancher-product-name: 'SUSE® Virtual Clusters'
-    ss-rancher-product-short-name: 'SUSE® Virtual Clusters'
     page-pagination: ''
     tabs-sync-option: ''
   extensions:
