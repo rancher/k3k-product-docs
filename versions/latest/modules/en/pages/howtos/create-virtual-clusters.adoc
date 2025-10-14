@@ -7,12 +7,12 @@ This guide walks through the various ways to create and manage virtual clusters 
 ----
 For full reference:
 
-* xref:/references/apis.adoc[CRD Reference Documentation]
-* xref:/references/cli-env-variables.adoc[CLI Reference Documentation]
+* xref:/references/crds.adoc[CRD Reference Documentation]
+* xref:/references/k3kcli.adoc[CLI Reference Documentation]
 * xref:/advanced-usage.adoc[Full example]
 ----
 
-NOTE: Some features are currently available only via the CRD interface. CLI support may be added in the future.
+NOTE: Some features are available only via the CRD interface.
 
 == Use Case: Create and Expose a Basic Virtual Cluster
 
@@ -37,10 +37,6 @@ spec:
 ----
 
 This will create a virtual cluster in `shared` mode and expose it via an ingress with the specified hostname.
-
-=== CLI Method
-
-_No CLI method available yet_
 
 == Use Case: Create a Virtual Cluster with Persistent Storage (*Default*)
 
@@ -73,10 +69,7 @@ k3kcli cluster create \
   k3kcluster-persistent
 ----
 
-____
-[!NOTE]
-The `k3kcli` does not support configuring the `storageRequestSize` yet.
-____
+NOTE: The `k3kcli` does not support configuring the `storageRequestSize` yet.
 
 == Use Case: Create a Highly Available Virtual Cluster in `shared` mode
 

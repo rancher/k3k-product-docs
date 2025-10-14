@@ -16,9 +16,9 @@ K3k integrates with Rancher for simplified management of your embedded clusters.
 
 * *Optimize Resource Utilization (Shared Mode)*: Efficiently use your infrastructure by running multiple K3s clusters on the same physical host. K3k's shared mode allows efficient sharing of resources.
 
-* *Complete Isolation (Virtual Mode)*: For better security and isolation, K3k's virtual mode provides dedicated K3s server pods for each cluster. This ensures separation of workloads, reducing resource contention and security risks.
+* *Complete Isolation (Virtual Mode)*: K3k’s virtual mode provides dedicated K3s server pods for each cluster. This ensures separation of workloads, reducing resource contention and security risks.
 
-* *Rancher Integration*: Simplify the management of your K3k clusters with Rancher. Use Rancher's UI and  features to monitor, manage, and scale your embedded clusters.
+WARNING: Virtual Mode can allow privilege escalation and hence, you need to take caution while running in Virtual Mode.
 
 == Installation
 

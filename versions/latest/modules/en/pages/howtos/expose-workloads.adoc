@@ -6,56 +6,63 @@ This guide explains how to expose workloads running in k3k-managed virtual clust
 
 == Virtual Mode
 
-____
-[!CAUTION]
-*Not Supported* +
-In _virtual mode_, direct external exposure of workloads is *not available*. +
-This mode is designed for strong isolation and does not expose the virtual cluster's network directly.
-____
+[CAUTION]
+====
+In _virtual mode_, direct external exposure of workloads is *not available*. This mode is designed for strong isolation and does not expose the virtual cluster's network directly.
+====
 
 == Shared Mode
 
 In _shared mode_, workloads can be exposed to the external network using standard Kubernetes service types or an ingress controller, depending on your requirements.
 
-____
-[!NOTE]
+[NOTE]
+====
 _`Services`_ are always synced from the virtual cluster to the host cluster following the same principle described link:../architecture.adoc#shared-mode[here] for pods.
-____
+====
 
 === Option 1: Use `NodePort` or `LoadBalancer`
 
 To expose a service such as a web application outside the host cluster:
 
-* *`NodePort`*: +
-Exposes the service on a static port on each node's IP. +
-Access the service at `http://<NodeIP>:<NodePort>`.
-* *`LoadBalancer`*: +
-Provisions an external load balancer (if supported by the environment) and exposes the service via the load balancer's IP.
+* *`NodePort`*: Exposes the service on a static port on each node's IP. Access the service at `http://<NodeIP>:<NodePort>`.
+* *`LoadBalancer`*: Provisions an external load balancer (if supported by the environment) and exposes the service via the load balancer's IP.
 
-____
-*Note* +
+[NOTE]
+====
 The `LoadBalancer` IP is currently not reflected back to the virtual cluster service. +
 https://github.com/rancher/k3k/issues/365[k3k issue #365]
-____
+====
 
 === Option 2: Use `ClusterIP` for Internal Communication
 
 If the workload should only be accessible to other services or pods _within_ the host cluster:
 
-* Use the `ClusterIP` service type. +
-This exposes the service on an internal IP, only reachable inside the host cluster.
+* Use the `ClusterIP` service type. This exposes the service on an internal IP, only reachable inside the host cluster.
 
 === Option 3: Use Ingress for HTTP/HTTPS Routing
 
-For more advanced routing (e.g., hostname- or path-based routing), deploy an *Ingress controller* in the virtual cluster, and expose it via `NodePort` or `LoadBalancer`.
+For more advanced routing, such as hostname- or path-based routing, deploy an *Ingress controller* in the virtual cluster, and expose it via `NodePort` or `LoadBalancer`.
 
 This allows you to:
 
 * Define Ingress resources in the virtual cluster.
 * Route external traffic to services within the virtual cluster.
 
-____
-*Note* +
-Support for using the host cluster's Ingress controller from a virtual cluster is being tracked in +
-https://github.com/rancher/k3k/issues/356[k3k issue #356]
-____
+=== Options 4: Use Host Ingress
+
+To use the host ingress controller, enable `sync.ingresses`. Since, ingresses are synced with the host cluster, virtual cluster users don't need to deploy an ingress Controller.
+
+----
+apiVersion: k3k.io/v1alpha1
+kind: Cluster
+metadata:
+  name: k3kcluster-shared-mode
+spec:
+  mode: shared
+  ...
+  sync: 
+    ingresses: 
+      enabled: true
+----
+
+With this sync enabled, certificate can also be issued by the host cluster. For example, certificate can be issued if you're using `Cert-Manager`.
