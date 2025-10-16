@@ -1,8 +1,10 @@
-== k3kcli cluster create
+= K3k CLI commands 
 :revdate: 2025-09-16
 :page-revdate: {revdate}
 
-Create new cluster
+== k3kcli cluster create
+
+Create a new cluster.
 
 ----
 k3kcli cluster create [flags]
@@ -47,7 +49,7 @@ k3kcli cluster create [command options] NAME
 
 == k3kcli cluster delete
 
-Delete an existing cluster
+Delete an existing cluster.
 
 ----
 k3kcli cluster delete [flags]
@@ -76,7 +78,7 @@ k3kcli cluster delete [command options] NAME
 
 == k3kcli cluster list
 
-List all the existing cluster
+List all existing clusters.
 
 ----
 k3kcli cluster list [flags]
@@ -104,7 +106,7 @@ k3kcli cluster list [command options]
 
 == k3kcli cluster
 
-cluster command
+K3k cluster command.
 
 === Options
 
@@ -121,7 +123,7 @@ cluster command
 
 == k3kcli kubeconfig generate
 
-Generate kubeconfig for clusters
+Generate kubeconfig for clusters.
 
 ----
 k3kcli kubeconfig generate [flags]
@@ -150,7 +152,7 @@ k3kcli kubeconfig generate [flags]
 
 == k3kcli kubeconfig
 
-Manage kubeconfig for clusters
+Manage kubeconfig for clusters.
 
 === Options
 
@@ -167,7 +169,7 @@ Manage kubeconfig for clusters
 
 == k3kcli policy create
 
-Create new policy
+Create a new policy.
 
 ----
 k3kcli policy create [flags]
@@ -195,7 +197,7 @@ k3kcli policy create [command options] NAME
 
 == k3kcli policy delete
 
-Delete an existing policy
+Delete an existing policy.
 
 ----
 k3kcli policy delete [flags]
@@ -222,7 +224,7 @@ k3kcli policy delete [command options] NAME
 
 == k3kcli policy list
 
-List all the existing policies
+List all existing policies.
 
 ----
 k3kcli policy list [flags]
@@ -249,7 +251,7 @@ k3kcli policy list [command options]
 
 == k3kcli policy
 
-policy command
+K3k policy command.
 
 === Options
 
@@ -266,7 +268,7 @@ policy command
 
 == k3kcli
 
-CLI for K3K
+CLI for K3k.
 
 === Options
 
