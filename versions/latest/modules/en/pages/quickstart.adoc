@@ -1,4 +1,4 @@
-= K3k: Kubernetes in Kubernetes
+= Quickstart
 :revdate: 2025-10-06
 :page-revdate: {revdate}
 
@@ -6,25 +6,7 @@ K3k, Kubernetes in Kubernetes, is a tool that enables you to create and manage i
 
 K3k integrates with Rancher for simplified management of your embedded clusters.
 
-== Features and Benefits
-
-* *Resource Isolation*: Enables workload isolation and prevents resource contention between teams or applications. K3k allows you to define resource limits and quotas for each embedded cluster, so that one team's workloads won't impact another's performance.
-
-* *Simplified Multi-Tenancy*: Create dedicated Kubernetes environments for different users or projects, simplifying access control and management. Provide each team with its own cluster, complete with its own namespaces, RBAC, and resource quotas, without the complexity of managing multiple physical clusters.
-
-* *Lightweight and Fast*: K3s spins up and tears down clusters quickly, accelerating development and testing cycles. Spin up a new K3k cluster in seconds, test your application in a clean environment, and tear it down just as quickly, streamlining your CI/CD pipeline.
-
-* *Optimize Resource Utilization (Shared Mode)*: Efficiently use your infrastructure by running multiple K3s clusters on the same physical host. K3k's shared mode allows efficient sharing of resources.
-
-* *Complete Isolation (Virtual Mode)*: K3k’s virtual mode provides dedicated K3s server pods for each cluster. This ensures separation of workloads, reducing resource contention and security risks.
-
-WARNING: Virtual Mode can allow privilege escalation and hence, you need to take caution while running in Virtual Mode.
-
-== Installation
-
-This section provides instructions on how to install K3k and the k3kcli.
-
-=== Prerequisites
+== Prerequisites
 
 * https://helm.sh/[Helm] must be installed to use the charts. Please refer to https://helm.sh/docs/[Helm's documentation] to get started.
 * An existing https://documentation.suse.com/cloudnative/rke2/latest/en/install/quickstart.html[RKE2] Kubernetes cluster (recommended).
@@ -32,7 +14,13 @@ This section provides instructions on how to install K3k and the k3kcli.
 
 NOTE: If you do not have a storage provider, you can configure the cluster to use ephemeral or static storage. Please consult the xref:advanced-usage.adoc#_using_the_cli[k3kcli Advanced Usage] for instructions on using these options.
 
+== Installation
+
+This section provides instructions on how to install K3k and the k3kcli.
+
 === Install the K3k controller
+
+NOTE: Rancher Prime customers, please see https://documentation.suse.com/cloudnative/k3k/latest/en/quickstart.html[Quickstart].
 
 . Add the K3k Helm repository:
 +
@@ -154,15 +142,3 @@ To delete a K3k cluster, use the following command:
 ----
 k3kcli cluster delete mycluster
 ----
-
-== Architecture
-
-For an explanation of the `K3k` architecture, refer to the xref:architecture.adoc[Architecture documentation].
-
-== Advanced Usage
-
-For in-depth examples and information on advanced K3k usage, including details on the differences between shared and virtual modes, resource management, and other configuration options, refer to the xref:advanced-usage.adoc[Advanced Usage] documentation.
-
-== Development
-
-If you're interested in building K3k from source or contributing to the project, refer to the xref:development.adoc[Development documentation].

@@ -1,20 +1,21 @@
 * xref:introduction.adoc[Introduction]
 
-* xref:k3k.adoc[K3k: Kubernetes in Kubernetes]
+* xref:quickstart.adoc[Quickstart]
+
+* xref:addons.adoc[Add-ons]
 
 * xref:architecture.adoc[Architecture]
-
-* xref:development.adoc[Development]
 
 * xref:advanced-usage.adoc[Advanced Usage]
 
 * xref:virtualclusterpolicy.adoc[VirtualClusterPolicy]
 
-* How-to guides
-** xref:howtos/airgap.adoc[Installing Virtual Clusters in an air-gapped environment]
-** xref:howtos/choose-mode.adoc[Choosing between Shared and Virtual Mode]
+* How-to guides for users
 ** xref:howtos/create-virtual-clusters.adoc[Creating a Virtual Cluster]
 ** xref:howtos/expose-workloads.adoc[Exposing workloads outside a Virtual Cluster]
+
+* How-to guides for admins
+** xref:howtos/choose-mode.adoc[Choosing between Shared and Virtual Mode]
 ** xref:howtos/adding-custom-cert.adoc[Adding custom certificates for k3s from k3k cluster]
 
 * References

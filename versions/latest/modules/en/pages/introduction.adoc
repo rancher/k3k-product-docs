@@ -37,6 +37,20 @@ With {k3k-product-name}, organizations can:
 * Speed up developer workflows with fast, lightweight clusters in a self-service mode (doc link - quickstart UI)
 * Define guardrails (doc link - virtual cluster policy) with policy, governance and lifecycle tooling, enabling seamless collaboration between platform and developers teams.
 
+== Features and Benefits
+
+* *Resource Isolation*: Enables workload isolation and prevents resource contention between teams or applications. K3k allows you to define resource limits and quotas for each embedded cluster, so that one team's workloads won't impact another's performance.
+
+* *Simplified Multi-Tenancy*: Create dedicated Kubernetes environments for different users or projects, simplifying access control and management. Provide each team with its own cluster, complete with its own namespaces, RBAC, and resource quotas, without the complexity of managing multiple physical clusters.
+
+* *Lightweight and Fast*: K3s spins up and tears down clusters quickly, accelerating development and testing cycles. Spin up a new K3k cluster in seconds, test your application in a clean environment, and tear it down just as quickly, streamlining your CI/CD pipeline.
+
+* *Optimize Resource Utilization (Shared Mode)*: Efficiently use your infrastructure by running multiple K3s clusters on the same physical host. K3k's shared mode allows efficient sharing of resources.
+
+* *Complete Isolation (Virtual Mode)*: K3k's virtual mode provides dedicated K3s server pods for each cluster. This ensures separation of workloads, reducing resource contention and security risks.
+
+WARNING: Virtual Mode can allow privilege escalation and hence, you need to take caution while running in Virtual Mode.
+
 **Certification details*: K3k conformance results are published on the link:https://www.cncf.io/training/certification/software-conformance/[CNCF listing].
 
 Kubernetes® is a registered trademark of The Linux Foundation in the United States and other countries and is used pursuant to a license from The Linux Foundation.

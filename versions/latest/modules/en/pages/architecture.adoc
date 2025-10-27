@@ -1,14 +1,15 @@
 = Architecture
 :revdate: 2025-09-16
-:page-revdate: {revdate}
+:page-revdate: 2025-10-27
 
 Virtual Clusters are isolated Kubernetes clusters provisioned on a physical cluster. K3k leverages link:https://k3s.io/[K3s] as the control plane of the Kubernetes cluster because of its lightweight footprint.
 
-K3k provides two modes for deploying virtual clusters: 
-- Shared (default) 
-- Virtual
+K3k provides two modes for deploying virtual clusters:
 
-== Shared Mode
+- <<shared, Shared (default)>> 
+- <<virtual, Virtual>>
+
+== Shared Mode [[shared]]
 
 The default *shared* mode uses a K3s server as control plane with an https://docs.k3s.io/advanced#running-agentless-servers-experimental[agentless servers configuration]. With this option enabled, the servers do not run the kubelet, container runtime, or CNI. The server uses a https://virtual-kubelet.io/[Virtual Kubelet] provider implementation specific to K3k, which schedules the workloads and other eventually needed resources on the host cluster. This K3k Virtual Kubelet provider handles the reflection of resources and workload execution within the shared host cluster environment.
 
@@ -51,7 +52,7 @@ Key aspects of PSA integration include:
 
 The shared mode architecture is designed with security in mind.  K3k employs multiple layers of security controls, including Network Policies and PSA, to protect virtual clusters and the host cluster.  While the shared namespace model requires careful configuration and management, these controls provide a robust security foundation for running workloads in a multi-tenant environment.  K3k continuously evaluates and enhances its security mechanisms to address evolving threats and ensure the highest level of protection for its users.
 
-== Virtual Mode
+== Virtual Mode [[virtual]]
 
 The `virtual` mode in K3k deploys fully functional K3s clusters (including both server and agent components) as virtual clusters.  These K3s clusters run as pods within the host cluster.  Each virtual cluster has its own dedicated K3s server and one or more K3s agents acting as worker nodes. This approach provides strong isolation, as each virtual cluster operates independently with its own control plane and worker nodes.  While these virtual clusters run as pods on the host cluster, they function as complete and separate Kubernetes environments.
 
@@ -113,23 +114,25 @@ K3k offers two distinct modes for deploying virtual clusters: `shared` and `virt
 
 | *Isolation*
 | Network Policies
-| Dedicated control plane and worker nodes
+| Dedicated control plane and worker nodes as pods
 
 | *Resource Sharing*
 | Dynamic, namespace-level ResourceQuotas
 | Resource limits on virtual cluster pods
 
 | *Networking*
-| Host cluster's CNI
-| Virtual cluster's own CNI
+| Host cluster's CNI +
+Host cluster's Ingress Controller (option)
+| Virtual cluster's own CNI +
+Virtual cluster's own Ingress Controller
 
 | *Storage*
 | Host cluster's storage
-| _Under development_
+| Bring your own storage provider
 
 | *Security*
 | Pod Security Admission (PSA), Network Policies
-| Inherent isolation, PSA, Network Policies, secure host configuration
+| Inherent isolation, PSA, Network Policies
 
 | *Performance*
 | Smaller footprint, more efficient due to running directly on the host
@@ -143,13 +146,6 @@ K3k offers two distinct modes for deploying virtual clusters: `shared` and `virt
 
 *Choosing the right mode:*
 
-* *Choose `shared` mode if:*
- ** You prioritize low overhead and resource efficiency.
- ** You need a simple setup and don't require strong isolation between virtual clusters.
- ** Your workloads don't have strict performance requirements.
- ** Your workloads needs host capacities (GPU)
-* *Choose `virtual` mode if:*
- ** You prioritize strong isolation.
- ** You need dedicated resources and predictable performance for your virtual clusters.
+To know more about choosing the right mode, see xref:./howtos/choose-mode.adoc[How to Choose Between Shared and Virtual Mode].
 
 Ultimately, the best choice depends on your specific requirements and priorities. Consider the trade-offs carefully and choose the mode that best aligns with your needs.
