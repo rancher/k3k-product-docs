@@ -59,7 +59,7 @@ For example, you can download the Linux amd64 version with:
 
 [,bash]
 ----
-wget -qO k3kcli https://github.com/rancher/k3k/releases/download/{latest-version}/k3kcli-linux-amd64 && \
+wget -qO k3kcli https://github.com/rancher/k3k/releases/download/{k3k-latest-version}/k3kcli-linux-amd64 && \
   chmod +x k3kcli && \
   sudo mv k3kcli /usr/local/bin
 ----
