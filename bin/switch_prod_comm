@@ -1,0 +1,54 @@
+#!/bin/bash
+
+# Switch version yaml files between community and product versions
+
+DEBUG=0
+
+function dprint () {
+  if [ $DEBUG -eq 1 ]; then
+    echo "$1"
+  fi
+}
+
+function px_error () {
+  echo "Error: $1"
+  exit 1
+}
+
+
+function fetch_versions_list () {
+  local versions
+  versions=$(ls -1 "$docs_root" | grep -v archive)
+  echo "$versions"
+}
+
+
+# main
+
+target_version="$1"
+
+if [ -z "$target_version" ]; then
+  px_error "Usage: $0 <version>"
+fi
+
+# shellcheck disable=SC2086,SC2046
+docs_root="$(realpath $(dirname $0)/../versions)"
+echo "switch_prod_comm: Docs root: $docs_root"
+
+for version in $(fetch_versions_list); do
+  dprint "Processing $version"
+  cd "$docs_root/$version" || px_error "failed to cd to $docs_root/$version"
+  if [ -f antora-yml/antora-"$target_version".yml ]; then
+    if ln -sf antora-yml/antora-"$target_version".yml antora.yml; then
+      dprint "Switched to $target_version : antora.yml -> antora-yml/antora-$target_version.yml"
+      dprint "== Contents =="
+      contents=$(cat antora.yml)
+      dprint "$contents"
+      dprint "== End contents =="
+    else
+      px_error "Error: failed to switch to antora-yml/antora-$target_version.yml"
+    fi
+  else
+    px_error "$version - antora-yml/antora-$target_version.yml not found. Please correct."
+  fi
+done

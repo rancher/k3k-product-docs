@@ -7,12 +7,12 @@ content:
   sources: 
   - url: https://github.com/rancher/k3k-product-docs
     branches: [main]
-    start_path: docs/latest
+    start_path: versions/latest
 ui: 
   bundle:
     url: https://github.com/SUSEdoc/dsc-style-bundle/blob/main/default-ui/ui-bundle.zip?raw=true
     snapshot: true
-  supplemental_files: ./dsc-style-bundle/supplemental-files/rancher
+  supplemental_files: ./k3k-community-style/supplemental-files
 runtime:
   fetch: true
 asciidoc:
@@ -37,4 +37,4 @@ antora:
     enabled: true
 
 output:
-  dir: build/site
+  dir: build-product/site
