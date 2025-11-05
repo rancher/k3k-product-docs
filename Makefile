@@ -31,7 +31,7 @@ community-remote:
 	npx antora --version
 	npx antora --stacktrace --log-format=pretty --log-level=info \
 		playbook-community-remote.yml \
-		2>&1 | tee tmp/product-remote-build.log 2>&1
+		2>&1 | tee tmp/community-remote-build.log 2>&1
 	bin/switch_prod_comm product ## Leave in a default state of product
 
 clean:
