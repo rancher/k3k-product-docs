@@ -45,7 +45,7 @@ jobs:
         run: |
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-          mv build/site ../site-temp
+          mv build-community/site ../site-temp
           git checkout --orphan gh-pages
           git rm -rf .
           rm -rf node_modules tmp
