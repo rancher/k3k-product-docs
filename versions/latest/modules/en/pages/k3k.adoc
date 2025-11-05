@@ -57,7 +57,7 @@ To install it, simply download the latest available version for your architectur
 
 For example, you can download the Linux amd64 version with:
 
-[,bash]
+[subs="+attributes",bash]
 ----
 wget -qO k3kcli https://github.com/rancher/k3k/releases/download/{k3k-latest-version}/k3kcli-linux-amd64 && \
   chmod +x k3kcli && \
