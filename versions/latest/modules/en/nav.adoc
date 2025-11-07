@@ -1,24 +1,26 @@
 * xref:introduction.adoc[Introduction]
 
-* xref:k3k.adoc[K3k: Kubernetes in Kubernetes]
+* xref:quickstart.adoc[Quick Start]
 
 * xref:architecture.adoc[Architecture]
-
-* xref:development.adoc[Development]
 
 * xref:advanced-usage.adoc[Advanced Usage]
 
 * xref:virtualclusterpolicy.adoc[VirtualClusterPolicy]
 
-* How-to guides
-** xref:howtos/airgap.adoc[Installing Virtual Clusters in an air-gapped environment]
-** xref:howtos/choose-mode.adoc[Choosing between Shared and Virtual Mode]
-** xref:howtos/create-virtual-clusters.adoc[Creating a Virtual Cluster]
-** xref:howtos/expose-workloads.adoc[Exposing workloads outside a Virtual Cluster]
-** xref:howtos/adding-custom-cert.adoc[Adding custom certificates for k3s from k3k cluster]
+* xref:addons.adoc[Addons]
+
+* How-tos for User
+** xref:how-tos-for-user/create-virtual-clusters.adoc[Creating a Virtual Cluster]
+** xref:how-tos-for-user/expose-workloads.adoc[Exposing workloads outside a Virtual Cluster]
+
+* How-tos for Admin
+** xref:how-tos-for-admin/airgap.adoc[Installing Virtual Clusters in an air-gapped environment]
+** xref:how-tos-for-admin/choose-mode.adoc[Choosing between Shared and Virtual Mode]
+** xref:how-tos-for-admin/adding-custom-cert.adoc[Adding custom certificates for K3s from K3k cluster]
 
 * References
 ** xref:references/crds.adoc[Customer Resource Definitions (CRDs)]
 ** xref:references/k3kcli.adoc[k3kcli]
 
-* xref:howtos/troubleshooting.adoc[Troubleshooting]
+* xref:troubleshooting.adoc[Troubleshooting]
