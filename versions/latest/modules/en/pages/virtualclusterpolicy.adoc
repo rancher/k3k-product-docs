@@ -1,10 +1,12 @@
 = VirtualClusterPolicy
-:revdate: 2025-09-16
+:revdate: 2025-11-07
 :page-revdate: {revdate}
 
 The `VirtualClusterPolicy` Custom Resource in K3k provides a way to define and enforce consistent configurations, security settings, and resource management rules for your virtual clusters and the Namespaces they operate within.
 
 By using VCPs, administrators can centrally manage these aspects, reducing manual configuration, ensuring alignment with organizational standards, and enhancing the overall security and operational consistency of the K3k environment.
+
+WARNING: Using a combination of `RKE2` and `Cilium` in the host cluster could result in issues with network policies. The recommended solution is to use `VirtualClusterPolicy` to disable network policy setup with K3k.
 
 == Core Concepts
 
