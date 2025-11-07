@@ -1,8 +1,8 @@
 = API Reference
-:revdate: 2025-09-16
+:revdate: 2025-11-07
 :page-revdate: {revdate}
 
-== k3k.io/v1alpha1 package
+== k3k.io/v1beta1 package
 
 === Resource Types
 
@@ -69,7 +69,7 @@ _Appears in:_
 | Field | Description | Default | Validation
 
 | `apiVersion` _string_
-| `k3k.io/v1alpha1`
+| `k3k.io/v1beta1`
 |
 |
 
@@ -97,7 +97,7 @@ ClusterList is a list of Cluster resources.
 | Field | Description | Default | Validation
 
 | `apiVersion` _string_
-| `k3k.io/v1alpha1`
+| `k3k.io/v1beta1`
 |
 |
 
@@ -723,7 +723,7 @@ _Appears in:_
 | Field | Description | Default | Validation
 
 | `apiVersion` _string_
-| `k3k.io/v1alpha1`
+| `k3k.io/v1beta1`
 |
 |
 
@@ -751,7 +751,7 @@ VirtualClusterPolicyList is a list of VirtualClusterPolicy resources.
 | Field | Description | Default | Validation
 
 | `apiVersion` _string_
-| `k3k.io/v1alpha1`
+| `k3k.io/v1beta1`
 |
 |
 
