@@ -15,7 +15,6 @@
 ** xref:how-tos-for-user/expose-workloads.adoc[Exposing workloads outside a Virtual Cluster]
 
 * How-tos for Admin
-** xref:how-tos-for-admin/airgap.adoc[Installing Virtual Clusters in an air-gapped environment]
 ** xref:how-tos-for-admin/choose-mode.adoc[Choosing between Shared and Virtual Mode]
 ** xref:how-tos-for-admin/adding-custom-cert.adoc[Adding custom certificates for K3s from K3k cluster]
 
