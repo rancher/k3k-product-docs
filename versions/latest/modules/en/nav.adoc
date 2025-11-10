@@ -22,4 +22,4 @@
 ** xref:references/crds.adoc[Customer Resource Definitions (CRDs)]
 ** xref:references/k3kcli.adoc[k3kcli]
 
-* xref:troubleshooting.adoc[Troubleshooting]
+* xref:how-tos-for-user/troubleshooting.adoc[Troubleshooting]
