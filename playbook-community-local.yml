@@ -15,7 +15,7 @@ ui:
   supplemental_files: ./k3k-community-style/supplemental-files
 asciidoc:
   attributes:
-    page-draft-preview-only: 'true'
+    # page-draft-preview-only: 'true'
     page-pagination: ''
     tabs-sync-option: ''
   extensions:
