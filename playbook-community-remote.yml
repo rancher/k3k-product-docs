@@ -17,7 +17,7 @@ runtime:
   fetch: true
 asciidoc:
   attributes:
-    page-draft-preview-only: 'true'
+    # page-draft-preview-only: 'true'
     page-pagination: ''
     tabs-sync-option: ''
   extensions:
