@@ -46,7 +46,7 @@ If you create a `VirtualClusterPolicy` without specifying any `spec` fields (for
 [,yaml]
 ----
 # Example of a minimal VCP (after creation with defaults)
-apiVersion: k3k.io/v1alpha1
+apiVersion: k3k.io/v1beta1
 kind: VirtualClusterPolicy
 metadata:
   name: my-default-policy
@@ -66,7 +66,7 @@ You can restrict the `mode` (e.g., "shared" or "virtual") in which K3k `Cluster`
 
 [,yaml]
 ----
-apiVersion: k3k.io/v1alpha1
+apiVersion: k3k.io/v1beta1
 kind: VirtualClusterPolicy
 metadata:
   name: shared-only-policy
@@ -85,7 +85,7 @@ You can define resource consumption limits for bound Namespaces by specifying a 
 
 [,yaml]
 ----
-apiVersion: k3k.io/v1alpha1
+apiVersion: k3k.io/v1beta1
 kind: VirtualClusterPolicy
 metadata:
   name: quota-policy
@@ -105,7 +105,7 @@ You can define default resource requests/limits and min/max constraints for cont
 
 [,yaml]
 ----
-apiVersion: k3k.io/v1alpha1
+apiVersion: k3k.io/v1beta1
 kind: VirtualClusterPolicy
 metadata:
   name: limit-policy
@@ -131,7 +131,7 @@ By default, K3k creates a `NetworkPolicy` in bound Namespaces to provide network
 
 [,yaml]
 ----
-apiVersion: k3k.io/v1alpha1
+apiVersion: k3k.io/v1beta1
 kind: VirtualClusterPolicy
 metadata:
   name: no-default-netpol-policy
@@ -141,13 +141,13 @@ spec:
 
 === Enforcing Pod Security Admission (`podSecurityAdmissionLevel`)
 
-You can enforce Pod Security Standards (PSS) by specifying a Pod Security Admission (PSA) level. K3k will apply the corresponding PSA labels to each bound Namespace. The allowed values are `privileged`, `baseline`, `restricted`, and this will add labels like `pod-security.kubernetes.io/enforce: <level>` to the bound Namespace.
+You can enforce Pod Security Standards (PSS) by specifying a Pod Security Admission (PSA) level. K3k applies the corresponding PSA labels to each bound Namespace. The allowed values are `privileged`, `baseline`, `restricted`, and this adds labels like `pod-security.kubernetes.io/enforce: <level>` to the bound Namespace.
 
 *Example:* Enforce the "baseline" PSS level.
 
 [,yaml]
 ----
-apiVersion: k3k.io/v1alpha1
+apiVersion: k3k.io/v1beta1
 kind: VirtualClusterPolicy
 metadata:
   name: baseline-psa-policy

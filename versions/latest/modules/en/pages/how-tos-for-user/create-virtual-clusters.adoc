@@ -20,7 +20,7 @@ NOTE: Some features are available only via the CRD interface.
 
 [,yaml]
 ----
-apiVersion: k3k.io/v1alpha1
+apiVersion: k3k.io/v1beta1
 kind: Cluster
 metadata:
   name: k3kcluster-ingress
@@ -44,7 +44,7 @@ This will create a virtual cluster in `shared` mode and expose it via an ingress
 
 [,yaml]
 ----
-apiVersion: k3k.io/v1alpha1
+apiVersion: k3k.io/v1beta1
 kind: Cluster
 metadata:
   name: k3kcluster-persistent
@@ -77,7 +77,7 @@ NOTE: The `k3kcli` does not support configuring the `storageRequestSize` yet.
 
 [,yaml]
 ----
-apiVersion: k3k.io/v1alpha1
+apiVersion: k3k.io/v1beta1
 kind: Cluster
 metadata:
   name: k3kcluster-ha
@@ -102,7 +102,7 @@ k3kcli cluster create \
 
 [,yaml]
 ----
-apiVersion: k3k.io/v1alpha1
+apiVersion: k3k.io/v1beta1
 kind: Cluster
 metadata:
   name: k3kcluster-virtual
@@ -133,7 +133,7 @@ k3kcli cluster create \
 
 [,yaml]
 ----
-apiVersion: k3k.io/v1alpha1
+apiVersion: k3k.io/v1beta1
 kind: Cluster
 metadata:
   name: k3kcluster-ephemeral
@@ -159,7 +159,7 @@ k3kcli cluster create \
 
 [,yaml]
 ----
-apiVersion: k3k.io/v1alpha1
+apiVersion: k3k.io/v1beta1
 kind: Cluster
 metadata:
   name: k3kcluster-custom-k8s
@@ -186,7 +186,7 @@ k3kcli cluster create \
 
 [,yaml]
 ----
-apiVersion: k3k.io/v1alpha1
+apiVersion: k3k.io/v1beta1
 kind: Cluster
 metadata:
   name: k3kcluster-resourced
@@ -212,7 +212,7 @@ _No CLI method available yet_
 
 [,yaml]
 ----
-apiVersion: k3k.io/v1alpha1
+apiVersion: k3k.io/v1beta1
 kind: Cluster
 metadata:
   name: k3kcluster-node-placed
@@ -253,7 +253,7 @@ k3kcli cluster create \
 
 [,yaml]
 ----
-apiVersion: k3k.io/v1alpha1
+apiVersion: k3k.io/v1beta1
 kind: Cluster
 metadata:
   name: k3kcluster-http-proxy
