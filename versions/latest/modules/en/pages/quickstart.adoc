@@ -2,7 +2,7 @@
 :revdate: 2025-11-07
 :page-revdate: {revdate}
 
-K3k, Kubernetes in Kubernetes, is a tool that enables you to create and manage isolated K3s clusters within your existing Kubernetes environment. It enables multi-tenancy, experimentation, and resource isolation, reducing infrastructure costs by allowing you to run multiple lightweight Kubernetes clusters on the same physical host. K3k offers both "shared" mode, optimizing resource utilization, and "virtual" mode, providing complete isolation with dedicated K3s server pods. This allows you to access a full Kubernetes experience without the overhead of managing separate physical resources.
+K3k, Kubernetes in Kubernetes, is a tool that enables you to create and manage isolated K3s clusters within your existing Kubernetes environment. It enables multi-tenancy, experimentation and resource isolation, reducing infrastructure costs by allowing you to run multiple lightweight Kubernetes clusters on the same physical host. K3k offers both "shared" mode, optimizing resource utilization, and "virtual" mode, providing complete isolation with dedicated K3s server pods. This allows you to access a full Kubernetes experience without the overhead of managing separate physical resources.
 
 K3k integrates with Rancher for simplified management of your embedded clusters.
 
@@ -20,7 +20,7 @@ NOTE: If you do not have a storage provider, you can configure the cluster to us
 
 === Install the K3k controller
 
-NOTE: Rancher Prime customers, please see https://scc.suse.com/rancher-docs/rancherprime/latest/en/suse-virtual-cluster/quickstart.html[Quick Start].
+NOTE: Rancher Prime customers, please see https://scc.suse.com/rancher-docs/rancherprime/latest/en/suse-virtual-cluster/installation-and-upgrades/quickstart.html[Quick Start].
 
 . Add the K3k Helm repository:
 +
@@ -56,8 +56,8 @@ Now run:
 
 [,bash]
 ----
--> % k3kcli --version
-k3kcli version v0.3.4
+k3kcli --version
+k3kcli version v1.0.0
 ----
 
 == Usage
@@ -114,12 +114,12 @@ kubectl get nodes
 kubectl get pods -A
 ----
 
-You can also directly create a Cluster resource in some namespace, to create a K3k cluster:
+You can also directly create a Cluster resource in certain namespace, to create a K3k cluster:
 
 [,bash]
 ----
 kubectl apply -f - <<EOF
-apiVersion: k3k.io/v1alpha1
+apiVersion: k3k.io/v1beta1
 kind: Cluster
 metadata:
   name: mycluster

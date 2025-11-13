@@ -53,7 +53,7 @@ This allows you to:
 To use the host ingress controller, enable `sync.ingresses`. Since, ingresses are synced with the host cluster, virtual cluster users don't need to deploy an ingress Controller.
 
 ----
-apiVersion: k3k.io/v1alpha1
+apiVersion: k3k.io/v1beta1
 kind: Cluster
 metadata:
   name: k3kcluster-shared-mode
