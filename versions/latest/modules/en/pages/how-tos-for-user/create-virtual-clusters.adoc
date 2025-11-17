@@ -2,7 +2,7 @@
 :revdate: 2025-09-11
 :page-revdate: {revdate}
 
-This guide walks through the various ways to create and manage virtual clusters in K3K. We'll cover common use cases using both the *Custom Resource Definitions (CRDs)* and the *K3K CLI*, so you can choose the method that fits your workflow.
+This guide provides instructions on creating and managing virtual clusters in K3k and covers common use cases using both the *Custom Resource Definitions (CRDs)* and the *K3K CLI* so you can choose the method that fits your workflow.
 
 ----
 For full reference:
@@ -36,7 +36,7 @@ spec:
         nginx.ingress.kubernetes.io/ssl-redirect: "HTTPS"
 ----
 
-This will create a virtual cluster in `shared` mode and expose it via an ingress with the specified hostname.
+This creates a virtual cluster in `shared` mode and expose it via an ingress with the specified host name.
 
 == Use Case: Create a Virtual Cluster with Persistent Storage (*Default*)
 
@@ -56,8 +56,8 @@ spec:
 ----
 
 This ensures that the virtual cluster stores its state persistently with a 30Gi volume. +
-If `storageClassName` is not set it will default to the default StorageClass. +
-If `storageRequestSize` is not set it will request a 1Gi volume by default.
+If `storageClassName` is not set, it will default to the default StorageClass. +
+If `storageRequestSize` is not set, it will request a 1Gi volume by default.
 
 === CLI Method
 
@@ -66,10 +66,9 @@ If `storageRequestSize` is not set it will request a 1Gi volume by default.
 k3kcli cluster create \
   --persistence-type dynamic \
   --storage-class-name local-path \
+  --storage-request-size 30Gi \
   k3kcluster-persistent
 ----
-
-NOTE: The `k3kcli` does not support configuring the `storageRequestSize` yet.
 
 == Use Case: Create a Highly Available Virtual Cluster in `shared` mode
 
