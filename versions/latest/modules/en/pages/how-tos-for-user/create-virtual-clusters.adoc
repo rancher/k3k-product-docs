@@ -1,5 +1,5 @@
 = How to: Create a Virtual Cluster
-:revdate: 2025-09-11
+:revdate: 2025-11-17
 :page-revdate: {revdate}
 
 This guide provides instructions on creating and managing virtual clusters in K3k and covers common use cases using both the *Custom Resource Definitions (CRDs)* and the *K3K CLI* so you can choose the method that fits your workflow.
