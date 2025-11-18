@@ -4,7 +4,7 @@
 
 * xref:advanced-usage.adoc[Advanced Usage]
 
-* xref:virtualclusterpolicy.adoc[VirtualClusterPolicy]
+* xref:virtualclusterpolicy.adoc[VirtualClusterPolicy: Concepts]
 
 * xref:addons.adoc[Addons]
 
