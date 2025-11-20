@@ -47,14 +47,16 @@ Afterwards, it is possible to create a normal ingress resource with the annotati
 
 ----
 apiVersion: networking.k8s.io
+kind: Ingress
 metadata:
   annotations:
-    nginx.ingress.kubernetes.io/ssl-passthrough: true
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "https"
   name: cluster-ingress
 spec:
   rules:
   - host: cluster.example.com
-    https:
+    http:
       paths:
       - backend:
           service:
