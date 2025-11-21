@@ -1,0 +1,70 @@
+= How-to: Expose Virtual Cluster Kubernetes API
+:revdate: 2025-11-11
+:page-revdate: {revdate}
+
+This guide explains how to expose workloads running in k3k-managed virtual clusters to external networks. Behavior varies depending on the operating mode of the virtual cluster.
+
+This guide explains how to expose the Kubernetes API of the virtual clusters to external networks. Practices apply to both _virtual mode_ and _shared mode_.
+
+[NOTE]
+====
+It is important to add the TLS-SAN arguments to the cluster, such that the IP address or host are not rejected.
+====
+
+[CAUTION]
+====
+Running `k3kcli cluster delete clustername` will delete the virtual cluster but will not cascade to the ingresses or services created using the following methods.
+====
+
+== Ingress
+
+It is possible to expose the virtual cluster's Kubernetes API through an ingress controller present on the host. However, it is important to note that TLS termination must be performed at the virtual cluster, requiring some changes from normal ingress objects.
+
+=== Traefik
+
+In the case of Traefik, the virtual cluster's API is exposed through an IngressRouteTCP resource. Here's an example configuration:
+
+----
+apiVersion: traefik.io/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name: cluster-ingress-rt
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: HostSNI(`cluster.example.com`)
+      services:
+        - name: k3k-clustername-service
+          port: 443
+  tls:
+    passthrough: true
+----
+
+=== Nginx
+
+ToDo
+
+---
+yaml: here
+---
+
+== Service
+
+The services created at creation time of the virtual cluster cannot be modified. It is necessary to create a new service of the desired type (LoadBalancer or NodePort).
+
+=== LoadBalancer
+
+If you have a load balancer available, be it through a cloud service provider or from an add-on such as MetalLB, you can expose the virtual cluster's API over its own unique IP address. For a virtual cluster called _test_ in the namespace _k3k_test_, you can create a LoadBalancer service using the following command:
+
+```
+kubectl -n k3k_test expose service k3k-test-service --type=LoadBalancer --name=k3k-test-servicelb
+```
+
+=== NodePort
+
+In the absence of the above solutions, you can always expose the Kubernetes API over a NodePort service, using the IP address of any of the host nodes. For a virtual cluster called _test_ in the namespace _k3k_test_, you can create a NodePort service using the following command:
+
+```
+kubectl -n k3k_test expose service k3k-test-service --type=NodePort --name=k3k-test-servicenp
+```
