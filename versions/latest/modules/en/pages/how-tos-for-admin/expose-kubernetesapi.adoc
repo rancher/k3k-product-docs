@@ -41,11 +41,29 @@ spec:
 
 === Ingress Nginx
 
-ToDo
+Ingress Nginx does not have SSL passthrough enabled out of the box and must be enabled with the --enable-ssl-passthrough flag. Refer to the ingress-nginx documentation {https://kubernetes.github.io/ingress-nginx/user-guide/tls/#ssl-passthrough}[here].
 
----
-yaml: here
----
+Afterwards, it is possible to create a normal ingress resource with the annotation "nginx.ingress.kubernetes.io/ssl-passthrough". For example:
+
+----
+apiVersion: networking.k8s.io
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-passthrough: true
+  name: cluster-ingress
+spec:
+  rules:
+  - host: cluster.example.com
+    https:
+      paths:
+      - backend:
+          service:
+            name: k3k-clustername-service
+            port:
+              number: 443
+        path: /
+        pathType: Prefix
+----
 
 == Service
 
