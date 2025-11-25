@@ -76,9 +76,10 @@ If a load balancer is available to the host cluster, either from a cloud service
 
 For an example cluster called _test_ in the namespace _k3k_test_, create a LoadBalancer service with the following command:
 
-```
+[bash, shell]
+----
 kubectl -n k3k_test expose service k3k-test-service --type=LoadBalancer --name=k3k-test-servicelb
-```
+----
 
 === NodePort
 
@@ -86,6 +87,7 @@ In the absence of the above solutions, the virtual Kubernetes API can be exposed
 
 For an example cluster named _test_ in the namespace _k3k_test_, create a NodePort service using the following command:
 
-```
+[bash, shell]
+----
 kubectl -n k3k_test expose service k3k-test-service --type=NodePort --name=k3k-test-servicenp
-```
+----
