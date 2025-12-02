@@ -1,7 +1,7 @@
 site:
   title: 'SUSE® Virtual Clusters'
   url: /
-  start_page: latest@virtual-clusters:en:introduction.adoc
+  start_page: latest@suse-virtual-clusters:en:introduction.adoc
   robots: disallow
 content:
   sources:
