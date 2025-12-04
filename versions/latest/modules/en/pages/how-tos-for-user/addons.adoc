@@ -8,7 +8,10 @@ IMPORTANT: Name the secret key with '.yaml' extension to be picked up by K3s.
 
 == K3k cluster creation using Add-ons
 
-. Install the K3k controller chart. For more information, see xref:./quickstart.adoc#_install_the_k3k_controller[Install the K3k controller].
+. Install the K3k controller chart. 
+ifdef::comm-build[] 
+For more information, see xref:/quickstart.adoc#_install_the_k3k_controller[Install the K3k controller].
+endif::comm-build[]
 
 . Create a secret key:
 +
