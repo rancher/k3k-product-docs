@@ -8,11 +8,10 @@
 
 * xref:virtualclusterpolicy.adoc[VirtualClusterPolicy: Concepts]
 
-* xref:addons.adoc[Addons]
-
 * How-tos for User
 ** xref:how-tos-for-user/create-virtual-clusters.adoc[Creating a Virtual Cluster]
 ** xref:how-tos-for-user/expose-workloads.adoc[Exposing workloads outside a Virtual Cluster]
+** xref:how-tos-for-user/addons.adoc[Addons]
 
 * How-tos for Admin
 ** xref:how-tos-for-admin/choose-mode.adoc[Choosing between Shared and Virtual Mode]
