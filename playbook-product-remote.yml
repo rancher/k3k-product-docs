@@ -4,11 +4,11 @@ site:
   start_page: latest@suse-virtual-clusters:en:introduction.adoc
   robots: disallow
 content:
-  sources: 
+  sources:
   - url: https://github.com/rancher/k3k-product-docs
     branches: [main]
     start_path: versions/latest
-ui: 
+ui:
   bundle:
     url: https://github.com/SUSEdoc/dsc-style-bundle/blob/main/default-ui/ui-bundle.zip?raw=true
     snapshot: true
@@ -19,6 +19,7 @@ asciidoc:
   attributes:
     latest-version: 'v1.0.0'
     page-draft-preview-only: 'true'
+    prod-build: ''
     page-pagination: ''
     tabs-sync-option: ''
   extensions:
