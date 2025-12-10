@@ -19,6 +19,7 @@ asciidoc:
   attributes:
     # page-draft-preview-only: 'true'
     page-pagination: ''
+    comm-build: ''
     tabs-sync-option: ''
   extensions:
   - '@asciidoctor/tabs'
