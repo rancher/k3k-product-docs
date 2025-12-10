@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Introduction :: K3k</title>
+    <link rel="next" href="quickstart.html">
+    <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="stylesheet" href="../../../_/css/search.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="../../../_/css/font-styles.css">
+<link rel="stylesheet" href="../../../_/fonts/css/all.css">
+<link rel="stylesheet" href="../../../_/css/site-extra.css">
+<link rel="stylesheet" href="../../../_/css/vendor/tabs.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=SUSE:wght@100..800&display=swap&family=SUSE+Mono:ital,wght@0,100..800;1,100..800" rel="stylesheet">
+<link href="https://documentation.suse.com/docserv/res/fonts/poppins/poppins.css" rel="stylesheet">
+<!-- <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto&display=swap" rel="stylesheet"> -->
+<link rel="stylesheet" href="../../../_/css/vendor/light.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs'; mermaid.initialize({"startOnLoad":true});</script><header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-item">
+        <a class=" navbar-logo" href="https://docs.k3k.io/" aria-label="K3k Documentation Home"><img class="logo"
+            src="../../../_/img/logo-horizontal-positive-k3k.svg" alt="K3k logo"/></a>
+      </div>
+      <div class="navbar-item search hide-for-print">
+        <div id="search-field" class="field">
+          <label class="visual-search-label" for="search-input">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+          <input label="Search" aria-label="Search" id="search-input" type="text" placeholder="Search the docs"  autofocus>
+          <label class="filter checkbox" style="display: none">
+            <input type="checkbox" data-facet-filter="component:k3k" checked> Only this project
+          </label>
+        </div>
+      </div>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link">
+            <img src="../../../_/img/resources.png" class="langIcon Resources" alt="Resources" title="Resources">
+          </div>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs"><i class="fab fa-github"></i>&nbsp;K3k</a>
+            <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs/issues"><i class="fab fa-github"></i>&nbsp;GitHub Issue</a>
+            <!-- <div class="has-submenu">
+              <a class="navbar-item" href="#" ><i class="fas fa-file-alt"></i>&nbsp;Report Issue &nbsp;<i class="fas fa-chevron-right"></i></a>
+              <div class="submenu">
+                <a class="navbar-item" href="https://scc.suse.com">SCC (Recommended)</a>
+                <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs/issues">GitHub Issue</a>
+              </div>
+            </div> -->
+            <a class="navbar-item" href="https://github.com/rancher/k3k/blob/main/docs/development.md"><i class="fas fa-user-edit"></i>&nbsp;Contribute</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link"><img src="../../../_/img/language.png" class="langIcon Language" alt="Language"
+              title="Language"></div>
+          <div class="navbar-dropdown">
+            <!--  </div><div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div> -->
+              <a role="button" class="navbar-item" id="en" onclick="selectLanguage(this.id)">
+                <!--<img src="../../../_/img/engFlag.svg" class="langIcon english">-->
+                &nbsp;English
+              </a>
+            <!-- LANGUAGESELECTOR -->
+          </div>
+        </div>
+        <!--
+        <div class="navbar-item">
+          <a href="https://twitter.com/SUSE">
+            <img alt="X-logo" class="x-logo" src="../../../_/img/x-logo-white.png">
+          </a>
+        </div>
+        -->
+      </div>
+    </div>
+
+    <!--   <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+      </div> -->
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="k3k" data-version="latest">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="introduction.html">K3k</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="1">
+    <a class="nav-link" href="introduction.html">Introduction</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="quickstart.html">Quick Start</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="architecture.html">Architecture</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="advanced-usage.html">Advanced Usage</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="virtualclusterpolicy.html">VirtualClusterPolicy: Concepts</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle" aria-label="Toggle expand/collapse"></button>
+    <span class="nav-text">How-tos for User</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="how-tos-for-user/create-virtual-clusters.html">Creating a Virtual Cluster</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="how-tos-for-user/expose-workloads.html">Exposing workloads outside a Virtual Cluster</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="how-tos-for-user/addons.html">Addons</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle" aria-label="Toggle expand/collapse"></button>
+    <span class="nav-text">How-tos for Admin</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="how-tos-for-admin/choose-mode.html">Choosing between Shared and Virtual Mode</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="how-tos-for-admin/adding-custom-cert.html">Adding custom certificates for K3s from K3k cluster</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle" aria-label="Toggle expand/collapse"></button>
+    <span class="nav-text">References</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="references/crds.html">Customer Resource Definitions (CRDs)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="references/k3kcli.html">k3kcli</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="how-tos-for-user/troubleshooting.html">Troubleshooting</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">K3k</span>
+    <span class="version">Latest</span>
+  </div>
+  <ul class="components">
+        <li class="component is-current">
+          <div class="title"><a href="introduction.html">K3k</a></div>
+          <ul class="versions">
+            <li class="version is-current is-latest">
+              <a href="introduction.html">Latest</a>
+            </li>
+          </ul>
+        </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="introduction.html" aria-label="Home" class="home-link is-current"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="introduction.html">K3k</a></li>
+    <li><a href="introduction.html">Introduction</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/rancher/k3k-product-docs/edit/main/versions/latest/modules/en/pages/introduction.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<aside class="toc sidebar" data-title="On this page" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Introduction</h1>
+<div class="sect1">
+<h2 id="_k3k"><a class="anchor" href="#_k3k"></a>K3k</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>K3k, a key feature of SUSE Rancher Prime, brings together the lightweight power of the open source engine <a href="https://github.com/rancher/k3k">K3k</a> and the enterprise-grade management capabilities of SUSE Virtual Cluster Management.</p>
+</div>
+<div class="paragraph">
+<p>This solution is designed to deliver the next generation of <strong>multi-tenancy in Kubernetes</strong>, making it easier for platform teams to manage and for developers to innovate with self-service.
+With K3k, you can spin up lightweight Kubernetes control planes on demand using <a href="https://k3s.io/">K3s</a>, without the overhead of provisioning and managing full physical clusters.</p>
+</div>
+<div class="paragraph">
+<p>This makes it possible to:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Enable secure and robust multi-tenant workload isolation.</p>
+</li>
+<li>
+<p>Optimize infrastructure costs by sharing worker nodes and platform services across many virtual clusters.</p>
+</li>
+<li>
+<p>Empower developers to self-serve and experiment without impacting others.</p>
+</li>
+<li>
+<p>Give platform teams control with policy, governance, and lifecycle management tools.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>K3k strikes the right balance between autonomy for developers and control for operators, thereby creating a scalable foundation for modern Kubernetes platforms.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_key_components"><a class="anchor" href="#_key_components"></a>Key Components</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><strong>SUSE Virtual Cluster Engine</strong>: The open source project powering SUSE Virtual Cluster Engine, K3k, has passed the CNCF Kubernetes conformance tests and is listed in the <a href="https://www.cncf.io/training/certification/software-conformance/">CNCF Certified Kubernetes® Software Conformance program</a>. Based on K3s, a lightweight CNCF project, K3k ensures interoperability, compatibility and a consistent Kubernetes experience for workloads and tooling.</p>
+</li>
+<li>
+<p><strong>SUSE Virtual Cluster Management</strong>: Manage K3k at scale directly from SUSE Rancher Manager with an enterprise-ready management interface.
+Features include:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Rancher Integration - Benefit from Rancher RBAC and extend it. Create and manage virtual clusters and policies directly from Rancher.</p>
+</li>
+<li>
+<p>CAPI Provider - Cluster API support for lifecycle automation.</p>
+</li>
+<li>
+<p>Terraform Provider (pre-release) - Infrastructure-as-Code workflows to scale and standardize cluster management.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_why_k3k"><a class="anchor" href="#_why_k3k"></a>Why K3k?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>With K3k, organizations can:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Deliver true Kubernetes multi-tenancy with two modes, shared and virtual, fitting most production use cases (doc link - how to choose between modes).</p>
+</li>
+<li>
+<p>Reduce cloud and infrastructure spend through shared worker pools and shared services (doc link - shared mode) from the host back to the virtual cluster.</p>
+</li>
+<li>
+<p>Speed up developer workflows with fast, lightweight clusters in a self-service mode (doc link - quickstart UI)</p>
+</li>
+<li>
+<p>Define guardrails (doc link - virtual cluster policy) with policy, governance and lifecycle tooling, enabling seamless collaboration between platform and developers teams.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>*Certification details</strong>: K3k conformance results are published on the <a href="https://www.cncf.io/training/certification/software-conformance/">CNCF listing</a>.</p>
+</div>
+<div class="paragraph">
+<p>Kubernetes® is a registered trademark of The Linux Foundation in the United States and other countries and is used pursuant to a license from The Linux Foundation.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="next"><a href="quickstart.html">Quick Start</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<script src="../../../_/js/site.js"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+<script src="../../../_/js/vendor/langSelection.js"></script>
+<script async src="../../../_/js/vendor/tabs.js"></script>
+
+
+  </body>
+</html>
