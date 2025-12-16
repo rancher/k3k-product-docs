@@ -16,7 +16,7 @@ ui:
 asciidoc:
   attributes:
     # page-draft-preview-only: 'true'
-    comm-build: ''
+    ss-build-type: 'community'
     page-pagination: ''
     tabs-sync-option: ''
   extensions:
