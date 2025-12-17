@@ -17,7 +17,6 @@ asciidoc:
   attributes:
     latest-version: 'v1.0.0'
     page-draft-preview-only: 'true'
-    ss-build-type: 'product'
     page-pagination: ''
     tabs-sync-option: ''
   extensions:
