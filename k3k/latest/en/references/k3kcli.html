@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>K3k CLI commands :: K3k</title>
+    <link rel="prev" href="crds.html">
+    <link rel="next" href="../how-tos-for-user/troubleshooting.html">
+    <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+<link rel="stylesheet" href="../../../../_/css/search.css">
+<link rel="icon" href="../../../../_/img/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="../../../../_/css/font-styles.css">
+<link rel="stylesheet" href="../../../../_/fonts/css/all.css">
+<link rel="stylesheet" href="../../../../_/css/site-extra.css">
+<link rel="stylesheet" href="../../../../_/css/vendor/tabs.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=SUSE:wght@100..800&display=swap&family=SUSE+Mono:ital,wght@0,100..800;1,100..800" rel="stylesheet">
+<link href="https://documentation.suse.com/docserv/res/fonts/poppins/poppins.css" rel="stylesheet">
+<!-- <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto&display=swap" rel="stylesheet"> -->
+<link rel="stylesheet" href="../../../../_/css/vendor/light.css">
+    <script>var uiRootPath = '../../../../_'</script>
+  </head>
+  <body class="article">
+<script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs'; mermaid.initialize({"startOnLoad":true});</script><header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-item">
+        <a class=" navbar-logo" href="https://docs.k3k.io/" aria-label="K3k Documentation Home"><img class="logo"
+            src="../../../../_/img/logo-horizontal-positive-k3k.svg" alt="K3k logo"/></a>
+      </div>
+      <div class="navbar-item search hide-for-print">
+        <div id="search-field" class="field">
+          <label class="visual-search-label" for="search-input">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+          <input label="Search" aria-label="Search" id="search-input" type="text" placeholder="Search the docs" >
+          <label class="filter checkbox" style="display: none">
+            <input type="checkbox" data-facet-filter="component:k3k" checked> Only this project
+          </label>
+        </div>
+      </div>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link">
+            <img src="../../../../_/img/resources.png" class="langIcon Resources" alt="Resources" title="Resources">
+          </div>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs"><i class="fab fa-github"></i>&nbsp;K3k</a>
+            <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs/issues"><i class="fab fa-github"></i>&nbsp;GitHub Issue</a>
+            <!-- <div class="has-submenu">
+              <a class="navbar-item" href="#" ><i class="fas fa-file-alt"></i>&nbsp;Report Issue &nbsp;<i class="fas fa-chevron-right"></i></a>
+              <div class="submenu">
+                <a class="navbar-item" href="https://scc.suse.com">SCC (Recommended)</a>
+                <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs/issues">GitHub Issue</a>
+              </div>
+            </div> -->
+            <a class="navbar-item" href="https://github.com/rancher/k3k/blob/main/docs/development.md"><i class="fas fa-user-edit"></i>&nbsp;Contribute</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link"><img src="../../../../_/img/language.png" class="langIcon Language" alt="Language"
+              title="Language"></div>
+          <div class="navbar-dropdown">
+            <!--  </div><div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div> -->
+              <a role="button" class="navbar-item" id="en" onclick="selectLanguage(this.id)">
+                <!--<img src="../../../../_/img/engFlag.svg" class="langIcon english">-->
+                &nbsp;English
+              </a>
+            <!-- LANGUAGESELECTOR -->
+          </div>
+        </div>
+        <!--
+        <div class="navbar-item">
+          <a href="https://twitter.com/SUSE">
+            <img alt="X-logo" class="x-logo" src="../../../../_/img/x-logo-white.png">
+          </a>
+        </div>
+        -->
+      </div>
+    </div>
+
+    <!--   <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+      </div> -->
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="k3k" data-version="latest">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../introduction.html">K3k</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../introduction.html">Introduction</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../quickstart.html">Quick Start</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../architecture.html">Architecture</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../advanced-usage.html">Advanced Usage</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../virtualclusterpolicy.html">VirtualClusterPolicy: Concepts</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle" aria-label="Toggle expand/collapse"></button>
+    <span class="nav-text">How-tos for User</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../how-tos-for-user/create-virtual-clusters.html">Creating a Virtual Cluster</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../how-tos-for-user/expose-workloads.html">Exposing workloads outside a Virtual Cluster</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../how-tos-for-user/addons.html">Addons</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle" aria-label="Toggle expand/collapse"></button>
+    <span class="nav-text">How-tos for Admin</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../how-tos-for-admin/choose-mode.html">Choosing between Shared and Virtual Mode</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../how-tos-for-admin/adding-custom-cert.html">Adding custom certificates for K3s from K3k cluster</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle" aria-label="Toggle expand/collapse"></button>
+    <span class="nav-text">References</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="crds.html">Customer Resource Definitions (CRDs)</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="k3kcli.html">k3kcli</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../how-tos-for-user/troubleshooting.html">Troubleshooting</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">K3k</span>
+    <span class="version">Latest</span>
+  </div>
+  <ul class="components">
+        <li class="component is-current">
+          <div class="title"><a href="../introduction.html">K3k</a></div>
+          <ul class="versions">
+            <li class="version is-current is-latest">
+              <a href="../introduction.html">Latest</a>
+            </li>
+          </ul>
+        </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../introduction.html" aria-label="Home" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../introduction.html">K3k</a></li>
+    <li>References</li>
+    <li><a href="k3kcli.html">k3kcli</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/rancher/k3k-product-docs/edit/main/versions/latest/modules/en/pages/references/k3kcli.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<aside class="toc sidebar" data-title="On this page" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">K3k CLI commands</h1>
+<div class="sect1">
+<h2 id="_k3kcli_cluster_create"><a class="anchor" href="#_k3kcli_cluster_create"></a>k3kcli cluster create</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Create a new cluster.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>k3kcli cluster create [flags]</pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_examples"><a class="anchor" href="#_examples"></a>Examples</h3>
+<div class="listingblock">
+<div class="content">
+<pre>k3kcli cluster create [command options] NAME</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_options"><a class="anchor" href="#_options"></a>Options</h3>
+<div class="listingblock">
+<div class="content">
+<pre>      --agent-args strings            agents extra arguments
+      --agent-envs strings            agents extra Envs
+      --agents int                    number of agents
+      --cluster-cidr string           cluster CIDR
+  -h, --help                          help for create
+      --kubeconfig-server string      override the kubeconfig server host
+      --mirror-host-nodes             Mirror Host Cluster Nodes
+      --mode string                   k3k mode type (shared, virtual) (default "shared")
+  -n, --namespace string              namespace of the k3k cluster
+      --persistence-type string       persistence mode for the nodes (dynamic, ephemeral, static) (default "dynamic")
+      --policy string                 The policy to create the cluster in
+      --server-args strings           servers extra arguments
+      --server-envs strings           servers extra Envs
+      --servers int                   number of servers (default 1)
+      --service-cidr string           service CIDR
+      --storage-class-name string     storage class name for dynamic persistence type
+      --storage-request-size string   storage size for dynamic persistence type
+      --token string                  token of the cluster
+      --version string                k3s version</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_options_inherited_from_parent_commands"><a class="anchor" href="#_options_inherited_from_parent_commands"></a>Options inherited from parent commands</h3>
+<div class="listingblock">
+<div class="content">
+<pre>      --debug               Turn on debug logs
+      --kubeconfig string   kubeconfig path ($HOME/.kube/config or $KUBECONFIG if set)</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_k3kcli_cluster_delete"><a class="anchor" href="#_k3kcli_cluster_delete"></a>k3kcli cluster delete</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Delete an existing cluster.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>k3kcli cluster delete [flags]</pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_examples_2"><a class="anchor" href="#_examples_2"></a>Examples</h3>
+<div class="listingblock">
+<div class="content">
+<pre>k3kcli cluster delete [command options] NAME</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_options_2"><a class="anchor" href="#_options_2"></a>Options</h3>
+<div class="listingblock">
+<div class="content">
+<pre>  -h, --help               help for delete
+      --keep-data          keeps persistence volumes created for the cluster after deletion
+  -n, --namespace string   namespace of the k3k cluster</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_options_inherited_from_parent_commands_2"><a class="anchor" href="#_options_inherited_from_parent_commands_2"></a>Options inherited from parent commands</h3>
+<div class="listingblock">
+<div class="content">
+<pre>      --debug               Turn on debug logs
+      --kubeconfig string   kubeconfig path ($HOME/.kube/config or $KUBECONFIG if set)</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_k3kcli_cluster_list"><a class="anchor" href="#_k3kcli_cluster_list"></a>k3kcli cluster list</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>List all existing clusters.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>k3kcli cluster list [flags]</pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_examples_3"><a class="anchor" href="#_examples_3"></a>Examples</h3>
+<div class="listingblock">
+<div class="content">
+<pre>k3kcli cluster list [command options]</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_options_3"><a class="anchor" href="#_options_3"></a>Options</h3>
+<div class="listingblock">
+<div class="content">
+<pre>  -h, --help               help for list
+  -n, --namespace string   namespace of the k3k cluster</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_options_inherited_from_parent_commands_3"><a class="anchor" href="#_options_inherited_from_parent_commands_3"></a>Options inherited from parent commands</h3>
+<div class="listingblock">
+<div class="content">
+<pre>      --debug               Turn on debug logs
+      --kubeconfig string   kubeconfig path ($HOME/.kube/config or $KUBECONFIG if set)</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_k3kcli_cluster"><a class="anchor" href="#_k3kcli_cluster"></a>k3kcli cluster</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>K3k cluster command.</p>
+</div>
+<div class="sect2">
+<h3 id="_options_4"><a class="anchor" href="#_options_4"></a>Options</h3>
+<div class="listingblock">
+<div class="content">
+<pre>  -h, --help   help for cluster</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_options_inherited_from_parent_commands_4"><a class="anchor" href="#_options_inherited_from_parent_commands_4"></a>Options inherited from parent commands</h3>
+<div class="listingblock">
+<div class="content">
+<pre>      --debug               Turn on debug logs
+      --kubeconfig string   kubeconfig path ($HOME/.kube/config or $KUBECONFIG if set)</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_k3kcli_kubeconfig_generate"><a class="anchor" href="#_k3kcli_kubeconfig_generate"></a>k3kcli kubeconfig generate</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Generate kubeconfig for clusters.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>k3kcli kubeconfig generate [flags]</pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_options_5"><a class="anchor" href="#_options_5"></a>Options</h3>
+<div class="listingblock">
+<div class="content">
+<pre>      --altNames strings           altNames of the generated certificates for the kubeconfig
+      --cn string                  Common name (CN) of the generated certificates for the kubeconfig (default "system:admin")
+      --config-name string         the name of the generated kubeconfig file
+      --expiration-days int        Expiration date of the certificates used for the kubeconfig (default 365)
+  -h, --help                       help for generate
+      --kubeconfig-server string   override the kubeconfig server host
+      --name string                cluster name
+  -n, --namespace string           namespace of the k3k cluster
+      --org strings                Organization name (ORG) of the generated certificates for the kubeconfig</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_options_inherited_from_parent_commands_5"><a class="anchor" href="#_options_inherited_from_parent_commands_5"></a>Options inherited from parent commands</h3>
+<div class="listingblock">
+<div class="content">
+<pre>      --debug               Turn on debug logs
+      --kubeconfig string   kubeconfig path ($HOME/.kube/config or $KUBECONFIG if set)</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_k3kcli_kubeconfig"><a class="anchor" href="#_k3kcli_kubeconfig"></a>k3kcli kubeconfig</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Manage kubeconfig for clusters.</p>
+</div>
+<div class="sect2">
+<h3 id="_options_6"><a class="anchor" href="#_options_6"></a>Options</h3>
+<div class="listingblock">
+<div class="content">
+<pre>  -h, --help   help for kubeconfig</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_options_inherited_from_parent_commands_6"><a class="anchor" href="#_options_inherited_from_parent_commands_6"></a>Options inherited from parent commands</h3>
+<div class="listingblock">
+<div class="content">
+<pre>      --debug               Turn on debug logs
+      --kubeconfig string   kubeconfig path ($HOME/.kube/config or $KUBECONFIG if set)</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_k3kcli_policy_create"><a class="anchor" href="#_k3kcli_policy_create"></a>k3kcli policy create</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Create a new policy.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>k3kcli policy create [flags]</pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_examples_4"><a class="anchor" href="#_examples_4"></a>Examples</h3>
+<div class="listingblock">
+<div class="content">
+<pre>k3kcli policy create [command options] NAME</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_options_7"><a class="anchor" href="#_options_7"></a>Options</h3>
+<div class="listingblock">
+<div class="content">
+<pre>  -h, --help          help for create
+      --mode string   The allowed mode type of the policy (default "shared")</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_options_inherited_from_parent_commands_7"><a class="anchor" href="#_options_inherited_from_parent_commands_7"></a>Options inherited from parent commands</h3>
+<div class="listingblock">
+<div class="content">
+<pre>      --debug               Turn on debug logs
+      --kubeconfig string   kubeconfig path ($HOME/.kube/config or $KUBECONFIG if set)</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_k3kcli_policy_delete"><a class="anchor" href="#_k3kcli_policy_delete"></a>k3kcli policy delete</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Delete an existing policy.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>k3kcli policy delete [flags]</pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_examples_5"><a class="anchor" href="#_examples_5"></a>Examples</h3>
+<div class="listingblock">
+<div class="content">
+<pre>k3kcli policy delete [command options] NAME</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_options_8"><a class="anchor" href="#_options_8"></a>Options</h3>
+<div class="listingblock">
+<div class="content">
+<pre>  -h, --help   help for delete</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_options_inherited_from_parent_commands_8"><a class="anchor" href="#_options_inherited_from_parent_commands_8"></a>Options inherited from parent commands</h3>
+<div class="listingblock">
+<div class="content">
+<pre>      --debug               Turn on debug logs
+      --kubeconfig string   kubeconfig path ($HOME/.kube/config or $KUBECONFIG if set)</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_k3kcli_policy_list"><a class="anchor" href="#_k3kcli_policy_list"></a>k3kcli policy list</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>List all existing policies.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>k3kcli policy list [flags]</pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_examples_6"><a class="anchor" href="#_examples_6"></a>Examples</h3>
+<div class="listingblock">
+<div class="content">
+<pre>k3kcli policy list [command options]</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_options_9"><a class="anchor" href="#_options_9"></a>Options</h3>
+<div class="listingblock">
+<div class="content">
+<pre>  -h, --help   help for list</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_options_inherited_from_parent_commands_9"><a class="anchor" href="#_options_inherited_from_parent_commands_9"></a>Options inherited from parent commands</h3>
+<div class="listingblock">
+<div class="content">
+<pre>      --debug               Turn on debug logs
+      --kubeconfig string   kubeconfig path ($HOME/.kube/config or $KUBECONFIG if set)</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_k3kcli_policy"><a class="anchor" href="#_k3kcli_policy"></a>k3kcli policy</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>K3k policy command.</p>
+</div>
+<div class="sect2">
+<h3 id="_options_10"><a class="anchor" href="#_options_10"></a>Options</h3>
+<div class="listingblock">
+<div class="content">
+<pre>  -h, --help   help for policy</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_options_inherited_from_parent_commands_10"><a class="anchor" href="#_options_inherited_from_parent_commands_10"></a>Options inherited from parent commands</h3>
+<div class="listingblock">
+<div class="content">
+<pre>      --debug               Turn on debug logs
+      --kubeconfig string   kubeconfig path ($HOME/.kube/config or $KUBECONFIG if set)</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_k3kcli"><a class="anchor" href="#_k3kcli"></a>k3kcli</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>CLI for K3k.</p>
+</div>
+<div class="sect2">
+<h3 id="_options_11"><a class="anchor" href="#_options_11"></a>Options</h3>
+<div class="listingblock">
+<div class="content">
+<pre>      --debug               Turn on debug logs
+  -h, --help                help for k3kcli
+      --kubeconfig string   kubeconfig path ($HOME/.kube/config or $KUBECONFIG if set)</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="crds.html">Customer Resource Definitions (CRDs)</a></span>
+  <span class="next"><a href="../how-tos-for-user/troubleshooting.html">Troubleshooting</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+<script src="../../../../_/js/vendor/lunr.js"></script>
+<script src="../../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../../.." data-snippet-length="100" data-stylesheet="../../../../_/css/search.css"></script>
+<script async src="../../../../search-index.js"></script>
+<script src="../../../../_/js/vendor/langSelection.js"></script>
+<script async src="../../../../_/js/vendor/tabs.js"></script>
+
+
+  </body>
+</html>
