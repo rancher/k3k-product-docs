@@ -1,3 +1,7 @@
+= K3k CLI commands 
+:revdate: 2026-01-12
+:page-revdate: {revdate}
+
 == k3kcli
 
 CLI for K3K.
