@@ -1,13 +1,13 @@
 site:
   title: 'K3k'
   url: /
-  start_page: latest@k3k:en:introduction.adoc
+  start_page: v1.0.1@k3k:en:introduction.adoc
   robots: disallow
 content:
   sources:
   - url: .
     branches: [HEAD]
-    start_path: versions/latest
+    start_paths: [versions/v*]
 ui:
   bundle:
     url: https://github.com/SUSEdoc/dsc-style-bundle/blob/main/default-ui/ui-bundle.zip?raw=true
@@ -31,6 +31,11 @@ antora:
       script_stem: header-scripts # <3>
       mermaid_initialize_options: # <4>
         start_on_load: true
+    - require: ./product-docs-common/extensions/dynamic-loading-attributes/load-global-site-attributes.js
+      attributefile: ./product-docs-common/global-attributes.yml
+      enabled: true
+    - require: ./product-docs-common/extensions/versions-latest-prerelease/vlp.js
+      enabled: true
 
 output:
   dir: build-community/site

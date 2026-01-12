@@ -1,18 +1,18 @@
 site:
   title: SUSE® Virtual Clusters
   url: /
-  start_page: latest@suse-virtual-clusters:en:introduction.adoc
+  start_page: v1.0.1@suse-virtual-clusters:en:introduction.adoc
   robots: disallow
 content:
   sources:
   - url: https://github.com/rancher/k3k-product-docs
     branches: [main]
-    start_path: versions/latest
+    start_paths: [versions/v*]
 ui:
   bundle:
     url: https://github.com/SUSEdoc/dsc-style-bundle/blob/main/default-ui/ui-bundle.zip?raw=true
     snapshot: true
-  supplemental_files: ./k3k-community-style/supplemental-files
+  supplemental_files: ./dsc-style-bundle/supplemental-files/rancher
 runtime:
   fetch: true
 asciidoc:
@@ -35,6 +35,8 @@ antora:
       start_on_load: true
   - require: ./product-docs-common/extensions/dynamic-loading-attributes/load-global-site-attributes.js
     attributefile: ./product-docs-common/global-attributes.yml
+    enabled: true
+  - require: ./product-docs-common/extensions/versions-latest-prerelease/vlp.js
     enabled: true
 
 output:
