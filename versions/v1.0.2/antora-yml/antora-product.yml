@@ -1,0 +1,13 @@
+name: suse-virtual-clusters
+title: SUSE® Virtual Clusters
+version: v1.0.2
+prerelease: -dev
+start_page: en:introduction.adoc
+asciidoc:
+  attributes:
+    product-name: "SUSE® Virtual Clusters"
+    k3k-latest-version: 'v1.0.0'
+    k3s-product-name: "SUSE® Rancher Prime: K3s"
+    rancher-product-name: "SUSE® Rancher Prime"
+nav:
+- modules/en/nav.adoc

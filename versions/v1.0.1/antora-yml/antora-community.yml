@@ -1,7 +1,7 @@
 name: k3k
 title: K3k
-version: latest
-display_version: 'Latest'
+version: v1.0.1
+display_version: 'v1.0.1-latest'
 start_page: en:introduction.adoc
 asciidoc:
   attributes:
