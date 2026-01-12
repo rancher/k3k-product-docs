@@ -12,7 +12,7 @@ ui:
   bundle:
     url: https://github.com/SUSEdoc/dsc-style-bundle/blob/main/default-ui/ui-bundle.zip?raw=true
     snapshot: true
-  supplemental_files: ./k3k-community-style/supplemental-files
+  supplemental_files: ./dsc-style-bundle/supplemental-files/rancher
 runtime:
   fetch: true
 asciidoc:
