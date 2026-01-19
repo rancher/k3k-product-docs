@@ -1,13 +1,13 @@
-name: k3k
-title: K3k
-version: v1.0.2
+name: suse-virtual-clusters
+title: SUSE® Virtual Clusters
+version: Dev
 prerelease: -dev
 start_page: en:introduction.adoc
 asciidoc:
   attributes:
-    product-name: "K3k"
+    product-name: "SUSE® Virtual Clusters"
     k3k-latest-version: 'v1.0.0'
-    k3s-product-name: "K3s"
+    k3s-product-name: "SUSE® Rancher Prime: K3s"
     rancher-product-name: "SUSE® Rancher Prime"
 nav:
 - modules/en/nav.adoc
