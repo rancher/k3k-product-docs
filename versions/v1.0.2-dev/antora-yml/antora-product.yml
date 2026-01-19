@@ -1,7 +1,7 @@
 name: suse-virtual-clusters
 title: SUSE® Virtual Clusters
-version: v1.0.2
-prerelease: -dev
+version: Dev
+#prerelease: -dev
 start_page: en:introduction.adoc
 asciidoc:
   attributes:
