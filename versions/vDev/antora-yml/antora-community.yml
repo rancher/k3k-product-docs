@@ -1,7 +1,7 @@
 name: k3k
 title: K3k
 version: Dev
-prerelease: ""
+prerelease: " "
 start_page: en:introduction.adoc
 asciidoc:
   attributes:
