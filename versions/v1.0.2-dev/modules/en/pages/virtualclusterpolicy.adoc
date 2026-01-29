@@ -157,5 +157,5 @@ spec:
 
 == Additional information
 
-* For a complete reference of all `VirtualClusterPolicy` spec fields, see xref:./references/crds.adoc#VirtualClusterPolicy[API Reference for VirtualClusterPolicy].
+* For a complete reference of all `VirtualClusterPolicy` spec fields, see xref:./references/crds.adoc#virtualclusterpolicy[API Reference for VirtualClusterPolicy].
 * To understand how VCPs fit into the overall K3k system, see xref:./architecture.adoc[Architecture].
