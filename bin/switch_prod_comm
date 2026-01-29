@@ -18,7 +18,7 @@ function px_error () {
 
 function fetch_versions_list () {
   local versions
-  versions=$(ls -1 "$docs_root" | grep -v archive)
+  versions=$(ls -1 "$docs_root" | grep -Ev 'archive|Dev')
   echo "$versions"
 }
 
