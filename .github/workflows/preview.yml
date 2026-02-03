@@ -36,16 +36,16 @@ jobs:
       - name: Install Antora with the Antora Lunr Extension
         run: make environment
       - name: Generate Site
-        run: make product-remote
+        run: make community-remote
       - name: Upload Artifacts
         uses: actions/upload-pages-artifact@v3
         with:
-          path: build-product/site
+          path: build-community/site
       - name: Push the static site content to gh-pages branch
         run: |
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-          mv build-product/site ../site-temp
+          mv build-community/site ../site-temp
           git checkout --orphan gh-pages
           git rm -rf .
           rm -rf node_modules tmp
