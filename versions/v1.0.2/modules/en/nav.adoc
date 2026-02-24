@@ -22,3 +22,6 @@
 ** xref:references/k3kcli.adoc[k3kcli]
 
 * xref:how-tos-for-user/troubleshooting.adoc[Troubleshooting]
+
+* Release Notes
+** xref:release-notes/version-1.0.2.adoc[v1.0.2]
