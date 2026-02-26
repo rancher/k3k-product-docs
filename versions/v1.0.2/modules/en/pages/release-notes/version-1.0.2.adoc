@@ -5,19 +5,19 @@
 == New Features
 
 * Pulling images from private repositories (via `registry.yaml`) and mounting custom certificates are now fully supported allowing virtual clusters to run securely in air-gapped or restricted environments. (link:https://github.com/rancher/k3k/pull/570[#570])
-* `k3kcli` now supports cluster updates, and the Rancher UI introduces context-aware sync options specifically for Shared Mode to simplify cluster configuration. (link:https://github.com/rancher/k3k/pull/595[#595], UI link:https://github.com/rancher/virtual-clusters-ui/pull/92[#92])
+* `k3kcli` now supports cluster updates, and the Rancher UI introduces context-aware sync options specifically for 'Shared Mode' to simplify cluster configuration. (link:https://github.com/rancher/k3k/pull/595[#595], UI link:https://github.com/rancher/virtual-clusters-ui/pull/92[#92])
 
 == Core Improvements
 
-* Fixed the "multiplier" bug in shared mode—virtual nodes now report correct per-node resources instead of incorrectly aggregating the whole host cluster. (link:https://github.com/rancher/k3k/pull/610[#610])
+* Fixed the "multiplier" bug in 'Shared Mode' — virtual nodes now report correct per-node resources instead of incorrectly aggregating the whole host cluster. (link:https://github.com/rancher/k3k/pull/610[#610])
 * `nodeSelector` now correctly applies to agent pods, ensuring your workloads land exactly where they belong on the underlying infrastructure. (link:https://github.com/rancher/k3k/pull/616[#616])
-* Refactored storage handling to attach volumes directly to PVCs and optimized server reconciliation for better performance and stability. (link:https://github.com/rancher/k3k/pull/577[#577], link:https://github.com/rancher/k3k/pull/618[#618])
-* Bumped to Go 1.25 and updated Kubernetes dependencies to v1.32.10 for the latest security and performance patches. (link:https://github.com/rancher/k3k/pull/620[#620], link:https://github.com/rancher/k3k/pull/626[#626])
+* Refactored the storage handling to attach volumes directly to PVCs and optimized the server reconciliation for better performance and stability. (link:https://github.com/rancher/k3k/pull/577[#577], link:https://github.com/rancher/k3k/pull/618[#618])
+* Bumped to `Go 1.25` and updated Kubernetes dependencies to `v1.32.10` for the latest security and performance patches. (link:https://github.com/rancher/k3k/pull/620[#620], link:https://github.com/rancher/k3k/pull/626[#626])
 
 == Bug Fixes & Security
 
 * Both the UI and API now correctly show enforced resource limits when a `VirtualClusterPolicy` is applied, including fixes for resource quota formatting. (link:https://github.com/rancher/k3k/pull/638[#638], UI link:https://github.com/rancher/virtual-clusters-ui/pull/97[#97])
-* Refactored initialisation to wait for Node IP assignment, eliminating race conditions during cluster creation. (link:https://github.com/rancher/k3k/pull/598[#598])
+* Refactored the initialization to wait for Node IP assignment, eliminating race conditions during cluster creation. (link:https://github.com/rancher/k3k/pull/598[#598])
 * Resolved errors when reloading the virtual clusters product page and fixed policy display issues for partially assigned namespaces. (UI link:https://github.com/rancher/virtual-clusters-ui/pull/94[#94], UI link:https://github.com/rancher/virtual-clusters-ui/pull/91[#91])
 
 Full Changelogs: link:https://github.com/rancher/k3k/releases/tag/v1.0.2[k3k v1.0.2] | link:https://github.com/rancher/virtual-clusters-ui/releases/tag/virtual-clusters-1.0.2[UI Extension v1.0.2]
