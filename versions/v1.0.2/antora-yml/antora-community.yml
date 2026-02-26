@@ -1,7 +1,7 @@
 name: k3k
 title: K3k
 version: 1.0.2
-prerelease: -dev
+display_version: 'v1.0.2-latest'
 start_page: en:introduction.adoc
 asciidoc:
   attributes:
