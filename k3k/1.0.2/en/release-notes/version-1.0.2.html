@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>SUSE Virtual Cluster v1.0.2 Release Highlights :: K3k</title>
+    <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+<link rel="stylesheet" href="../../../../_/css/search.css">
+<link rel="icon" href="../../../../_/img/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="../../../../_/css/font-styles.css">
+<link rel="stylesheet" href="../../../../_/fonts/css/all.css">
+<link rel="stylesheet" href="../../../../_/css/site-extra.css">
+<link rel="stylesheet" href="../../../../_/css/vendor/tabs.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=SUSE:wght@100..800&display=swap&family=SUSE+Mono:ital,wght@0,100..800;1,100..800" rel="stylesheet">
+<link href="https://documentation.suse.com/docserv/res/fonts/poppins/poppins.css" rel="stylesheet">
+<!-- <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto&display=swap" rel="stylesheet"> -->
+<link rel="stylesheet" href="../../../../_/css/vendor/light.css">
+    <script>var uiRootPath = '../../../../_'</script>
+  </head>
+  <body class="article">
+<script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs'; mermaid.initialize({"startOnLoad":true});</script><header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-item">
+        <a class=" navbar-logo" href="https://docs.k3k.io/" aria-label="K3k Documentation Home"><img class="logo"
+            src="../../../../_/img/logo-horizontal-positive-k3k.svg" alt="K3k logo"/></a>
+      </div>
+      <div class="navbar-item search hide-for-print">
+        <div id="search-field" class="field">
+          <label class="visual-search-label" for="search-input">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+          <input label="Search" aria-label="Search" id="search-input" type="text" placeholder="Search the docs" >
+          <label class="filter checkbox" style="display: none">
+            <input type="checkbox" data-facet-filter="component:k3k" checked> Only this project
+          </label>
+        </div>
+      </div>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link">
+            <img src="../../../../_/img/resources.png" class="langIcon Resources" alt="Resources" title="Resources">
+          </div>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs"><i class="fab fa-github"></i>&nbsp;K3k</a>
+            <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs/issues"><i class="fab fa-github"></i>&nbsp;GitHub Issue</a>
+            <!-- <div class="has-submenu">
+              <a class="navbar-item" href="#" ><i class="fas fa-file-alt"></i>&nbsp;Report Issue &nbsp;<i class="fas fa-chevron-right"></i></a>
+              <div class="submenu">
+                <a class="navbar-item" href="https://scc.suse.com">SCC (Recommended)</a>
+                <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs/issues">GitHub Issue</a>
+              </div>
+            </div> -->
+            <a class="navbar-item" href="https://github.com/rancher/k3k/blob/main/docs/development.md"><i class="fas fa-user-edit"></i>&nbsp;Contribute</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link"><img src="../../../../_/img/language.png" class="langIcon Language" alt="Language"
+              title="Language"></div>
+          <div class="navbar-dropdown">
+            <!--  </div><div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div> -->
+              <a role="button" class="navbar-item" id="en" onclick="selectLanguage(this.id)">
+                <!--<img src="../../../../_/img/engFlag.svg" class="langIcon english">-->
+                &nbsp;English
+              </a>
+            <!-- LANGUAGESELECTOR -->
+          </div>
+        </div>
+        <!--
+        <div class="navbar-item">
+          <a href="https://twitter.com/SUSE">
+            <img alt="X-logo" class="x-logo" src="../../../../_/img/x-logo-white.png">
+          </a>
+        </div>
+        -->
+      </div>
+    </div>
+
+    <!--   <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+      </div> -->
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="k3k" data-version="1.0.2">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../introduction.html">K3k</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../introduction.html">Introduction</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../quickstart.html">Quick Start</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../architecture.html">Architecture</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../advanced-usage.html">Advanced Usage</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../virtualclusterpolicy.html">VirtualClusterPolicy: Concepts</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle" aria-label="Toggle expand/collapse"></button>
+    <span class="nav-text">How-tos for User</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../how-tos-for-user/create-virtual-clusters.html">Creating a Virtual Cluster</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../how-tos-for-user/expose-workloads.html">Exposing workloads outside a Virtual Cluster</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../how-tos-for-user/addons.html">Addons</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle" aria-label="Toggle expand/collapse"></button>
+    <span class="nav-text">How-tos for Admin</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../how-tos-for-admin/choose-mode.html">Choosing between Shared and Virtual Mode</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../how-tos-for-admin/adding-custom-cert.html">Adding custom certificates for K3s from K3k cluster</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle" aria-label="Toggle expand/collapse"></button>
+    <span class="nav-text">References</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../references/crds.html">Customer Resource Definitions (CRDs)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../references/k3kcli.html">k3kcli</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../how-tos-for-user/troubleshooting.html">Troubleshooting</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">K3k</span>
+    <span class="version">v1.0.2-latest</span>
+  </div>
+  <ul class="components">
+        <li class="component is-current">
+          <div class="title"><a href="../introduction.html">K3k</a></div>
+          <ul class="versions">
+            <li class="version is-current is-latest">
+              <a href="../introduction.html">v1.0.2-latest</a>
+            </li>
+            <li class="version">
+              <a href="../../../v1.0.1/en/introduction.html">v1.0.1</a>
+            </li>
+            <li class="version">
+              <a href="../../../v1.0.0/en/introduction.html">v1.0.0</a>
+            </li>
+          </ul>
+        </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../v1.0.1/en/introduction.html" aria-label="Home" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../introduction.html">K3k</a></li>
+    <li><a href="version-1.0.2.html">SUSE Virtual Cluster v1.0.2 Release Highlights</a></li>
+  </ul>
+</nav>
+<div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">v1.0.2-latest</button>
+  <div class="version-menu">
+    <a class="version is-current" href="version-1.0.2.html">v1.0.2-latest</a>
+    <a class="version is-missing" href="../../../v1.0.1/en/introduction.html">v1.0.1</a>
+    <a class="version is-missing" href="../../../v1.0.0/en/introduction.html">v1.0.0</a>
+  </div>
+</div>
+  <div class="edit-this-page"><a href="https://github.com/rancher/k3k-product-docs/edit/main/versions/v1.0.2/modules/en/pages/release-notes/version-1.0.2.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<aside class="toc sidebar" data-title="On this page" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">SUSE Virtual Cluster v1.0.2 Release Highlights</h1>
+<div class="sect1">
+<h2 id="_new_features"><a class="anchor" href="#_new_features"></a>New Features</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Pulling images from private repositories (via <code>registry.yaml</code>) and mounting custom certificates are now fully supported allowing virtual clusters to run securely in air-gapped or restricted environments. (<a href="https://github.com/rancher/k3k/pull/570">#570</a>)</p>
+</li>
+<li>
+<p><code>k3kcli</code> now supports cluster updates, and the Rancher UI introduces context-aware sync options specifically for 'Shared Mode' to simplify cluster configuration. (<a href="https://github.com/rancher/k3k/pull/595">#595</a>, UI <a href="https://github.com/rancher/virtual-clusters-ui/pull/92">#92</a>)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_core_improvements"><a class="anchor" href="#_core_improvements"></a>Core Improvements</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Fixed the "multiplier" bug in 'Shared Mode' — virtual nodes now report correct per-node resources instead of incorrectly aggregating the whole host cluster. (<a href="https://github.com/rancher/k3k/pull/610">#610</a>)</p>
+</li>
+<li>
+<p><code>nodeSelector</code> now correctly applies to agent pods, ensuring your workloads land exactly where they belong on the underlying infrastructure. (<a href="https://github.com/rancher/k3k/pull/616">#616</a>)</p>
+</li>
+<li>
+<p>Refactored the storage handling to attach volumes directly to PVCs and optimized the server reconciliation for better performance and stability. (<a href="https://github.com/rancher/k3k/pull/577">#577</a>, <a href="https://github.com/rancher/k3k/pull/618">#618</a>)</p>
+</li>
+<li>
+<p>Bumped to <code>Go 1.25</code> and updated Kubernetes dependencies to <code>v1.32.10</code> for the latest security and performance patches. (<a href="https://github.com/rancher/k3k/pull/620">#620</a>, <a href="https://github.com/rancher/k3k/pull/626">#626</a>)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_bug_fixes_security"><a class="anchor" href="#_bug_fixes_security"></a>Bug Fixes &amp; Security</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Both the UI and API now correctly show enforced resource limits when a <code>VirtualClusterPolicy</code> is applied, including fixes for resource quota formatting. (<a href="https://github.com/rancher/k3k/pull/638">#638</a>, UI <a href="https://github.com/rancher/virtual-clusters-ui/pull/97">#97</a>)</p>
+</li>
+<li>
+<p>Refactored the initialization to wait for Node IP assignment, eliminating race conditions during cluster creation. (<a href="https://github.com/rancher/k3k/pull/598">#598</a>)</p>
+</li>
+<li>
+<p>Resolved errors when reloading the virtual clusters product page and fixed policy display issues for partially assigned namespaces. (UI <a href="https://github.com/rancher/virtual-clusters-ui/pull/94">#94</a>, UI <a href="https://github.com/rancher/virtual-clusters-ui/pull/91">#91</a>)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Full Changelogs: <a href="https://github.com/rancher/k3k/releases/tag/v1.0.2">k3k v1.0.2</a> | <a href="https://github.com/rancher/virtual-clusters-ui/releases/tag/virtual-clusters-1.0.2">UI Extension v1.0.2</a></p>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+<script src="../../../../_/js/vendor/lunr.js"></script>
+<script src="../../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../../.." data-snippet-length="100" data-stylesheet="../../../../_/css/search.css"></script>
+<script async src="../../../../search-index.js"></script>
+<script src="../../../../_/js/vendor/langSelection.js"></script>
+<script async src="../../../../_/js/vendor/tabs.js"></script>
+
+
+  </body>
+</html>
