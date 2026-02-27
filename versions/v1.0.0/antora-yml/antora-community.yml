@@ -5,7 +5,7 @@ start_page: en:introduction.adoc
 asciidoc:
   attributes:
     product-name: "K3k"
-    k3k-latest-version: 'v1.0.0'
+    k3k-latest-version: 'v1.0.2'
     k3s-product-name: "K3s"
     rancher-product-name: "SUSE® Rancher Prime"
 nav:
