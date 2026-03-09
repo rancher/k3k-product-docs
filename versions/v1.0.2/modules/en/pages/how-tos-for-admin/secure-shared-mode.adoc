@@ -1,5 +1,5 @@
 = Secure shared mode
-:revdate: 2025-09-16
+:revdate: 2026-03-09
 :page-revdate: {revdate}
 
 By default, {k3k-product-name} in shared mode allows privileged pods, which can lead to host-level access. To secure your environment, you must enforce https://kubernetes.io/docs/concepts/security/pod-security-standards/[Pod Security Standard (PSS)].
