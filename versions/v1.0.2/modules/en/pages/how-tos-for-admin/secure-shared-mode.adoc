@@ -1,4 +1,4 @@
-= Secure shared mode
+= Securing Shared Mode Virtual Clusters
 :revdate: 2026-03-09
 :page-revdate: {revdate}
 
