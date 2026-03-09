@@ -22,6 +22,7 @@ endif::[]
 ** xref:how-tos-for-admin/choose-mode.adoc[Choosing between Shared and Virtual Mode]
 ** xref:how-tos-for-admin/adding-custom-cert.adoc[Adding custom certificates for K3s from K3k cluster]
 ** xref:how-tos-for-admin/restrict-gpu-usage.adoc[Restrict GPU usage]
+** xref:how-tos-for-admin/secure-shared-mode.adoc[Secure shared mode]
 
 * References
 ** xref:references/crds.adoc[Customer Resource Definitions (CRDs)]
