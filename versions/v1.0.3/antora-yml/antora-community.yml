@@ -1,0 +1,14 @@
+name: k3k
+title: K3k
+version: 1.0.3
+display_version: 'v1.0.3 (Dev)'
+prerelease: -dev
+start_page: en:introduction.adoc
+asciidoc:
+  attributes:
+    product-name: "K3k"
+    k3k-latest-version: 'v1.0.3'
+    k3s-product-name: "K3s"
+    rancher-product-name: "SUSE® Rancher Prime"
+nav:
+- modules/en/nav.adoc
