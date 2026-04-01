@@ -1,6 +1,6 @@
 ifndef::ss-build-community[]
 * Release Notes
-** xref:release-notes/version-1.0.3.adoc[v1.0.3]
+** xref:release-notes/version-1.1.0.adoc[v1.1.0]
 endif::[]
 
 * xref:introduction.adoc[Introduction]
