@@ -1,4 +1,4 @@
-= SUSE Virtual Cluster v1.0.3 Release Highlights
+= SUSE Virtual Cluster v1.1.0 Release Highlights
 :revdate: 2026-02-23
 :page-revdate: {revdate}
 
@@ -20,4 +20,4 @@
 * Refactored the initialization to wait for Node IP assignment, eliminating race conditions during cluster creation. (link:https://github.com/rancher/k3k/pull/598[#598])
 * Resolved errors when reloading the virtual clusters product page and fixed policy display issues for partially assigned namespaces. (UI link:https://github.com/rancher/virtual-clusters-ui/pull/94[#94], UI link:https://github.com/rancher/virtual-clusters-ui/pull/91[#91])
 
-Full Changelogs: link:https://github.com/rancher/k3k/releases/tag/v1.0.3[k3k v1.0.3] | link:https://github.com/rancher/virtual-clusters-ui/releases/tag/virtual-clusters-1.0.2[UI Extension v1.0.3]
+Full Changelogs: link:https://github.com/rancher/k3k/releases/tag/v1.1.0[k3k v1.1.0] | link:https://github.com/rancher/virtual-clusters-ui/releases/tag/virtual-clusters-1.0.2[UI Extension v1.1.0]
