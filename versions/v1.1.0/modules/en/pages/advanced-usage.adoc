@@ -103,6 +103,14 @@ The `clusterDNS` field specifies the IP address for the CoreDNS service. It need
 
 The `serverArgs` field allows you to specify additional arguments to be passed to the K3s server pods.
 
+=== `serverAffinity` and `agentAffinity`
+
+The `serverAffinity` field allows you to specify the node affinity or inter-pod affinity/anti-affinity for the server pods. The accepted value is the same as the k8s version https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity.
+
+The `agentAffinity` field allows you to specify the node affinity or inter-pod affinity/anti-affinity for the agent pods. The accepted value is the same as the k8s version https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity.
+
+Note that if a server or agent affinity is specified in the VirtualClusterPolicy assigned to this cluster, those affinities will override the values set in the cluster CRD.
+
 == Using the cli
 
 You can check the xref:/references/k3kcli.adoc[k3kcli documentation] for the full specs.
