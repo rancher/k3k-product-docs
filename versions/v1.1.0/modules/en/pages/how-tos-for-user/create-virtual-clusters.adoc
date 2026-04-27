@@ -205,6 +205,81 @@ This configures the CPU and memory limit for the virtual cluster.
 
 _No CLI method available yet_
 
+== Use Case: Create a Virtual Cluster with a specific server node affinity
+
+=== CRD Method
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-server-affinity
+spec:
+  mode: virtual
+  serverAffinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: topology.kubernetes.io/zone
+            operator: In
+            values:
+            - antarctica-east1
+            - antarctica-west1
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 1
+        preference:
+          matchExpressions:
+          - key: another-node-label-key
+            operator: In
+            values:
+            - another-node-label-value
+----
+
+=== CLI Method
+
+_No CLI method available yet_
+
+== Use Case: Create a Virtual Cluster with a specific agent pod affinity
+
+=== CRD Method
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-agent-affinity
+spec:
+  mode: virtual
+  agentAffinity:
+    podAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - key: security
+            operator: In
+            values:
+            - S1
+        topologyKey: topology.kubernetes.io/zone
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+            - key: security
+              operator: In
+              values:
+              - S2
+          topologyKey: topology.kubernetes.io/zone
+----
+
+=== CLI Method
+
+_No CLI method available yet_
+
 == Use Case: Create a Virtual Cluster on specific host nodes
 
 === CRD Method
