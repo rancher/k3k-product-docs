@@ -1,4 +1,4 @@
-= Sync Guide
+= Resource Sync
 :revdate: 2026-04-29
 :page-revdate: {revdate}
 
