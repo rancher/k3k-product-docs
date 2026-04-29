@@ -9,6 +9,8 @@ endif::[]
 
 * xref:architecture.adoc[Architecture]
 
+* xref:resource-sync.adoc[Resource Sync]
+
 * xref:advanced-usage.adoc[Advanced Usage]
 
 * xref:virtualclusterpolicy.adoc[VirtualClusterPolicy: Concepts]
