@@ -2,8 +2,12 @@
 :revdate: 2026-04-29
 :page-revdate: {revdate}
 
-K3k automatically syncs resources between your virtual clusters and the
-host cluster, enabling your workloads to run seamlessly while maintaining isolation.
+In `shared` mode, K3k virtual clusters run their workloads directly on the host cluster
+while maintaining logical isolation. Since your pods execute on the host, they need
+access to essential resources like Services, ConfigMaps, Secrets, and PersistentVolumeClaims.
+K3k automatically syncs these resources from your virtual cluster to the host,
+enabling your workloads to run seamlessly.
+
 This guide explains what resources are synced, why, and how to control sync behavior for your use case.
 
 == Quick Start
