@@ -3,20 +3,19 @@
 :page-revdate: {revdate}
 
 K3k automatically syncs resources between your virtual clusters and the
-host cluster, enabling your workloads to run seamlessly while
-maintaining isolation. This guide explains what resources are synced,
-why, and how to control sync behavior for your use case.
+host cluster, enabling your workloads to run seamlessly while maintaining isolation.
+This guide explains what resources are synced, why, and how to control sync behavior for your use case.
 
 == Quick Start
 
-By default, K3k syncs the essential resources needed for your workloads
-to run: - *Enabled:* Services, ConfigMaps, Secrets,
-PersistentVolumeClaims - *Disabled:* Ingresses, PriorityClasses,
-StorageClasses
+By default, K3k syncs the essential resources needed for your workloads to run:
+
+- *Enabled:* Services, ConfigMaps, Secrets, PersistentVolumeClaims
+- *Disabled:* Ingresses, PriorityClasses, StorageClasses
 
 *Important:* The default enabled syncs (Services, ConfigMaps, Secrets,
 PVCs) are required for most workloads to function correctly. Disabling
-these should only be done if you know what you’re doing and understand
+these should only be done if you know what you're doing and understand
 the impact on your applications.
 
 For most use cases, the defaults work out of the box. You only need to
@@ -39,11 +38,15 @@ K3k syncs resources in two directions depending on their purpose:
 └────────────────┘      StorageClasses       └─────────────────┘
 ....
 
-*Workload Resources (Virtual → Host):* Your applications need services,
+*Workload Resources (Virtual → Host):*
+
+Your applications need services,
 configuration, and secrets to run. These flow from your virtual cluster
 to the host where your pods actually execute.
 
-*Infrastructure Resources (Host → Virtual):* Storage classes represent
+*Infrastructure Resources (Host → Virtual):*
+
+Storage classes represent
 available storage infrastructure. These flow from the host into your
 virtual cluster so your applications can request the right type of
 storage.
@@ -58,10 +61,12 @@ Services provide network endpoints to access your applications. When you
 create a service in your virtual cluster, K3k automatically makes it
 available on the host cluster so traffic can reach your pods.
 
-*When to use:* - Always leave enabled for basic networking - Required
-for ClusterIP, LoadBalancer, and NodePort services - Disabling this will
-break networking for your workloads - only disable if you know what
-you’re doing
+*When to use:*
+
+- Always leave enabled for basic networking
+- Required for ClusterIP, LoadBalancer, and NodePort services
+- Disabling this will break networking for your workloads
+- only disable if you know what you're doing
 
 === ConfigMaps
 
@@ -70,9 +75,11 @@ you’re doing
 ConfigMaps store configuration data for your applications. Since your
 pods run on the host cluster, their ConfigMaps must be available there.
 
-*When to use:* - Leave enabled if your applications use ConfigMaps -
-Disable only if your applications don’t use any ConfigMaps - Use label
-selectors to sync only specific configuration
+*When to use:*
+
+- Leave enabled if your applications use ConfigMaps
+- Disable only if your applications don't use any ConfigMaps
+- Use label selectors to sync only specific configuration
 
 *Example - Sync only app-specific ConfigMaps:*
 
@@ -97,12 +104,16 @@ spec:
 Secrets store sensitive data like passwords and certificates. Your pods
 need access to these secrets on the host cluster.
 
-*Security:* Synced secrets remain isolated within your cluster’s
-namespace boundary and aren’t shared with other virtual clusters.
+*Security:*
 
-*When to use:* - Leave enabled if your applications use Secrets -
-Disable only if your applications don’t use any Secrets - Use label
-selectors for granular control over which secrets are synced
+Synced secrets remain isolated within your cluster's
+namespace boundary and aren't shared with other virtual clusters.
+
+*When to use:*
+
+- Leave enabled if your applications use Secrets
+- Disable only if your applications don't use any Secrets
+- Use label selectors for granular control over which secrets are synced
 
 *Example - Sync only explicitly labeled secrets:*
 
@@ -123,9 +134,10 @@ spec:
 PersistentVolumeClaims (PVCs) request storage for your applications. K3k
 syncs these to the host where the actual storage provisioning happens.
 
-*When to use:* - Leave enabled if your applications need persistent
-storage - Disable only if your applications don’t use any
-PersistentVolumeClaims
+*When to use:*
+
+- Leave enabled if your applications need persistent storage
+- Disable only if your applications don't use any PersistentVolumeClaims
 
 *Example - Disable if not needed:*
 
@@ -141,26 +153,29 @@ spec:
 
 *Default: Disabled* | *Direction: Virtual → Host*
 
-Ingresses define HTTP/HTTPS routing rules for external access to your
-applications.
+Ingresses define HTTP/HTTPS routing rules for external access to your applications.
 
-*Why disabled by default:* Not all applications need external access.
+*Why disabled by default:*
+
+Not all applications need external access.
 Enable Ingresses when you need to expose services outside the cluster.
 
-*TLS Secret Translation:* When you create an Ingress in your virtual
-cluster, any TLS secrets it references are synced from the virtual
-cluster to the host with translated names (just like other resources).
-This is the default behavior.
+*TLS Secret Translation:*
 
-If you want to use a shared TLS secret that already exists on the host
-cluster (for example, a wildcard certificate used across multiple
-virtual clusters), you can disable TLS secret translation with
-`+disableTLSSecretTranslation: true+`. With this option, the Ingress
-will reference the secret by its original name on the host, allowing you
-to use centrally-managed certificates.
+When you create an Ingress in your virtual cluster, any TLS secrets it references are synced from the virtual
+cluster to the host with translated names (just like other resources). This is the default behavior.
 
-*When to use:* - Production applications that need external HTTP/HTTPS
-access - Custom domain routing - SSL/TLS termination
+If you want to use a shared TLS secret that already exists on the host cluster
+(for example, a wildcard certificate used across multiple virtual clusters),
+you can disable TLS secret translation with `+disableTLSSecretTranslation: true+`.
+With this option, the Ingress will reference the secret by its original name on the host,
+allowing you to use centrally-managed certificates.
+
+*When to use:*
+
+- Production applications that need external HTTP/HTTPS access
+- Custom domain routing
+- SSL/TLS termination
 
 *Example - Default behavior (secrets synced from virtual cluster):*
 
@@ -209,14 +224,17 @@ spec:
 PriorityClasses define pod scheduling priorities. Higher priority pods
 can preempt lower priority ones when resources are constrained.
 
-*Why disabled by default:* Priority settings affect cluster-wide
-scheduling and could impact other workloads. Enable only when you need
-guaranteed scheduling for critical applications.
+*Why disabled by default:*
 
-*Security consideration:* In multi-tenant environments, carefully
-evaluate whether virtual clusters should define their own priorities.
+Priority settings affect cluster-wide scheduling and could impact other workloads.
+Enable only when you need guaranteed scheduling for critical applications.
 
-*When to use:* - Critical production workloads that must not be evicted
+*Security consideration:*
+In multi-tenant environments, carefully evaluate whether virtual clusters should define their own priorities.
+
+*When to use:*
+
+- Critical production workloads that must not be evicted
 - Multi-tier applications with priority ordering
 
 *Example:*
@@ -233,34 +251,38 @@ spec:
 
 *Default: Disabled* | *Direction: Host → Virtual*
 
-StorageClasses define available storage types (SSD, HDD, cloud storage,
-etc.). Unlike other resources, StorageClasses sync FROM the host TO your
-virtual cluster.
+StorageClasses define available storage types (SSD, HDD, cloud storage, etc.).
+Unlike other resources, StorageClasses sync FROM the host TO your virtual cluster.
 
-*Why reverse direction:* StorageClasses represent storage infrastructure
-provided by the host. Your virtual cluster consumes these storage
-options rather than creating them.
+*Why reverse direction:*
 
-*Important:* When StorageClass sync is enabled, ALL StorageClasses on
-the host are synced to your virtual cluster by default. Use the
-`+k3k.io/sync-enabled+` label on the host to prevent specific
-StorageClasses from being synced.
+StorageClasses represent storage infrastructure provided by the host.
+Your virtual cluster consumes these storage options rather than creating them.
+
+*Important:*
+
+When StorageClass sync is enabled, ALL StorageClasses on the host are synced to your virtual cluster by default.
+Use the `+k3k.io/sync-enabled+` label on the host to prevent specific StorageClasses from being synced.
 
 *Two-Level Filtering:*
 
 [arabic]
-. *Host-Level Label (Optional):* Add `+k3k.io/sync-enabled+` label to
-StorageClasses on the host to control sync
+. *Host-Level Label (Optional):*
+
+Add `+k3k.io/sync-enabled+` label to StorageClasses on the host to control sync
 * No label: StorageClass WILL be synced
 * Label = `+"true"+`: StorageClass WILL be synced +
-* Label = `+"false"+`: StorageClass will NOT be synced (use this to
-block unwanted StorageClasses)
-. *Cluster-Level Selector (Optional):* Further filter which
-StorageClasses appear in your virtual cluster based on labels
+* Label = `+"false"+`: StorageClass will NOT be synced (use this to block unwanted StorageClasses).
 
-*When to use:* - Enable when your applications need to choose specific
-storage types - Multi-tier storage (fast SSD for databases, cheap HDD
-for backups) - Cloud provider-specific storage classes
+*Cluster-Level Selector (Optional):*
+
+Further filter which StorageClasses appear in your virtual cluster based on labels
+
+*When to use:*
+
+- Enable when your applications need to choose specific storage types
+- Multi-tier storage (fast SSD for databases, cheap HDD for backups)
+- Cloud provider-specific storage classes
 
 *Example - Sync all StorageClasses:*
 
@@ -350,12 +372,12 @@ spec:
 
 === Policy-Level Configuration
 
-Use VirtualClusterPolicy to apply the same sync settings to all clusters
-in a namespace. This is ideal for multi-tenant environments where you
-want consistent behavior.
+Use VirtualClusterPolicy to apply the same sync settings to all clusters in a namespace.
+This is ideal for multi-tenant environments where you want consistent behavior.
 
-*Policy overrides cluster configuration:* When a policy is applied, its
-sync settings take precedence over individual cluster settings.
+*Policy overrides cluster configuration:*
+
+When a policy is applied, its sync settings take precedence over individual cluster settings.
 
 [source,yaml]
 ----
@@ -380,8 +402,8 @@ All clusters in the `+prod-clusters+` namespace inherit these settings.
 
 === Using Label Selectors
 
-Label selectors let you sync only specific resources based on labels. An
-empty selector syncs all resources of that type.
+Label selectors let you sync only specific resources based on labels.
+An empty selector syncs all resources of that type.
 
 *Example - Environment-specific ConfigMaps:*
 
