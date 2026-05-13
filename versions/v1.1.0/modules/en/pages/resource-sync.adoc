@@ -17,10 +17,13 @@ By default, K3k syncs the essential resources needed for your workloads to run:
 - *Enabled:* Services, ConfigMaps, Secrets, PersistentVolumeClaims
 - *Disabled:* Ingresses, PriorityClasses, StorageClasses
 
-*Important:* The default enabled syncs (Services, ConfigMaps, Secrets,
+[IMPORTANT] 
+====
+The default enabled syncs (Services, ConfigMaps, Secrets,
 PVCs) are required for most workloads to function correctly. Disabling
 these should only be done if you know what you're doing and understand
 the impact on your applications.
+====
 
 For most use cases, the defaults work out of the box. You only need to
 configure sync when you want external access (Ingresses), custom
