@@ -1,0 +1,32 @@
+ifndef::ss-build-community[]
+* Notes de version
+** xref:release-notes/version-1.0.3.adoc[v1.0.3]
+endif::[]
+
+* xref:introduction.adoc[Introduction]
+
+* xref:quickstart.adoc[Démarrage rapide]
+
+* xref:architecture.adoc[Architecture]
+
+* xref:advanced-usage.adoc[Utilisation avancée]
+
+* xref:virtualclusterpolicy.adoc[VirtualClusterPolicy : concepts]
+
+* Procédures pour les utilisateurs
+** xref:how-tos-for-user/create-virtual-clusters.adoc[Création d'un cluster virtuel]
+** xref:how-tos-for-user/expose-workloads.adoc[Exposition des charges de travail en dehors d'un cluster virtuel]
+** xref:how-tos-for-user/addons.adoc[Addons]
+
+* Procédures pour les administrateurs
+** xref:how-tos-for-admin/choose-mode.adoc[Choisir entre le mode partagé et le mode virtuel]
+** xref:how-tos-for-admin/adding-custom-cert.adoc[Ajout de certificats personnalisés pour K3s depuis le cluster K3k]
+** xref:how-tos-for-admin/restrict-gpu-usage.adoc[Restreindre l'utilisation du GPU]
+** xref:how-tos-for-admin/secure-shared-mode.adoc[Mode partagé sécurisé]
+
+* Références
+** xref:references/crds.adoc[Définitions de ressources personnalisées (CRD)]
+** xref:references/k3kcli.adoc[k3kcli]
+
+* xref:how-tos-for-user/troubleshooting.adoc[Dépannage]
+

@@ -1,0 +1,83 @@
+= Wie man zwischen dem gemeinsamen und dem virtuellen Modus wählt
+:revdate: 2025-09-16
+:page-revdate: {revdate}
+
+Dieser Leitfaden hilft Ihnen, den richtigen Modus für Ihren virtuellen Cluster auszuwählen: *Gemeinsamer Modus* oder *Virtueller Modus*. 
+
+Wenn Sie unsicher sind, beginnen Sie mit *gemeinsamem Modus* - es ist der Standard und passt zu den meisten gängigen Szenarien.
+
+== Gemeinsamer Modus (Standard)
+
+*Am besten für:*
+
+* Entwickler, die Workloads schnell ausführen möchten, ohne die internen Abläufe von Kubernetes zu verwalten
+* Plattformteams, die Sichtbarkeit und Kontrolle über alle Workloads benötigen
+* Benutzer, die Zugriff auf Ressourcen auf Host-Ebene benötigen (zum Beispiel GPUs)
+
+Im *gemeinsamen Modus* läuft der virtuelle Cluster mit seinem eigenen K3s-Server, verlässt sich jedoch auf den Host, um Workloads auszuführen. Der virtuelle Kubelet synchronisiert Ressourcen und ermöglicht eine leichte, schnelle Bereitstellung mit Unterstützung für die Isolation von Clusterressourcen. Weitere Details zur link:./../architecture.adoc#shared-mode[Architektur].
+
+=== Anwendungsfälle nach Persona
+
+==== Entwickler
+
+_"Ich baue eine Webanwendung, die außerhalb des virtuellen Clusters zugänglich sein soll."_ +
+→ Verwenden Sie *den gemeinsamen Modus*. Es ermöglicht Ihnen, Ihre Anwendung xref:how-tos-for-user/expose-workloads.adoc[zugänglich zu machen].
+
+==== Datenwissenschaftler:
+
+_"`I need to run Jupyter notebooks that leverage the cluster's GPU.`"_ +
+→ Verwenden Sie *den gemeinsamen Modus*. Es gewährt Zugriff auf physische Geräte, während die Overheadkosten niedrig bleiben.
+
+==== Plattform-Administrator
+
+_"Ich möchte alle Arbeitslasten der Mieter von einem zentralen Ort aus überwachen und sichern."_ +
+→ Verwenden Sie *den gemeinsamen Modus*. Agenten auf Host-Ebene (zum Beispiel, Einblick, Durchsetzung von Richtlinien) arbeiten über alle virtuellen Cluster hinweg.
+
+==== Sicherheitsingenieur
+
+_"Ich muss Sicherheitsrichtlinien wie Netzwerkrichtlinien oder Laufzeitscans für alle Arbeitslasten durchsetzen."_ +
+→ Verwenden Sie *gemeinsamen Modus*. Die Plattform kann Richtlinien global durchsetzen, ohne dass Mieter umgangen werden.
+
+_"Ich muss einen neuen Admission Controller oder Richtlinien-Engine testen."_ +
+→ Verwenden Sie *den gemeinsamen Modus*, wenn er auf Ihren virtuellen Cluster beschränkt ist. Sie können Werkzeuge wie Kubewarden ausführen, ohne den Host zu beeinträchtigen.
+
+==== CI/CD Engineer
+
+_"Ich möchte pro Pipeline-Durchlauf temporäre virtuelle Cluster schnell und mit geringen Ressourcenkosten aufsetzen."_ +
+→ Verwenden Sie *den gemeinsamen Modus*. Es ist schnell bereitzustellen und ideal für kurzlebige, namespace-spezifische Umgebungen.
+
+== Virtueller Modus
+
+*Am besten für:*
+
+* Erweiterte Benutzer, die vollständige Kubernetes-Isolation benötigen
+* Entwickler, die experimentelle oder clusterweite Funktionen testen
+* Anwendungsfälle, die Kontrolle über die gesamte Kubernetes-Steuerebene erfordern
+
+Im *virtuellen Modus* läuft der virtuelle Cluster mit seiner eigenen isolierten Kubernetes-Steuerebene. Es unterstützt verschiedene CNIs und API-Konfigurationen --, die ideal für tiefgehende Experimente oder erweiterte Arbeitslasten sind. Weitere Details zur link:./../architecture.adoc#virtual-mode[Architektur].
+
+=== Anwendungsfälle nach Persona
+
+==== Entwickler
+
+_"Ich muss ein neues Kubernetes-Feature-Gate testen, das im Host-Cluster deaktiviert ist."_ +
+→ Verwenden Sie *den virtuellen Modus*. Sie können Ihre eigenen Flags der Kubernetes-Steuerebene und API-Funktionen konfigurieren.
+
+==== Plattform-Administrator
+
+_"Wir testen Upgrades über Kubernetes-Versionen hinweg, einschließlich neuer API-Verhaltensweisen."_ +
+→ Verwenden Sie den virtuellen Modus. Sie können verschiedene Kubernetes-Versionen ausführen und Upgrade-Pfade sicher validieren.
+
+==== Network Engineer
+
+_"Ich bewerte ein neues CNI, das die volle Kontrolle über das Netzwerk des Clusters benötigt."_ +
+→ Verwenden Sie *den virtuellen Modus*. Sie können einen separaten CNI-Stack ausführen, ohne den Host oder andere Mieter zu beeinträchtigen.
+
+==== Sicherheitsingenieur
+
+_"Ich teste einen neuen Admission Controller und eine Richtlinien-Engine, bevor ich ihn clusterweit ausrolle."_ +
+→ Verwenden Sie *den virtuellen Modus*, wenn Sie clusterweite Richtlinien, benutzerdefinierte Zulassungsabläufe oder fortgeschrittene Erweiterungen mit voller Kontrolle testen müssen.
+
+== Zusätzliche Informationen
+
+Wenn Sie fortgeschrittenere Anwendungsfälle bewerten oder einen tiefergehenden Vergleich wünschen, sehen Sie sich die vollständige Abwägung in der xref:../architecture.adoc[Architekturdokumentation] an.

@@ -1,0 +1,32 @@
+ifndef::ss-build-community[]
+* リリースノート
+** xref:release-notes/version-1.0.3.adoc[v1.0.3]
+endif::[]
+
+* xref:introduction.adoc[概要]
+
+* xref:quickstart.adoc[クイックスタート]
+
+* xref:architecture.adoc[アーキテクチャ]
+
+* xref:advanced-usage.adoc[高度な使用方法]
+
+* xref:virtualclusterpolicy.adoc[VirtualClusterPolicy: 概念]
+
+* ユーザ向けハウツー
+** xref:how-tos-for-user/create-virtual-clusters.adoc[仮想クラスターの作成]
+** xref:how-tos-for-user/expose-workloads.adoc[仮想クラスターの外部にワークロードを公開する]
+** xref:how-tos-for-user/addons.adoc[Addons]
+
+* 管理者向けハウツー
+** xref:how-tos-for-admin/choose-mode.adoc[共有モードと仮想モードの選択]
+** xref:how-tos-for-admin/adding-custom-cert.adoc[K3s用のカスタム証明書をK3kクラスターから追加する]
+** xref:how-tos-for-admin/restrict-gpu-usage.adoc[GPU使用の制限]
+** xref:how-tos-for-admin/secure-shared-mode.adoc[共有モードの保護]
+
+* 参考資料
+** xref:references/crds.adoc[カスタムリソース定義（CRD）]
+** xref:references/k3kcli.adoc[k3kcli]
+
+* xref:how-tos-for-user/troubleshooting.adoc[トラブルシューティング]
+

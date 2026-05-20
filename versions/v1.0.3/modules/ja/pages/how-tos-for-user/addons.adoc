@@ -1,0 +1,67 @@
+= アドオン
+:revdate: 2025-11-07
+:page-revdate: {revdate}
+
+この文書は、`add-ons`機能を使用してK3kクラスターをプロビジョニングするための情報を提供します。
+
+IMPORTANT: シークレットキーに「.yaml」という拡張子を付けて、K3sによって取得されるようにします。
+
+== アドオンを使用したK3kクラスターの作成
+
+. K3kコントローラーチャートをインストールします。
+ifdef::comm-build[] 
+詳細については、xref:/quickstart.adoc#_install_the_k3k_controller[K3kコントローラーをインストールする]を参照してください。
+endif::comm-build[]
+
+. シークレットキーを作成します：
++
+.例
+[,yaml]
+----
+apiVersion: v1
+kind: Secret
+metadata:
+  name: rancher-init
+  namespace: default
+stringData:
+  manifests.yaml: |-
+    apiVersion: v1
+    kind: Namespace
+    metadata:
+      name: cattle-system
+----
+
+. `add-ons`を使用してK3kクラスターを作成します：
++
+.例
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: rancher-k3k
+  namespace: rancher-k3k-system
+spec:
+  mode: shared
+  persistence:
+    type: ephemeral
+  addons:
+    - secretRef: rancher-init
+      secretNamespace: default
+----
+
+== 検証
+
+* クラスターが正常にプロビジョニングされたかどうかを確認します：
++
+[,yaml]
+----
+k exec -it -n rancher-k3k-system k3k-rancher-k3k-server-0 -- /bin/sh
+~ # kubectl get ns
+NAME              STATUS   AGE
+cattle-system     Active   98s
+default           Active   104s
+kube-node-lease   Active   104s
+kube-public       Active   105s
+kube-system       Active   105s
+----

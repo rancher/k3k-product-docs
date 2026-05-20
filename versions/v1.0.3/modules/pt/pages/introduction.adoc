@@ -1,0 +1,42 @@
+= Introdução
+:revdate: 2025-09-16
+:page-revdate: {revdate}
+
+== {product-name}
+
+{product-name}, um recurso importante do SUSE Rancher Prime, combina a leveza do mecanismo de código aberto link:https://github.com/rancher/k3k[K3k] com os recursos de gerenciamento de nível empresarial do SUSE Virtual Cluster Management.
+
+Esta solução foi projetada para oferecer a próxima geração de *multi-tenância no Kubernetes*, facilitando o gerenciamento para as equipes de plataforma e a inovação com autoatendimento para os desenvolvedores.
+Com {product-name}, você pode criar planos de controle Kubernetes leves sob demanda usando link:https://k3s.io/[K3s], sem a sobrecarga de provisionar e gerenciar clusters físicos completos.
+
+Isso torna possível:
+
+* Habilitar o isolamento seguro e robusto de cargas de trabalho multi-tenantes.
+* Otimizar os custos de infraestrutura compartilhando nós de trabalho e serviços de plataforma entre muitos clusters virtuais.
+* Capacitar os desenvolvedores a se autoatenderem e experimentarem sem impactar os outros.
+* Dar às equipes de plataforma controle com ferramentas de política, governança e gerenciamento de ciclo de vida.
+
+{product-name} encontra o equilíbrio certo entre autonomia para os desenvolvedores e controle para os operadores, criando assim uma base escalável para plataformas Kubernetes modernas.
+
+== Componentes-chave
+
+* *SUSE Virtual Cluster Engine*: O projeto de código aberto que alimenta o SUSE Virtual Cluster Engine, K3k, passou nos testes de conformidade do CNCF Kubernetes e está listado no link:https://www.cncf.io/training/certification/software-conformance/[programa de Conformidade de Software Kubernetes® Certificado pelo CNCF]. Baseado no K3s, um projeto leve do CNCF, o K3k garante interoperabilidade, compatibilidade e uma experiência Kubernetes consistente para cargas de trabalho e ferramentas.
+
+* *SUSE Virtual Cluster Management*: Gerencie {product-name} em escala diretamente do SUSE Rancher Manager com uma interface de gerenciamento pronta para empresas. 
+Seus recursos incluem:
+- Integração com Rancher - Beneficie-se do RBAC do Rancher e amplie-o. Crie e gerencie clusters virtuais e políticas diretamente do Rancher. 
+- Provedor CAPI - Suporte a Cluster API para automação de ciclo de vida.
+- Provedor Terraform (pré-lançamento) - Fluxos de trabalho de infraestrutura como código para escalar e padronizar o gerenciamento de clusters.
+
+== Por que {product-name}?
+
+Com {product-name}, as organizações podem:
+
+* Oferecer verdadeira multi-tenância Kubernetes com dois modos, compartilhado e virtual, adequando-se à maioria dos casos de uso em produção (link do doc - como escolher entre os modos). 
+* Reduzir gastos com nuvem e infraestrutura por meio de pools de trabalhadores compartilhados e serviços compartilhados (link do doc - modo compartilhado) do host de volta para o cluster virtual. 
+* Acelerar os fluxos de trabalho dos desenvolvedores com clusters rápidos e leves em um modo de autoatendimento (link do doc - UI de início rápido).
+* Definir diretrizes (link do doc - política de cluster virtual) com ferramentas de política, governança e ciclo de vida, permitindo uma colaboração perfeita entre as equipes de plataforma e desenvolvedores.
+
+**Detalhes da certificação*: Os resultados de conformidade do K3k são publicados na link:https://www.cncf.io/training/certification/software-conformance/[listagem CNCF].
+
+Kubernetes® é uma marca registrada da The Linux Foundation nos Estados Unidos e em outros países e é usada de acordo com uma licença da The Linux Foundation.

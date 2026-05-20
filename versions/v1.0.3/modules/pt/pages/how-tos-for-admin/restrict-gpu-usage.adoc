@@ -1,0 +1,62 @@
+= Restringindo recursos de GPU em clusters virtuais SUSE
+:revdate: 2026-03-09
+:page-revdate: {revdate}
+
+Este guia ajuda você a definir restrições de GPU para seus locatários usando o conceito de política de {k3k-product-name}.
+
+[NOTE]
+==== 
+Isso se aplica apenas ao modo `shared`.
+====
+
+== Crie uma VirtualClusterPolicy
+
+Comece definindo um `VirtualClusterPolicy` em um arquivo YAML (por exemplo, `gpu-policy.yaml`) e aplicando-o ao seu cluster.
+
+----
+apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: quota-policy
+spec:
+  quota:
+    hard:
+      requests.nvidia.com/gpu: 4
+----
+
+Aplique a política usando kubectl:
+
+----
+kubectl apply -f gpu-policy.yaml
+----
+
+Esta política permite o consumo de 4 GPUs.
+
+== Anexe a política a um locatário
+
+Aplique a política anotando o namespace desejado:
+
+----
+kubectl label namespace <namespace-name> policy.k3k.io/policy-name="quota-policy"
+----
+
+Uma cota de recursos é criada automaticamente no namespace.
+
+== Acompanhe o Consumo de GPU
+
+Uma vez que uma carga de trabalho de GPU é criada em um cluster virtual (em modo compartilhado), ela consome um dos recursos de GPU alocados. 
+
+Você pode acompanhar o consumo usando o comando `quota`:
+
+[,bash]
+----
+kubectl get quota -n testgpu
+NAME               REQUEST                        LIMIT   AGE
+k3k-quota-policy   requests.nvidia.com/gpu: 0/4           4s
+----
+
+Se o limite for atingido e um usuário tentar implantar um novo pod consumindo uma GPU, o pod permanece no estado `Pending` com o seguinte status:
+
+----
+Warning  ProviderCreateFailed  1s    ubuntu/pod-controller  pods "cuda-vectoradd-default-sharedclustergpu-637564612d7665637-865e4" is forbidden: exceeded quota: k3k-quota-policy, requested: requests.nvidia.com/gpu=1, used: requests.nvidia.com/gpu=4, limited: requests.nvidia.com/gpu=4
+----

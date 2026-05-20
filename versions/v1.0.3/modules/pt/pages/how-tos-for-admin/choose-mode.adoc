@@ -1,0 +1,82 @@
+= Como Escolher Entre Modo Compartilhado e Modo Virtual
+:revdate: 2025-09-16
+:page-revdate: {revdate}
+
+Este guia ajuda você a escolher o modo certo para seu cluster virtual: *Compartilhado* ou *Virtual*. 
+
+Se você estiver em dúvida, comece com *Modo Compartilhado* - é o padrão e se encaixa na maioria dos cenários comuns.
+
+== Modo Compartilhado (padrão)
+
+*Melhor para:*
+
+* Desenvolvedores que desejam executar cargas de trabalho rapidamente sem gerenciar os detalhes internos do Kubernetes
+* Equipes de plataforma que precisam de visibilidade e controle sobre todas as cargas de trabalho
+* Usuários que precisam de acesso a recursos em nível de host (por exemplo, GPUs)
+
+No *Modo Compartilhado*, o cluster virtual executa seu próprio servidor K3s, mas depende do host para executar as cargas de trabalho. O kubelet virtual sincroniza recursos, permitindo provisionamento leve e rápido com suporte para isolamento de recursos do cluster. Mais detalhes sobre a link:./../architecture.adoc#shared-mode[arquitetura].
+
+=== Casos de Uso por Persona
+
+==== Ações do
+
+_"Estou construindo um aplicativo web que deve ser exposto fora do cluster virtual."_ +
+→ Use *Modo Compartilhado*. Isso permite que você xref:how-tos-for-user/expose-workloads.adoc[exponha] seu aplicativo.
+
+==== Cientista de Dados:
+
+_"`I need to run Jupyter notebooks that leverage the cluster's GPU.`"_ +
+→ Use *Modo Compartilhado*. Isso dá acesso a dispositivos físicos enquanto mantém a sobrecarga baixa.
+
+==== Administrador de Plataforma
+
+_"Eu quero monitorar e proteger todas as cargas de trabalho dos inquilinos a partir de um local central."_ +
+→ Use *Modo Compartilhado*. Agentes em nível de host (por exemplo, observabilidade, aplicação de políticas) funcionam em todos os clusters virtuais.
+
+==== Engenheiro de Segurança
+
+_"Eu preciso aplicar políticas de segurança como políticas de rede ou varredura em tempo de execução em todas as cargas de trabalho."_ +
+→ Use *Modo Compartilhado*. A plataforma pode aplicar políticas globalmente sem contornar os inquilinos.
+
+_"Eu preciso testar um novo controlador de admissão ou mecanismo de política."_ +
+→ Use *Modo Compartilhado*, se estiver restrito ao seu cluster virtual. Você pode executar ferramentas como Kubewarden sem afetar o host.
+
+==== Engenheiro de CI/CD
+
+_Eu quero criar clusters virtuais descartáveis para cada execução de pipeline, de forma rápida e com baixo custo de recursos._ +
+→ Use *Modo Compartilhado*. É rápido para provisionar e ideal para ambientes de curta duração, com escopo de namespace.
+
+== Modo Virtual
+
+*Melhor para:*
+
+* Usuários avançados que precisam de isolamento completo do Kubernetes
+* Desenvolvedores testando recursos experimentais ou em todo o cluster
+* Casos de uso que requerem controle sobre todo o plano de controle do Kubernetes
+
+No *Modo Virtual*, o cluster virtual executa seu próprio plano de controle do Kubernetes isolado. Suporta diferentes CNIs e configurações de API -- ideais para experimentação profunda ou cargas de trabalho avançadas. Mais detalhes sobre a link:./../architecture.adoc#virtual-mode[arquitetura].
+
+=== Casos de Uso por Persona
+
+==== Ações do
+
+_"Eu preciso testar um novo feature gate do Kubernetes que está desativado no cluster host."_ +
+→ Use *Modo Virtual*. Você pode configurar suas próprias flags do plano de controle e recursos da API.
+
+==== Administrador de Plataforma
+
+_"Estamos testando fazer upgrade entre versões do Kubernetes, incluindo novos comportamentos da API."_ → Use Modo Virtual. Você pode executar diferentes versões do Kubernetes e validar caminhos de upgrade com segurança.
+
+==== Engenheiro de Rede
+
+_"Estou avaliando um novo CNI que precisa de controle total da rede do cluster."_ +
+→ Use *Modo Virtual*. Você pode executar uma pilha CNI separada sem afetar o host ou outros inquilinos.
+
+==== Engenheiro de Segurança
+
+_"Estou testando um novo controlador de admissão e mecanismo de política antes de implementá-lo em todo o cluster."_ +
+→ Use *Modo Virtual*, se precisar testar políticas em todo o cluster, fluxo de admissão personalizado ou extensões avançadas com controle total.
+
+== Informações adicionais
+
+Se você estiver avaliando casos de uso mais avançados ou quiser uma comparação mais profunda, veja a análise completa de trade-offs na xref:../architecture.adoc[documentação de Arquitetura].

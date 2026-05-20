@@ -1,0 +1,161 @@
+= VirtualClusterPolicy:概念
+:revdate: 2025-11-18
+:page-revdate: {revdate}
+
+K3kの`VirtualClusterPolicy`カスタムリソースは、仮想クラスターとそれが操作するネームスペースのために、一貫した設定、セキュリティ設定、およびリソース管理ルールを定義し、強制する方法を提供します。
+
+VCPを使用することで、管理者はこれらの側面を中央で管理でき、手動設定を減らし、組織の基準に沿った整合性を確保し、K3k環境の全体的なセキュリティと運用の一貫性を向上させることができます。
+
+WARNING: ホストクラスターで`RKE2`と`Cilium`の組み合わせを使用すると、ネットワークポリシーに問題が発生する可能性があります。推奨される解決策は、K3kとのネットワークポリシーセットアップを無効にするために`VirtualClusterPolicy`を使用することです。
+
+== コアコンセプト
+
+=== VirtualClusterPolicyとは何ですか？
+
+`VirtualClusterPolicy`は、ルールと設定のセットを指定するクラスター範囲のKubernetesカスタムリソースです。これらのポリシーは、明示的にVCPにバインドされたKubernetesネームスペース内で動作するK3k仮想クラスター（`Cluster`リソース）に適用されます。
+
+=== ポリシーをネームスペースにバインドする
+
+`VirtualClusterPolicy`を1つ以上のネームスペースに適用するには（したがって、これらのネームスペース内のすべてのK3k `Cluster`リソースに適用するには）、希望するネームスペースにラベルを付ける必要があります。
+
+次のラベルをネームスペースのメタデータに追加してください：
+----
+`policy.k3k.io/policy-name: <YOUR_POLICY_NAME>`
+----
+
+*例:ネームスペースにラベルを付ける*
+
+[,yaml]
+----
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: my-app-namespace
+  labels:
+    policy.k3k.io/policy-name: "standard-dev-policy"
+----
+
+この例では、`my-app-namespace`は`VirtualClusterPolicy`という名前の`standard-dev-policy`で定義されたルールに従います。複数のネームスペースを同じポリシーにバインドして一貫した設定を行うことも、異なるネームスペースを異なるポリシーにバインドすることもできます。
+
+ネームスペースのポリシーバインディングが変更された場合に何が起こるかも重要です。ネームスペースがVirtualClusterPolicyからバインド解除されると（policy.k3k.io/policy-nameラベルを削除することによって）、K3kはそのポリシーによって元々適用されたリソース（ResourceQuotas、LimitRanges、管理されたネームスペースラベルなど）をクリーンアップして削除します。同様に、ラベルが変更されてネームスペースを新しいVirtualClusterPolicyにバインドする場合、K3kは新しいポリシーの設定を適用する前に古いポリシーに関連するリソースを最初に削除し、クリーンな移行を確保します。
+
+=== デフォルトポリシー値
+
+`VirtualClusterPolicy`を`spec`フィールドを指定せずに作成すると（例えば、`k3kcli policy create my-default-policy`を使用して）、デフォルト設定で作成されます。現在、これは`spec.allowedMode`が`shared`に設定されることを含みます。
+
+[,yaml]
+----
+# Example of a minimal VCP (after creation with defaults)
+apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: my-default-policy
+spec:
+  allowedMode: shared
+----
+
+== 主要な機能と例
+
+`VirtualClusterPolicy`は、バインドされているネームスペースとその中で動作する仮想クラスターのいくつかの側面を構成できます。
+
+=== 許可された仮想クラスターのモードを制限する(`AllowedMode`)
+
+K3k `mode`リソースがバインドされたネームスペース内でプロビジョニングできる`Cluster`（例："共有"または"仮想"）を制限できます。バインドされたネームスペースで許可されていないモードで`Cluster`が作成された場合、その作成は進行する可能性がありますが、`allowedMode``Cluster`リソースのステータスにエラーが報告されるべきです。
+
+*例:*"共有"モードのクラスターのみを許可します。
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: shared-only-policy
+spec:
+  allowedModeTypes:
+  - shared
+----
+
+これをCLIを使用して指定することもできます：`k3kcli policy create --mode shared shared-only-policy`（または`--mode virtual`）。
+
+=== リソースクォータの定義(`quota`)
+
+バインドされたネームスペースのためにリソース消費制限を定義するには、`ResourceQuota`を指定します。K3kは、提供された仕様に基づいて各バインドされたネームスペースに`ResourceQuota`オブジェクトを作成します。
+
+*例:*CPU、メモリ、およびポッドの制限を設定します。
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: quota-policy
+spec:
+  quota:
+    hard:
+      cpu: "10"
+      memory: "20Gi"
+      pods: "10"
+----
+
+=== 制限範囲の設定(`limit`)
+
+バインドされたネームスペースで実行されるコンテナのために、デフォルトのリソースリクエスト/制限および最小/最大制約を定義するには、`LimitRange`を指定します。K3kは、各バインドされたネームスペースに`LimitRange`オブジェクトを作成します。
+
+*例:*デフォルトのCPUリクエスト/制限および最小/最大CPUを定義します。
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: limit-policy
+spec:
+  limit:
+    limits:
+    - default:
+        cpu: "500m"
+      defaultRequest:
+        cpu: "500m"
+      max:
+        cpu: "1"
+      min:
+        cpu: "100m"
+      type: Container
+----
+
+=== ネットワーク隔離の管理(`disableNetworkPolicy`)
+
+デフォルトでは、K3kはバインドされたネームスペースに`NetworkPolicy`を作成し、仮想クラスターのためのネットワーク隔離を提供します（特に共有モードで）。このデフォルトポリシーの作成を無効にすることができます。
+
+*例:*デフォルトのNetworkPolicyを無効にします。
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: no-default-netpol-policy
+spec:
+  disableNetworkPolicy: true
+----
+
+=== Podセキュリティアドミッションの強制（`podSecurityAdmissionLevel`）
+
+Podセキュリティスタンダード（PSS）をPodセキュリティアドミッション（PSA）レベルを指定することで強制できます。K3kは、各バインドされたネームスペースに対応するPSAラベルを適用します。許可される値は`privileged`、`baseline`、`restricted`であり、これによりバインドされたネームスペースに`pod-security.kubernetes.io/enforce: <level>`のようなラベルが追加されます。
+
+*例:*「ベースライン」PSSレベルを強制します。
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: baseline-psa-policy
+spec:
+  podSecurityAdmissionLevel: baseline
+----
+
+== 追加情報
+
+* すべての`VirtualClusterPolicy`仕様フィールドの完全なリファレンスについては、xref:./references/crds.adoc#VirtualClusterPolicy[APIリファレンス for VirtualClusterPolicy]を参照してください。
+* VCPが全体のK3kシステムにどのように適合するかを理解するには、xref:./architecture.adoc[アーキテクチャ]を参照してください。

@@ -1,0 +1,59 @@
+= 共有モードの仮想クラスターを保護する
+:revdate: 2026-03-09
+:page-revdate: {revdate}
+
+デフォルトでは、{k3k-product-name}の共有モードは特権ポッドを許可しており、ホストレベルのアクセスにつながる可能性があります。環境を保護するためには、 https://kubernetes.io/docs/concepts/security/pod-security-standards/[ポッドセキュリティスタンダード (PSS)]を強制する必要があります。
+
+以下のガイドでは、K3kの`VirtualClusterPolicy`メカニズムを使用してこれを強制する方法を説明します。
+
+== VirtualClusterPolicyを作成する
+
+ポッドの機能を制限するポリシーを定義します。
+
+[NOTE]
+====
+*ベースライン*プロファイルは、ほとんどのワークロードを壊すことなく特権昇格を防ぐために推奨されます。
+====
+
+----
+apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: baseline-psa-policy
+spec:
+  podSecurityAdmissionLevel: baseline
+----
+
+*サポートされているレベル*
+
+* *特権*:無制限アクセス（デフォルト）。
+* *ベースライン*:既知の特権昇格を防ぎます。
+* *制限*:最大のハードニング（最高のセキュリティ、互換性は低下します）。
+
+詳細については、 https://kubernetes.io/docs/concepts/security/pod-security-standards/[ポッドセキュリティスタンダード]を参照してください。
+
+== ポリシーを適用する
+
+Rancher UIまたは`kubectl`を使用して、仮想クラスターが展開されているネームスペースにポリシーを添付します。
+
+----
+kubectl label namespace <namespace-name> policy.k3k.io/policy-name="baseline-psa-policy"
+----
+
+== 検証
+
+K3kオペレーターは、選択したポッドセキュリティスタンダード (PSS) を強制するために、ターゲットネームスペースを自動的に更新します。
+
+強制されたネームスペースの例:
+
+----
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: prod-k3kcluster-ns
+  labels:
+    pod-security.kubernetes.io/enforce: baseline
+    policy.k3k.io/policy-name: baseline-psa-policy
+----
+
+このポリシーに違反する仮想クラスター内のポッド（例えば、`privileged: true`を要求するもの）は拒否されます。

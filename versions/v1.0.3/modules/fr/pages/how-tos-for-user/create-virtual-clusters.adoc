@@ -1,0 +1,295 @@
+= Procédure{nbsp}: Créer un cluster virtuel
+:revdate: 2025-11-17
+:page-revdate: {revdate}
+
+Ce guide fournit des instructions sur la création et la gestion de clusters virtuels dans K3k et couvre les cas d'utilisation courants en utilisant à la fois les *définitions de ressources personnalisées (CRDs)* et le *K3K CLI* afin que vous puissiez choisir la méthode qui convient à votre flux de travail.
+
+----
+For full reference:
+
+* xref:/references/crds.adoc[CRD Reference Documentation]
+* xref:/references/k3kcli.adoc[CLI Reference Documentation]
+* xref:/advanced-usage.adoc[Full example]
+----
+
+NOTE: Certaines fonctionnalités ne sont disponibles que via l'interface CRD.
+
+== Cas d'utilisation : Créer et exposer un cluster virtuel de base
+
+=== Méthode CRD
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-ingress
+spec:
+  tlsSANs:
+    - my-cluster.example.com
+  expose:
+    ingress:
+      ingressClassName: nginx
+      annotations:
+        nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+        nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+        nginx.ingress.kubernetes.io/ssl-redirect: "HTTPS"
+----
+
+Cela crée un cluster virtuel en mode `shared` et l'expose via un ingress avec le nom d'hôte spécifié.
+
+== Cas d'utilisation : Créer un cluster virtuel avec stockage persistant (*Par défaut*)
+
+=== Méthode CRD
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-persistent
+spec:
+  persistence:
+    type: dynamic
+    storageClassName: local-path
+    storageRequestSize: 30Gi
+----
+
+Cela garantit que le cluster virtuel stocke son état de manière persistante avec un volume de 30Gi. +
+Si `storageClassName` n'est pas défini, il utilisera la StorageClass par défaut. +
+Si `storageRequestSize` n'est pas défini, il demandera par défaut un volume de 1Gi.
+
+=== Méthode CLI
+
+[,sh]
+----
+k3kcli cluster create \
+  --persistence-type dynamic \
+  --storage-class-name local-path \
+  --storage-request-size 30Gi \
+  k3kcluster-persistent
+----
+
+== Cas d'utilisation : Créer un cluster virtuel hautement disponible en mode `shared`
+
+=== Méthode CRD
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-ha
+spec:
+  servers: 3
+----
+
+Cela créera un cluster virtuel avec 3 serveurs et un volume par défaut de 1Gi pour la persistance.
+
+=== Méthode CLI
+
+[,sh]
+----
+k3kcli cluster create \
+  --servers 3 \
+  k3kcluster-ha
+----
+
+== Cas d'utilisation : Créer un cluster virtuel hautement disponible en mode `virtual`
+
+=== Méthode CRD
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-virtual
+spec:
+  mode: virtual
+  servers: 3
+  agents: 3
+----
+
+Cela créera un cluster virtuel avec 3 serveurs et 3 agents et un volume par défaut de 1Gi pour la persistance.
+
+NOTE: Les agents existent UNIQUEMENT pour le mode `virtual`.
+
+=== Méthode CLI
+
+[,sh]
+----
+k3kcli cluster create \
+  --agents 3 \
+  --servers 3 \
+  --mode virtual \
+  k3kcluster-virtual
+----
+
+== Cas d'utilisation : Créer un cluster virtuel éphémère
+
+=== Méthode CRD
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-ephemeral
+spec:
+  persistence:
+    type: ephemeral
+----
+
+Cela créera un cluster virtuel éphémère sans persistance et avec un seul serveur.
+
+=== Méthode CLI
+
+[,sh]
+----
+k3kcli cluster create \
+  --persistence-type ephemeral \
+  k3kcluster-ephemeral
+----
+
+== Cas d'utilisation : Créer un cluster virtuel avec une version Kubernetes personnalisée
+
+=== Méthode CRD
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-custom-k8s
+spec:
+  version: "v1.33.1-k3s1"
+----
+
+Cela définit explicitement la version Kubernetes du cluster virtuel.
+
+NOTE: Seules les distributions https://k3s.io[K3s] sont prises en charge. Vous pouvez trouver des versions compatibles sur la page de https://github.com/k3s-io/k3s/releases[release] de K3s sur GitHub.
+
+=== Méthode CLI
+
+[,sh]
+----
+k3kcli cluster create \
+  --version v1.33.1-k3s1 \
+  k3kcluster-custom-k8s
+----
+
+== Cas d'utilisation : Créer un cluster virtuel avec des limites de ressources personnalisées.
+
+=== Méthode CRD
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-resourced
+spec:
+  mode: virtual
+  serverLimit:
+    cpu: "1"
+    memory: "2Gi"
+  workerLimit:
+    cpu: "1"
+    memory: "2Gi"
+----
+
+Cela configure la limite d'UC et de mémoire pour le cluster virtuel.
+
+=== Méthode CLI
+
+_Aucune méthode CLI disponible pour le moment_
+
+== Cas d'utilisation : Créer un cluster virtuel sur des nœuds hôtes spécifiques.
+
+=== Méthode CRD
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-node-placed
+spec:
+  nodeSelector:
+    disktype: ssd
+----
+
+Cela place le cluster virtuel sur des nœuds avec l'étiquette `disktype: ssd`.
+
+NOTE: En mode `shared`, les charges de travail sont également planifiées sur les nœuds sélectionnés.
+
+=== Méthode CLI
+
+_Aucune méthode CLI disponible pour le moment_
+
+== Cas d'utilisation : Créez un cluster virtuel avec un Kubeconfig de cluster hôte Rancher.
+
+Lorsque vous utilisez un `kubeconfig` généré avec Rancher, vous devez spécifier avec la CLI l'hôte souhaité pour le cluster virtuel `kubeconfig`. +
+Par défaut, `k3kcli` utilise l'hôte actuel `kubeconfig` pour déterminer le cluster cible.
+
+=== Méthode CRD
+
+_Non applicable_
+
+=== Méthode CLI
+
+[,sh]
+----
+k3kcli cluster create \
+  --kubeconfig-server https://abc.xyz \
+  k3kcluster-host-rancher
+----
+
+== Cas d'utilisation : Créez un cluster virtuel derrière un proxy HTTP.
+
+=== Méthode CRD
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-http-proxy
+spec:
+  serverEnvs:
+    - name: HTTP_PROXY
+      value: "http://abc.xyz"
+  agentEnvs:
+    - name: HTTP_PROXY
+      value: "http://abc.xyz"
+----
+
+Cela configure un proxy HTTP pour les serveurs et les agents dans le cluster virtuel.
+
+NOTE: Cela peut être utilisé pour passer *toutes les variables d'environnement personnalisées* aux serveurs et agents, pas seulement les paramètres de proxy.
+
+=== Méthode CLI
+
+[,sh]
+----
+k3kcli cluster create  \
+  --server-envs HTTP_PROXY=http://abc.xyz \
+  --agent-envs HTTP_PROXY=http://abc.xyz \
+  k3kcluster-http-proxy
+----
+
+== Procédure{nbsp}: Connectez-vous à un cluster virtuel.
+
+Une fois le cluster virtuel en cours d'exécution, vous pouvez vous y connecter en utilisant la CLI{nbsp}:
+
+=== Méthode CLI
+
+[,sh]
+----
+k3kcli kubeconfig generate --namespace k3k-mycluster --name mycluster
+export KUBECONFIG=$PWD/mycluster-kubeconfig.yaml
+kubectl get nodes
+----
+
+Cette commande génère un fichier `kubeconfig`, que vous pouvez utiliser pour accéder à votre cluster virtuel via `kubectl`.

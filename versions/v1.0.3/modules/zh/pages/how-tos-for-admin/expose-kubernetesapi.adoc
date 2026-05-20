@@ -1,0 +1,93 @@
+= 操作指南：暴露虚拟集群Kubernetes API
+:revdate: 2025-11-11
+:page-revdate: {revdate}
+
+本指南解释了如何将虚拟集群的Kubernetes API暴露给外部网络。这些实践适用于_虚拟模式_和_共享模式_。
+
+[NOTE]
+====
+重要的是要将TLS-SAN参数添加到集群，以便IP地址或主机不会被拒绝。
+====
+
+[CAUTION]
+====
+运行`k3kcli cluster delete clustername`将删除虚拟集群，但不会级联到使用以下方法创建的ingress或服务。
+====
+
+== 入口
+
+可以通过主机上存在的ingress控制器暴露虚拟集群的Kubernetes API。然而，重要的是要注意，TLS终止必须在虚拟集群上执行，这需要对正常的ingress对象进行一些更改。
+
+=== Traefik
+
+在Traefik的情况下，虚拟集群的API通过IngressRouteTCP资源暴露。以下是一个示例配置：
+
+----
+apiVersion: traefik.io/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name: cluster-ingress-rt
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: HostSNI(`cluster.example.com`)
+      services:
+        - name: k3k-clustername-service
+          port: 443
+  tls:
+    passthrough: true
+----
+
+=== Ingress Nginx
+
+Ingress Nginx默认情况下未启用SSL透传，必须使用--enable-ssl-passthrough标志启用。请参阅ingress-nginx文档{ https://kubernetes.github.io/ingress-nginx/user-guide/tls/#ssl-passthrough}[这里]。
+
+之后，可以创建一个带有注释"nginx.ingress.kubernetes.io/ssl-passthrough"的正常ingress资源。例如：
+
+----
+apiVersion: networking.k8s.io
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "https"
+  name: cluster-ingress
+spec:
+  rules:
+  - host: cluster.example.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: k3k-clustername-service
+            port:
+              number: 443
+        path: /
+        pathType: Prefix
+----
+
+== 服务
+
+在虚拟集群创建时创建的服务无法修改。需要创建一个所需类型的新服务（LoadBalancer或NodePort）。
+
+=== 负载均衡器
+如果主机集群中存在可用的负载均衡器，无论是来自云服务提供商还是通过像MetalLB这样的附加产品获得，都可以通过其独特的IP地址暴露虚拟集群的API。
+
+对于命名空间_k3k_test_中名为_test_的示例集群，使用以下命令创建LoadBalancer服务：
+
+[bash, shell]
+----
+kubectl -n k3k_test expose service k3k-test-service --type=LoadBalancer --name=k3k-test-servicelb
+----
+
+=== NodePort
+
+在上述解决方案不可用的情况下，可以使用任一主机节点的IP地址，通过NodePort服务暴露虚拟Kubernetes API。
+
+对于命名为_test_的示例集群，在命名空间_k3k_test_中，使用以下命令创建NodePort服务：
+
+[bash, shell]
+----
+kubectl -n k3k_test expose service k3k-test-service --type=NodePort --name=k3k-test-servicenp
+----

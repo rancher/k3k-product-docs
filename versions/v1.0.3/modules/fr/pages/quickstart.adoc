@@ -1,0 +1,150 @@
+= Démarrage rapide
+:revdate: 2025-11-19
+:page-revdate: {revdate}
+
+ifndef::ss-build-community[]
+Pour en savoir plus sur l'installation et la création des clusters, consultez link:https://scc.suse.com/rancher-docs/rancherprime/latest/en/suse-virtual-cluster/installation-and-upgrades/quickstart.html[Installation et création de clusters via l'interface utilisateur].
+endif::[]
+
+ifdef::ss-build-community[]
+K3k, Kubernetes dans Kubernetes, est un outil qui vous permet de créer et de gérer des clusters K3s isolés au sein de votre environnement Kubernetes existant. Il permet la multi-tenance, l'expérimentation et l'isolation des ressources, réduisant les coûts d'infrastructure en vous permettant d'exécuter plusieurs clusters Kubernetes légers sur le même hôte physique. K3k offre à la fois un mode "partagé", optimisant l'utilisation des ressources, et un mode "virtuel", fournissant une isolation complète avec des pods de serveur K3s dédiés. Cela vous permet d'accéder à une expérience Kubernetes complète sans la surcharge de gestion de ressources physiques séparées.
+
+K3k s'intègre à Rancher pour une gestion simplifiée de vos clusters intégrés.
+
+== Installation
+
+Cette section fournit des instructions sur la façon d'installer K3k et le k3kcli.
+
+=== Conditions préalables
+
+* https://helm.sh/[Helm] doit être installé pour utiliser les charts. Veuillez vous référer à https://helm.sh/docs/[la documentation de Helm] pour commencer.
+* Un cluster Kubernetes https://documentation.suse.com/cloudnative/rke2/latest/en/install/quickstart.html[RKE2] existant (recommandé).
+* Un fournisseur de stockage configuré avec une classe de stockage par défaut.
+
+NOTE: Si vous n'avez pas de fournisseur de stockage, vous pouvez configurer le cluster pour utiliser un stockage éphémère ou statique. Veuillez consulter le xref:advanced-usage.adoc#_using_the_cli[k3kcli Utilisation Avancée] pour des instructions sur l'utilisation de ces options.
+
+=== Installez le contrôleur K3k
+
+NOTE: Clients de Rancher Prime, veuillez consulter https://scc.suse.com/rancher-docs/rancherprime/latest/en/suse-virtual-cluster/installation-and-upgrades/quickstart.html[démarrage rapide].
+
+. Ajoutez le dépôt Helm K3k{nbsp}:
++
+[,bash]
+----
+helm repo add k3k https://rancher.github.io/k3k
+helm repo update
+----
+
+. Installez le contrôleur K3k{nbsp}:
++
+[,bash]
+----
+helm install --namespace k3k-system --create-namespace k3k k3k/k3k
+----
+
+=== Installez le `k3kcli`
+
+Le `k3kcli` fournit un moyen rapide et facile de créer des clusters K3k et les expose automatiquement via un kubeconfig.
+
+Pour l'installer, téléchargez simplement la dernière version disponible pour votre architecture depuis la page des Releases GitHub.
+
+Par exemple, vous pouvez télécharger la version Linux amd64 avec{nbsp}:
+
+[subs="+attributes",bash]
+----
+wget -qO k3kcli https://github.com/rancher/k3k/releases/download/{k3k-latest-version}/k3kcli-linux-amd64 && \
+  chmod +x k3kcli && \
+  sudo mv k3kcli /usr/local/bin
+----
+
+Exécutez maintenant{nbsp}:
+
+[,bash]
+----
+k3kcli --version
+k3kcli version v1.0.0
+----
+
+== Syntaxe
+
+Cette section fournit des exemples sur la façon d'utiliser le `k3kcli` pour gérer vos clusters K3k.
+
+`K3k` fonctionne dans le kubectl actuellement configuré. Cela signifie que K3k respecte les mécanismes standard de Kubernetes pour la configuration des contextes, y compris le drapeau `--kubeconfig`, la variable d'environnement $KUBECONFIG et le fichier par défaut $HOME/.kube/config. Tous les clusters K3k que vous créez résideront dans le cluster Kubernetes auquel votre kubectl pointe actuellement.
+
+=== Création d'un cluster K3k
+
+Pour créer un nouveau cluster K3k, utilisez la commande suivante{nbsp}:
+
+[,bash]
+----
+k3kcli cluster create mycluster
+----
+
+[NOTE]
+====
+*Création d'un cluster K3k sur un cluster hôte géré par Rancher*
+
+Si votre cluster Kubernetes hôte est géré par Rancher (par exemple, l'adresse du serveur de votre kubeconfig inclut une URL Rancher), utilisez le drapeau `--kubeconfig-server` lors de la création de votre cluster K3k{nbsp}:
+
+[,bash]
+----
+k3kcli cluster create --kubeconfig-server <host_node_IP_or_load_balancer_IP> mycluster
+----
+
+Cela garantit que le kubeconfig généré se connecte au bon point de terminaison.
+====
+
+Lorsque le serveur K3s est prêt, `k3kcli` générera le fichier kubeconfig nécessaire et imprimera des instructions sur la façon de l'utiliser.
+
+Voici un exemple de la sortie{nbsp}:
+
+[,yaml]
+----
+INFO[0000] Creating a new cluster [mycluster]
+INFO[0000] Extracting Kubeconfig for [mycluster] cluster 
+INFO[0000] waiting for cluster to be available..
+INFO[0073] certificate CN=system:admin,O=system:masters signed by CN=k3s-client-ca@1738746570: notBefore=2025-02-05 09:09:30 +0000 UTC notAfter=2026-02-05 09:10:42 +0000 UTC 
+INFO[0073] You can start using the cluster with: 
+
+        export KUBECONFIG=/my/current/directory/mycluster-kubeconfig.yaml
+        kubectl cluster-info
+----
+
+Après avoir exporté le kubeconfig généré, vous pouvez accéder à votre cluster Kubernetes{nbsp}:
+
+[,bash]
+----
+export KUBECONFIG=/my/current/directory/mycluster-kubeconfig.yaml
+kubectl get nodes
+kubectl get pods -A
+----
+
+Vous pouvez également créer directement une ressource Cluster dans un espace de noms, pour créer un cluster K3k :
+
+[,bash]
+----
+kubectl apply -f - <<EOF
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: mycluster
+  namespace: k3k-mycluster
+EOF
+----
+
+et utiliser le `k3kcli` pour récupérer le kubeconfig{nbsp}:
+
+[,bash]
+----
+k3kcli kubeconfig generate --namespace k3k-mycluster --name mycluster 
+----
+
+=== Suppression d'un cluster K3k
+
+Pour supprimer un cluster K3k, utilisez la commande suivante{nbsp}:
+
+[,bash]
+----
+k3kcli cluster delete mycluster
+----
+endif::[]

@@ -1,0 +1,161 @@
+= VirtualClusterPolicy: Konzepte
+:revdate: 2025-11-18
+:page-revdate: {revdate}
+
+Die `VirtualClusterPolicy` Benutzerdefinierte Ressource in K3k bietet eine Möglichkeit, konsistente Konfigurationen, Sicherheitseinstellungen und Ressourcenmanagementregeln für Ihre virtuellen Cluster und die Namespaces, in denen sie betrieben werden, zu definieren und durchzusetzen.
+
+Durch die Verwendung von VCPs können Administratoren diese Aspekte zentral verwalten, manuelle Konfiguration reduzieren, die Übereinstimmung mit den organisatorischen Standards sicherstellen und die allgemeine Sicherheit sowie die betriebliche Konsistenz der K3k-Umgebung verbessern.
+
+WARNING: Die Verwendung einer Kombination aus `RKE2` und `Cilium` im Host-Cluster könnte zu Problemen mit Netzwerkrichtlinien führen. Die empfohlene Lösung besteht darin, `VirtualClusterPolicy` zu verwenden, um das Netzwerkrichtlinien-Setup mit K3k zu deaktivieren.
+
+== Kernelkonzepte
+
+=== Was ist eine VirtualClusterPolicy?
+
+Eine `VirtualClusterPolicy` ist eine clusterweite Kubernetes Benutzerdefinierte Ressource, die eine Reihe von Regeln und Konfigurationen spezifiziert. Diese Richtlinien werden dann auf K3k virtuelle Cluster (`Cluster` Ressourcen) angewendet, die innerhalb von Kubernetes Namespaces betrieben werden und die ausdrücklich an eine VCP gebunden sind.
+
+=== Eine Richtlinie an einen Namespace binden
+
+Um eine `VirtualClusterPolicy` auf einen oder mehrere Namespaces (und damit auf alle K3k `Cluster` Ressourcen innerhalb dieser Namespaces) anzuwenden, müssen Sie die gewünschten Namespaces kennzeichnen.
+
+Fügen Sie das folgende Label zu Ihren Namespace-Metadaten hinzu:
+----
+`policy.k3k.io/policy-name: <YOUR_POLICY_NAME>`
+----
+
+*Beispiel: Labeling eines Namespace*
+
+[,yaml]
+----
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: my-app-namespace
+  labels:
+    policy.k3k.io/policy-name: "standard-dev-policy"
+----
+
+In diesem Beispiel wird `my-app-namespace` den in der `VirtualClusterPolicy` mit dem Namen `standard-dev-policy` definierten Regeln folgen. Mehrere Namespaces können an dieselbe Richtlinie für eine einheitliche Konfiguration gebunden werden, oder verschiedene Namespaces können an unterschiedliche Richtlinien gebunden werden.
+
+Es ist auch wichtig zu beachten, was passiert, wenn sich die Richtlinienbindung eines Namespaces ändert. Wenn ein Namespace von einer VirtualClusterPolicy ungebunden wird (indem das Label policy.k3k.io/policy-name entfernt wird), wird K3k die Ressourcen (wie ResourceQuotas, LimitRanges und verwaltete Namespace-Labels), die ursprünglich von dieser Richtlinie angewendet wurden, bereinigen und entfernen. Ähnlich, wenn das Label geändert wird, um den Namespace an eine neue VirtualClusterPolicy zu binden, entfernt K3k zunächst die Ressourcen, die mit der alten Richtlinie verbunden sind, bevor er die Konfigurationen der neuen anwendet, um einen sauberen Übergang zu gewährleisten.
+
+=== Standardrichtlinienwerte
+
+Wenn Sie eine `VirtualClusterPolicy` erstellen, ohne irgendwelche `spec` Felder anzugeben (zum Beispiel mit `k3kcli policy create my-default-policy`), wird sie mit den Standardeinstellungen erstellt. Derzeit umfasst dies, dass `spec.allowedMode` auf `shared` gesetzt wird.
+
+[,yaml]
+----
+# Example of a minimal VCP (after creation with defaults)
+apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: my-default-policy
+spec:
+  allowedMode: shared
+----
+
+== Wesentliche Funktionen & Beispiele
+
+Ein `VirtualClusterPolicy` kann mehrere Aspekte der Namespaces, an die er gebunden ist, sowie die darin betriebenen virtuellen Cluster konfigurieren.
+
+=== Einschränkung der erlaubten virtuellen Cluster-Modi (`AllowedMode`)
+
+Sie können den `mode` (z. B. "shared" oder "virtual") einschränken, in dem K3k `Cluster` Ressourcen innerhalb der gebundenen Namespaces bereitgestellt werden können. Wenn ein `Cluster` in einem gebundenen Namespace mit einem nicht erlaubten Modus in `allowedMode` erstellt wird, kann die Erstellung fortschreiten, aber es sollte ein Fehler im Status der `Cluster` Ressource gemeldet werden.
+
+*Beispiel:* Erlauben Sie nur Cluster im "shared"-Modus.
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: shared-only-policy
+spec:
+  allowedModeTypes:
+  - shared
+----
+
+Sie können dies auch über die Kommandozeilenschnittstelle angeben: `k3kcli policy create --mode shared shared-only-policy` (oder `--mode virtual`).
+
+=== Definition von Ressourcenquoten (`quota`)
+
+Sie können Verbrauchsgrenzen für Ressourcen in gebundenen Namespaces festlegen, indem Sie einen `ResourceQuota` angeben. K3k wird ein `ResourceQuota`-Objekt in jedem gebundenen Namespace mit den angegebenen Spezifikationen erstellen.
+
+*Beispiel:* Setzen Sie CPU-, Speicher- und Pod-Limits.
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: quota-policy
+spec:
+  quota:
+    hard:
+      cpu: "10"
+      memory: "20Gi"
+      pods: "10"
+----
+
+=== Festlegen von Limitbereichen (`limit`)
+
+Sie können Standardressourcenanforderungen/-limits und min/max-Einschränkungen für Container, die in gebundenen Namespaces laufen, festlegen, indem Sie einen `LimitRange` angeben. K3k wird ein `LimitRange`-Objekt in jedem gebundenen Namespace erstellen.
+
+*Beispiel:* Definieren Sie Standard-CPU-Anforderungen/-limits und min/max-CPU.
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: limit-policy
+spec:
+  limit:
+    limits:
+    - default:
+        cpu: "500m"
+      defaultRequest:
+        cpu: "500m"
+      max:
+        cpu: "1"
+      min:
+        cpu: "100m"
+      type: Container
+----
+
+=== Verwaltung der Netzwerkisolierung (`disableNetworkPolicy`)
+
+Standardmäßig erstellt K3k ein `NetworkPolicy` in gebundenen Namespaces, um Netzwerkisolierung für virtuelle Cluster (insbesondere im "shared"-Modus) bereitzustellen. Sie können die Erstellung dieser Standardrichtlinie deaktivieren.
+
+*Beispiel:* Deaktivieren Sie die Standard-Netzwerk-Richtlinie.
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: no-default-netpol-policy
+spec:
+  disableNetworkPolicy: true
+----
+
+=== Durchsetzung der Pod-Sicherheitszulassung (`podSecurityAdmissionLevel`)
+
+Sie können die Pod-Sicherheitsstandards (PSS) durch Angabe eines Pod-Sicherheitszulassungsniveaus (PSA) durchsetzen. K3k wendet die entsprechenden PSA-Labels auf jeden gebundenen Namespace an. Die zulässigen Werte sind `privileged`, `baseline`, `restricted`, und dies fügt Labels wie `pod-security.kubernetes.io/enforce: <level>` zum gebundenen Namespace hinzu.
+
+*Beispiel:* Setzen Sie das PSS-Niveau "Baseline" durch.
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: baseline-psa-policy
+spec:
+  podSecurityAdmissionLevel: baseline
+----
+
+== Zusätzliche Informationen
+
+* Für eine vollständige Referenz aller `VirtualClusterPolicy` Spezifikationsfelder siehe xref:./references/crds.adoc#VirtualClusterPolicy[API-Referenz für VirtualClusterPolicy].
+* Um zu verstehen, wie VCPs in das gesamte K3k-System passen, siehe xref:./architecture.adoc[Architektur].

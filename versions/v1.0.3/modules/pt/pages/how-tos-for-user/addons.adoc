@@ -1,0 +1,67 @@
+= Complementos
+:revdate: 2025-11-07
+:page-revdate: {revdate}
+
+Este documento fornece informações sobre o provisionamento do cluster K3k usando o recurso `add-ons`.
+
+IMPORTANT: Nomeie a chave secreta com a extensão '.yaml' para ser reconhecida pelo K3s.
+
+== Criação do cluster K3k usando complementos.
+
+. Instale o chart do controlador K3k. 
+ifdef::comm-build[] 
+Para mais informações, veja xref:/quickstart.adoc#_install_the_k3k_controller[Instale o controlador K3k].
+endif::comm-build[]
+
+. Crie uma chave secreta:
++
+.Exemplo
+[,yaml]
+----
+apiVersion: v1
+kind: Secret
+metadata:
+  name: rancher-init
+  namespace: default
+stringData:
+  manifests.yaml: |-
+    apiVersion: v1
+    kind: Namespace
+    metadata:
+      name: cattle-system
+----
+
+. Crie o cluster K3k usando o `add-ons`:
++
+.Exemplo
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: rancher-k3k
+  namespace: rancher-k3k-system
+spec:
+  mode: shared
+  persistence:
+    type: ephemeral
+  addons:
+    - secretRef: rancher-init
+      secretNamespace: default
+----
+
+== Verificação
+
+* Verifique se o cluster foi provisionado com sucesso:
++
+[,yaml]
+----
+k exec -it -n rancher-k3k-system k3k-rancher-k3k-server-0 -- /bin/sh
+~ # kubectl get ns
+NAME              STATUS   AGE
+cattle-system     Active   98s
+default           Active   104s
+kube-node-lease   Active   104s
+kube-public       Active   105s
+kube-system       Active   105s
+----

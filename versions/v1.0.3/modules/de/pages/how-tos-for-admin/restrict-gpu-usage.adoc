@@ -1,0 +1,62 @@
+= Einschränkung von GPU-Ressourcen in SUSE Virtual Clusters
+:revdate: 2026-03-09
+:page-revdate: {revdate}
+
+Dieser Leitfaden hilft Ihnen, GPU-Einschränkungen innerhalb Ihrer Mandanten mithilfe des Richtlinienkonzepts von {k3k-product-name} zu definieren.
+
+[NOTE]
+==== 
+Dies gilt nur für den `shared`-Modus.
+====
+
+== Erstellen Sie eine VirtualCluster-Richtlinie
+
+Beginnen Sie damit, eine `VirtualClusterPolicy` in einer YAML-Datei (zum Beispiel `gpu-policy.yaml`) zu definieren und sie auf Ihren Cluster anzuwenden.
+
+----
+apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: quota-policy
+spec:
+  quota:
+    hard:
+      requests.nvidia.com/gpu: 4
+----
+
+Wenden Sie die Richtlinie mit kubectl an:
+
+----
+kubectl apply -f gpu-policy.yaml
+----
+
+Diese Richtlinie erlaubt den Verbrauch von 4 GPUs.
+
+== Fügen Sie die Richtlinie einem Mandanten hinzu
+
+Wenden Sie die Richtlinie an, indem Sie den gewünschten Namespace annotieren:
+
+----
+kubectl label namespace <namespace-name> policy.k3k.io/policy-name="quota-policy"
+----
+
+Ein Ressourcen-Quota wird automatisch im Namespace erstellt.
+
+== Verfolgen Sie den GPU-Verbrauch
+
+Sobald eine GPU-Arbeitslast in einem virtuellen Cluster (im gemeinsamen Modus) erstellt wird, verbraucht sie eine der zugewiesenen GPU-Ressourcen. 
+
+Sie können den Verbrauch mit dem `quota`-Befehl verfolgen:
+
+[,bash]
+----
+kubectl get quota -n testgpu
+NAME               REQUEST                        LIMIT   AGE
+k3k-quota-policy   requests.nvidia.com/gpu: 0/4           4s
+----
+
+Wenn das Limit erreicht ist und ein Benutzer versucht, einen neuen Pod bereitzustellen, der eine GPU verbraucht, bleibt der Pod im `Pending`-Zustand mit dem folgenden Status:
+
+----
+Warning  ProviderCreateFailed  1s    ubuntu/pod-controller  pods "cuda-vectoradd-default-sharedclustergpu-637564612d7665637-865e4" is forbidden: exceeded quota: k3k-quota-policy, requested: requests.nvidia.com/gpu=1, used: requests.nvidia.com/gpu=4, limited: requests.nvidia.com/gpu=4
+----

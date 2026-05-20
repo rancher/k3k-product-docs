@@ -1,0 +1,68 @@
+= How-to: Arbeitslasten außerhalb des virtuellen Clusters exponieren
+:revdate: 2025-09-10
+:page-revdate: {revdate}
+
+Dieser Leitfaden erklärt, wie Arbeitslasten, die in k3k-verwalteten virtuellen Clustern laufen, extern exponiert werden können. Das Verhalten variiert je nach Betriebsmodus des virtuellen Clusters.
+
+== Virtueller Modus
+
+[CAUTION]
+====
+Im _virtuellen Modus_ ist die direkte externe Exponierung von Arbeitslasten *nicht verfügbar*. Dieser Modus ist für starke Isolation konzipiert und exponiert das Netzwerk des virtuellen Clusters nicht direkt.
+====
+
+== Geteilter Modus
+
+Im _geteilten Modus_ können Arbeitslasten je nach Ihren Anforderungen über Standard-Kubernetes-Diensttypen oder einen Ingress-Controller an das externe Netzwerk exponiert werden.
+
+[NOTE]
+====
+_`Services`_ werden immer vom virtuellen Cluster zum Host-Cluster synchronisiert, gemäß dem gleichen Prinzip, das link:../architecture.adoc#shared-mode[hier] für Pods beschrieben ist.
+====
+
+=== Option 1: Verwenden Sie `NodePort` oder `LoadBalancer`
+
+Um einen Dienst wie eine Webanwendung außerhalb des Host-Clusters zu exponieren:
+
+* *`NodePort`*: Exponiert den Dienst an einem statischen Port auf der IP jedes Knotens. Greifen Sie auf den Dienst unter `http://<NodeIP>:<NodePort>` zu.
+* *`LoadBalancer`*: Stellt einen externen Lastenausgleich zur Verfügung (sofern von der Umgebung unterstützt) und exponiert den Dienst über die IP des Lastenausgleichs.
+
+[NOTE]
+====
+Die `LoadBalancer` IP wird derzeit nicht an den Dienst des virtuellen Clusters zurückgegeben. +
+\https://github.com/rancher/k3k/issues/365[k3k issue #365]
+====
+
+=== Option 2: Verwenden Sie `ClusterIP` für die interne Kommunikation
+
+Wenn die Arbeitslast nur für andere Dienste oder Pods _innerhalb_ des Host-Clusters zugänglich sein soll:
+
+* Verwenden Sie den `ClusterIP` Diensttyp. Dies macht den Dienst über eine interne IP verfügbar, die nur innerhalb des Host-Clusters erreichbar ist.
+
+=== Option 3: Verwenden Sie Ingress für HTTP/HTTPS-Routing
+
+Für fortgeschrittenes Routing, wie hostname- oder pfadbasiertes Routing, stellen Sie einen *Ingress-Controller* im virtuellen Cluster bereit und exponieren ihn über `NodePort` oder `LoadBalancer`.
+
+Dies ermöglicht Ihnen Folgendes:
+
+* Definieren Sie Ingress-Ressourcen im virtuellen Cluster.
+* Leiten Sie externen Verkehr zu Diensten innerhalb des virtuellen Clusters.
+
+=== Option 4: Verwenden Sie Host-Ingress
+
+Um den Host-Ingress-Controller zu verwenden, aktivieren Sie `sync.ingresses`. Da Ingress mit dem Host-Cluster synchronisiert wird, müssen Benutzer des virtuellen Clusters keinen Ingress-Controller bereitstellen.
+
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-shared-mode
+spec:
+  mode: shared
+  ...
+  sync: 
+    ingresses: 
+      enabled: true
+----
+
+Mit dieser aktivierten Synchronisierung kann das Zertifikat auch vom Host-Cluster ausgestellt werden. Zum Beispiel kann ein Zertifikat ausgestellt werden, wenn Sie `Cert-Manager` verwenden.

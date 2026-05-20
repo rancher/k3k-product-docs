@@ -1,0 +1,42 @@
+= 简介
+:revdate: 2025-09-16
+:page-revdate: {revdate}
+
+== {product-name}
+
+{product-name} 是 SUSE Rancher Prime 的核心功能，融合了开源引擎 link:https://github.com/rancher/k3k[K3k] 的轻量级性能和 SUSE 虚拟群集管理的企业级管理能力。
+
+该解决方案旨在打造 *Kubernetes 中的下一代多租户能力*，助力平台团队更高效地开展管理工作，同时让开发者能够通过自助服务模式快速创新。
+使用 {product-name}，您可以按需启动轻量级 Kubernetes 控制平面，使用 link:https://k3s.io/[K3s]，而无需承担配置和管理完整物理集群的开销。
+
+这使得以下目标成为可能：
+
+* 实现安全且强大的多租户工作负载隔离。
+* 通过在多个虚拟集群之间共享工作节点和平台服务来优化基础设施成本。
+* 赋能开发者自助服务和实验，而不影响其他人。
+* 通过策略、治理和生命周期管理工具，为平台团队赋予了充分的控制权。
+
+{product-name} 在开发者的自主性和操作员的控制之间取得了良好的平衡，从而为现代 Kubernetes 平台创建了可扩展的基础。
+
+== 关键组件
+
+* *SUSE 虚拟集群引擎*：为 SUSE 虚拟集群引擎提供动力的开源项目 K3k 已通过 CNCF Kubernetes 认证测试，并列入 link:https://www.cncf.io/training/certification/software-conformance/[CNCF认证Kubernetes®软件符合性计划]。基于 K3s 这一轻量级 CNCF 项目，K3k 确保工作负载和工具之间的互操作性、兼容性和一致的 Kubernetes 体验。
+
+* *SUSE 虚拟集群管理*：通过企业级管理界面直接从 SUSE Rancher Manager 大规模管理 {product-name}。
+功能包括：
+- Rancher 集成 - 受益于 Rancher RBAC 并进行扩展。直接从 Rancher 创建和管理虚拟集群及策略。
+- CAPI 提供者 - 集群 API 支持生命周期自动化。
+- Terraform 提供者（预发布） - 基础架构即代码工作流以扩展和标准化集群管理。
+
+== 为什么 {product-name}？
+
+通过{product-name}，组织可以：
+
+* 提供真实的Kubernetes多租户功能，具有共享和虚拟两种模式，适合大多数生产用例（文档链接 - 如何选择模式）。
+* 通过共享工作池和共享服务（文档链接 - 共享模式）从主机到虚拟集群，减少云和基础设施支出。
+* 通过快速、轻量级的集群在自助服务模式下加快开发者工作流程（文档链接 - 快速入门UI）。
+* 定义保护措施（文档链接 - 虚拟集群策略），通过策略、治理和生命周期工具，实现平台与开发团队之间的无缝协作。
+
+**认证详情*：K3k符合性结果已发布在link:https://www.cncf.io/training/certification/software-conformance/[CNCF列表]上。
+
+Kubernetes®是Linux基金会在美国及其他国家的注册商标，并根据Linux基金会的许可使用。

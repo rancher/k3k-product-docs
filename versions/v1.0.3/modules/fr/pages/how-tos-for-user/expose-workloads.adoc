@@ -1,0 +1,69 @@
+= Procédure : Exposer des charges de travail en dehors du cluster virtuel
+:revdate: 2025-09-10
+:page-revdate: {revdate}
+
+Ce guide explique comment exposer les charges de travail exécutées dans des clusters virtuels gérés par k3k aux réseaux externes. Le comportement varie en fonction du mode de fonctionnement du cluster virtuel.
+
+== Mode virtuel
+
+[CAUTION]
+====
+En _mode virtuel_, l'exposition externe directe des charges de travail n'est *pas disponible*. Ce mode est conçu pour une forte isolation et n'expose pas directement le réseau du cluster virtuel.
+====
+
+== Mode partagé
+
+En _mode partagé_, les charges de travail peuvent être exposées au réseau externe en utilisant des types de services Kubernetes standard ou un contrôleur d'ingress, selon vos besoins.
+
+[NOTE]
+====
+_`Services`_ sont toujours synchronisés du cluster virtuel au cluster hôte selon le même principe décrit link:../architecture.adoc#shared-mode[ici] pour les pods.
+====
+
+=== Option 1 : Utilisez `NodePort` ou `LoadBalancer`
+
+Pour exposer un service tel qu'une application web en dehors du cluster hôte{nbsp}:
+
+* *`NodePort`*{nbsp}: Expose le service sur un port statique sur l'IP de chaque nœud. Accédez au service à `http://<NodeIP>:<NodePort>`.
+* *`LoadBalancer`*{nbsp}: Provisionne un équilibreur de charge externe (si pris en charge par l'environnement) et expose le service via l'IP de l'équilibreur de charge.
+
+[NOTE]
+====
+L'IP `LoadBalancer` n'est actuellement pas reflétée dans le service du cluster virtuel. +
+\https://github.com/rancher/k3k/issues/365[k3k issue #365]
+====
+
+=== Option 2 : Utilisez `ClusterIP` pour la communication interne
+
+Si la charge de travail ne doit être accessible qu'à d'autres services ou pods _dans_ le cluster hôte{nbsp}:
+
+* Utilisez le type de service `ClusterIP`. Cela expose le service sur une IP interne, uniquement accessible à l'intérieur du cluster hôte.
+
+=== Option 3 : Utilisez Ingress pour le routage HTTP/HTTPS
+
+Pour un routage plus avancé, tel que le routage basé sur le nom d'hôte ou le chemin, déployez un *contrôleur Ingress* dans le cluster virtuel et exposez-le via `NodePort` ou `LoadBalancer`.
+
+Ceci vous permet de :
+
+* Définissez des ressources Ingress dans le cluster virtuel.
+* Dirigez le trafic externe vers les services dans le cluster virtuel.
+
+=== Options 4 +
+: Utilisez le Host Ingress
+
+Pour utiliser le contrôleur d'ingress hôte, activez `sync.ingresses`. Étant donné que les ingress sont synchronisés avec le cluster hôte, les utilisateurs du cluster virtuel n'ont pas besoin de déployer un contrôleur d'ingress.
+
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-shared-mode
+spec:
+  mode: shared
+  ...
+  sync: 
+    ingresses: 
+      enabled: true
+----
+
+Avec cette synchronisation active9e, un certificat peut e9galement eatre e9mis par le cluster hf4te. Par exemple, un certificat peut être émis si vous utilisez `Cert-Manager`.

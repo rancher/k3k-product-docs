@@ -1,0 +1,68 @@
+= 使用说明：将工作负载暴露在虚拟集群外部
+:revdate: 2025-09-10
+:page-revdate: {revdate}
+
+本指南解释了如何将运行在k3k管理的虚拟集群中的工作负载暴露到外部网络。行为因虚拟集群的操作模式而异。
+
+== 虚拟模式
+
+[CAUTION]
+====
+在_虚拟模式_中，工作负载的直接外部暴露是*不可用*的。此模式旨在提供强隔离，不直接暴露虚拟集群的网络。
+====
+
+== 共享模式
+
+在_共享模式_中，工作负载可以根据您的需求使用标准 Kubernetes 服务类型或 Ingress 控制器暴露到外部网络。
+
+[NOTE]
+====
+_`Services`_始终根据link:../architecture.adoc#shared-mode[此处]描述的相同原则从虚拟集群同步到主集群。
+====
+
+=== 选项 1：使用`NodePort`或`LoadBalancer`
+
+要将服务（例如 web 应用程序）暴露在主集群外部：
+
+* *`NodePort`*：在每个节点的IP上以静态端口暴露服务。在`http://<NodeIP>:<NodePort>`访问该服务。
+* *`LoadBalancer`*：提供外部负载均衡器（如果环境支持）并通过负载均衡器的IP暴露服务。
+
+[NOTE]
+====
+`LoadBalancer` IP当前未反映回虚拟集群服务。 +
+\https://github.com/rancher/k3k/issues/365[k3k issue #365]
+====
+
+=== 选项 2：使用`ClusterIP`进行内部通信
+
+如果工作负载仅应对主集群_内部_的其他服务或Pod可访问：
+
+* 使用 `ClusterIP` 服务类型。这会在内部 IP 上暴露服务，仅在主机集群内部可访问。
+
+=== 选项3：使用 Ingress 进行 HTTP/HTTPS 路由
+
+对于更高级的路由，例如基于主机名或路径的路由，在虚拟集群中部署一个 *Ingress 控制器*，并通过 `NodePort` 或 `LoadBalancer` 进行暴露。
+
+这允许您：
+
+* 在虚拟集群中定义 Ingress 资源。
+* 将外部流量路由到虚拟集群内的服务。
+
+=== 选项4：使用主机 Ingress
+
+要使用主机 Ingress 控制器，请启用 `sync.ingresses`。由于 Ingress 与主机集群同步，虚拟集群用户无需部署 Ingress 控制器。
+
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-shared-mode
+spec:
+  mode: shared
+  ...
+  sync: 
+    ingresses: 
+      enabled: true
+----
+
+启用此同步后，证书也可以由主机集群颁发。例如，如果您使用 `Cert-Manager`，可以颁发证书。

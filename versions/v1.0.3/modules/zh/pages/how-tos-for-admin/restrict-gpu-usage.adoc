@@ -1,0 +1,62 @@
+= 在SUSE虚拟集群中限制GPU资源
+:revdate: 2026-03-09
+:page-revdate: {revdate}
+
+本指南帮助您使用{k3k-product-name}的策略概念定义租户中的GPU限制。
+
+[NOTE]
+==== 
+这仅适用于`shared`模式。
+====
+
+== 创建一个VirtualClusterPolicy
+
+首先在YAML文件中定义一个`VirtualClusterPolicy`（例如，`gpu-policy.yaml`），并将其应用到您的集群中。
+
+----
+apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: quota-policy
+spec:
+  quota:
+    hard:
+      requests.nvidia.com/gpu: 4
+----
+
+使用kubectl应用策略：
+
+----
+kubectl apply -f gpu-policy.yaml
+----
+
+该策略允许消耗4个GPU。
+
+== 将策略附加到租户
+
+通过为所需的名称空间添加注解来应用策略:
+
+----
+kubectl label namespace <namespace-name> policy.k3k.io/policy-name="quota-policy"
+----
+
+在名称空间中会自动创建资源配额.
+
+== 跟踪GPU消耗
+
+一旦在虚拟集群中创建了GPU工作负载（在共享模式下），它将消耗分配的一个GPU资源。
+
+您可以使用`quota`命令跟踪消耗：
+
+[,bash]
+----
+kubectl get quota -n testgpu
+NAME               REQUEST                        LIMIT   AGE
+k3k-quota-policy   requests.nvidia.com/gpu: 0/4           4s
+----
+
+如果达到限制，用户尝试部署一个消耗GPU的新pod时，该pod将保持在`Pending`状态，状态如下：
+
+----
+Warning  ProviderCreateFailed  1s    ubuntu/pod-controller  pods "cuda-vectoradd-default-sharedclustergpu-637564612d7665637-865e4" is forbidden: exceeded quota: k3k-quota-policy, requested: requests.nvidia.com/gpu=1, used: requests.nvidia.com/gpu=4, limited: requests.nvidia.com/gpu=4
+----

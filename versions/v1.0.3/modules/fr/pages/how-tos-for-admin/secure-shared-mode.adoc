@@ -1,0 +1,59 @@
+= Sécurisation des clusters virtuels en mode partagé
+:revdate: 2026-03-09
+:page-revdate: {revdate}
+
+Par défaut, {k3k-product-name} en mode partagé permet des pods privilégiés, ce qui peut conduire à un accès au niveau de l'hôte. Pour sécuriser votre environnement, vous devez appliquer https://kubernetes.io/docs/concepts/security/pod-security-standards/[le Standard de Sécurité des Pods (PSS)].
+
+Le guide suivant explique comment appliquer cela en utilisant le mécanisme `VirtualClusterPolicy` de K3k.
+
+== Créer une Stratégie de Cluster Virtuel
+
+Définir une stratégie pour restreindre les capacités des pods. 
+
+[NOTE]
+====
+Le profil *baseline* est recommandé pour prévenir l'escalade de privilèges sans perturber la plupart des charges de travail.
+====
+
+----
+apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: baseline-psa-policy
+spec:
+  podSecurityAdmissionLevel: baseline
+----
+
+*Niveaux Supportés*
+
+* *privilégié*{nbsp}: Accès illimité (par défaut).
+* *baseline*{nbsp}: Prévient les escalades de privilèges connues.
+* *restreint*{nbsp}: Renforcement maximum de la sécurité (sécurité maximale, compatibilité réduite).
+
+Voir https://kubernetes.io/docs/concepts/security/pod-security-standards/[les Standards de Sécurité des Pods] pour plus d'informations.
+
+== Appliquer la stratégie
+
+Attacher la stratégie aux espaces de noms où vos clusters virtuels sont déployés en utilisant l'interface Rancher ou `kubectl`{nbsp}:
+
+----
+kubectl label namespace <namespace-name> policy.k3k.io/policy-name="baseline-psa-policy"
+----
+
+== Vérification
+
+L'opérateur K3k met automatiquement à jour les espaces de noms cibles pour appliquer le Standard de Sécurité des Pods (PSS) sélectionné.
+
+Exemple d'un espace de noms appliqué{nbsp}:
+
+----
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: prod-k3kcluster-ns
+  labels:
+    pod-security.kubernetes.io/enforce: baseline
+    policy.k3k.io/policy-name: baseline-psa-policy
+----
+
+Tout pod au sein du cluster virtuel qui enfreint cette stratégie (par exemple, en demandant `privileged: true`) est rejeté.

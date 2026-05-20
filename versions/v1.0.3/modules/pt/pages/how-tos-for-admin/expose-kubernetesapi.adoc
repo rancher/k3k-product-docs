@@ -1,0 +1,93 @@
+= Procedimentos: Expor a API do Cluster Virtual Kubernetes
+:revdate: 2025-11-11
+:page-revdate: {revdate}
+
+Este guia explica como expor a API do Kubernetes dos clusters virtuais para redes externas. As práticas se aplicam tanto ao _modo virtual_ quanto ao _modo compartilhado_.
+
+[NOTE]
+====
+É importante adicionar os argumentos TLS-SAN ao cluster, de modo que o endereço IP ou o host não sejam rejeitados.
+====
+
+[CAUTION]
+====
+Executar `k3kcli cluster delete clustername` irá deletar o cluster virtual, mas não afetará os Ingress ou os serviços criados pelos seguintes métodos.
+====
+
+== Ingress
+
+É possível expor a API do Kubernetes do cluster virtual através de um controlador de Ingress presente no host. No entanto, é importante notar que a terminação TLS deve ser realizada no cluster virtual, exigindo algumas mudanças em relação aos objetos de Ingress normais.
+
+=== Traefik
+
+No caso do Traefik, a API do cluster virtual é exposta através de um recurso IngressRouteTCP. Aqui está um exemplo de configuração:
+
+----
+apiVersion: traefik.io/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name: cluster-ingress-rt
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: HostSNI(`cluster.example.com`)
+      services:
+        - name: k3k-clustername-service
+          port: 443
+  tls:
+    passthrough: true
+----
+
+=== Ingress Nginx
+
+O Ingress Nginx não tem o SSL passthrough habilitado por padrão e deve ser ativado com a flag --enable-ssl-passthrough. Consulte a documentação do ingress-nginx { https://kubernetes.github.io/ingress-nginx/user-guide/tls/#ssl-passthrough}[aqui].
+
+Depois, é possível criar um recurso Ingress normal com a anotação "nginx.ingress.kubernetes.io/ssl-passthrough". Por exemplo:
+
+----
+apiVersion: networking.k8s.io
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "https"
+  name: cluster-ingress
+spec:
+  rules:
+  - host: cluster.example.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: k3k-clustername-service
+            port:
+              number: 443
+        path: /
+        pathType: Prefix
+----
+
+== Serviço
+
+Os serviços criados no momento da criação do cluster virtual não podem ser modificados. É necessário criar um novo serviço do tipo desejado (LoadBalancer ou NodePort).
+
+=== LoadBalancer
+Se um balanceador de carga estiver disponível para o cluster host, seja de um provedor de serviços em nuvem ou de um complemento como o MetalLB, é possível expor a API do cluster virtual sobre seu próprio endereço IP exclusivo.
+
+Para um cluster de exemplo chamado _teste_ no namespace _k3k_test_, crie um serviço LoadBalancer com o seguinte comando:
+
+[bash, shell]
+----
+kubectl -n k3k_test expose service k3k-test-service --type=LoadBalancer --name=k3k-test-servicelb
+----
+
+=== NodePort
+
+Na ausência das soluções acima, a API virtual do Kubernetes pode ser exposta por meio de um serviço NodePort usando o endereço IP de qualquer um dos nós do host.
+
+Para um cluster de exemplo chamado _teste_ no namespace _k3k_test_, crie um serviço NodePort usando o seguinte comando:
+
+[bash, shell]
+----
+kubectl -n k3k_test expose service k3k-test-service --type=NodePort --name=k3k-test-servicenp
+----
