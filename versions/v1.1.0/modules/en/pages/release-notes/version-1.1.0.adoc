@@ -1,23 +1,28 @@
 = SUSE Virtual Cluster v1.1.0 Release Highlights
-:revdate: 2026-02-23
+:revdate: 2026-05-27
 :page-revdate: {revdate}
 
 == New Features
 
-* Pulling images from private repositories (via `registry.yaml`) and mounting custom certificates are now fully supported allowing virtual clusters to run securely in air-gapped or restricted environments. (link:https://github.com/rancher/k3k/pull/570[#570])
-* `k3kcli` now supports cluster updates, and the Rancher UI introduces context-aware sync options specifically for 'Shared Mode' to simplify cluster configuration. (link:https://github.com/rancher/k3k/pull/595[#595], UI link:https://github.com/rancher/virtual-clusters-ui/pull/92[#92])
+* **Enhanced Security & Execution**: Virtual clusters now support custom runtime classes and security contexts, as well as `hostUsers` mapping directly in the cluster spec. (link:https://github.com/rancher/k3k/pull/742[#742], link:https://github.com/rancher/k3k/pull/787[#787])
+* **Storage Sync**: Host StorageClasses are now seamlessly synced to the virtual cluster. For more details on how this works, check out our new link:https://documentation.suse.com/cloudnative/suse-virtual-clusters/1.1.0/en/resource-sync.html[Resource Sync guide]. (link:https://github.com/rancher/k3k/pull/681[#681])
+* **Resource & Scheduling Control**: Major upgrades to scheduling, including the introduction of Pod affinity (preferring scheduling Pods on the same Node), worker limits in shared clusters, and explicit server/worker resource requests and limits. (link:https://github.com/rancher/k3k/pull/696[#696], link:https://github.com/rancher/k3k/pull/724[#724], link:https://github.com/rancher/k3k/pull/798[#798], link:https://github.com/rancher/k3k/pull/832[#832])
 
 == Core Improvements
 
-* Fixed the "multiplier" bug in 'Shared Mode' — virtual nodes now report correct per-node resources instead of incorrectly aggregating the whole host cluster. (link:https://github.com/rancher/k3k/pull/610[#610])
-* `nodeSelector` now correctly applies to agent pods, ensuring your workloads land exactly where they belong on the underlying infrastructure. (link:https://github.com/rancher/k3k/pull/616[#616])
-* Refactored the storage handling to attach volumes directly to PVCs and optimized the server reconciliation for better performance and stability. (link:https://github.com/rancher/k3k/pull/577[#577], link:https://github.com/rancher/k3k/pull/618[#618])
-* Bumped to `Go 1.25` and updated Kubernetes dependencies to `v1.32.10` for the latest security and performance patches. (link:https://github.com/rancher/k3k/pull/620[#620], link:https://github.com/rancher/k3k/pull/626[#626])
+* **Smarter Distribution**: Overhauled the distribution algorithm to accurately account for host capacity, properly removing node capacity from merged lists and filtering requested infrastructure resources. (link:https://github.com/rancher/k3k/pull/688[#688], link:https://github.com/rancher/k3k/pull/816[#816], link:https://github.com/rancher/k3k/pull/834[#834])
+* **Architecture Optimizations**: Improved Shared Mode by removing the Pod mutating webhook, transitioning `ControllerReferences` over to `OwnerReferences` for cleaner garbage collection, and changing default node types to worker. (link:https://github.com/rancher/k3k/pull/659[#659], link:https://github.com/rancher/k3k/pull/662[#662], link:https://github.com/rancher/k3k/pull/699[#699], link:https://github.com/rancher/k3k/pull/774[#774])
 
 == Bug Fixes & Security
 
-* Both the UI and API now correctly show enforced resource limits when a `VirtualClusterPolicy` is applied, including fixes for resource quota formatting. (link:https://github.com/rancher/k3k/pull/638[#638], UI link:https://github.com/rancher/virtual-clusters-ui/pull/97[#97])
-* Refactored the initialization to wait for Node IP assignment, eliminating race conditions during cluster creation. (link:https://github.com/rancher/k3k/pull/598[#598])
-* Resolved errors when reloading the virtual clusters product page and fixed policy display issues for partially assigned namespaces. (UI link:https://github.com/rancher/virtual-clusters-ui/pull/94[#94], UI link:https://github.com/rancher/virtual-clusters-ui/pull/91[#91])
+* **Dependency & Security Updates**: Upgraded to `Go v1.25.9`, virtual-kubelet `v1.12`, Kubernetes dependencies to `v1.35`, and bumped the base image to BCI `v16`, pulling in the latest upstream security patches, telemetry updates, and fixes. (link:https://github.com/rancher/k3k/pull/716[#716], link:https://github.com/rancher/k3k/pull/759[#759], link:https://github.com/rancher/k3k/pull/819[#819])
+* **Policy Handling Fixes**: Improved policy status and deletion handling by adding finalizers and tracking `policy` directly within the Cluster Status. (link:https://github.com/rancher/k3k/pull/663[#663], link:https://github.com/rancher/k3k/pull/781[#781])
+* Added support for projected service account tokens in shared mode to ensure service accounts operate correctly. (link:https://github.com/rancher/k3k/pull/660[#660])
+* Fixed cgroup directory mapping for virtual mode clusters and addressed missing network policies specifically on `kube-ovn` networks. (link:https://github.com/rancher/k3k/pull/691[#691], link:https://github.com/rancher/k3k/pull/792[#792])
+* Addressed an issue with translated ingress TLS secrets in ingress objects. (link:https://github.com/rancher/k3k/pull/672[#672])
+* Improved general stability by fixing a PVC race condition during creation and resolving a helm installation bug. (link:https://github.com/rancher/k3k/pull/786[#786], link:https://github.com/rancher/k3k/pull/791[#791])
+* Disabled the metrics server from starting by default to avoid unexpected metric collision/overhead. (link:https://github.com/rancher/k3k/pull/714[#714])
 
-Full Changelogs: link:https://github.com/rancher/k3k/releases/tag/v1.1.0[k3k v1.1.0] | link:https://github.com/rancher/virtual-clusters-ui/releases/tag/virtual-clusters-1.0.2[UI Extension v1.1.0]
+Full Changelog: link:https://github.com/rancher/k3k/releases/tag/v1.1.0[k3k v1.1.0]
+
+Full Changelogs: link:https://github.com/rancher/k3k/releases/tag/v1.1.0[k3k v1.1.0] | link:https://github.com/rancher/virtual-clusters-ui/releases/tag/virtual-clusters-1.1.0[UI Extension v1.1.0]
