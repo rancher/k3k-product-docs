@@ -20,9 +20,6 @@
 * Added support for projected service account tokens in shared mode to ensure service accounts operate correctly. (link:https://github.com/rancher/k3k/pull/660[#660])
 * Fixed cgroup directory mapping for virtual mode clusters and addressed missing network policies specifically on `kube-ovn` networks. (link:https://github.com/rancher/k3k/pull/691[#691], link:https://github.com/rancher/k3k/pull/792[#792])
 * Addressed an issue with translated ingress TLS secrets in ingress objects. (link:https://github.com/rancher/k3k/pull/672[#672])
-* Improved general stability by fixing a PVC race condition during creation and resolving a helm installation bug. (link:https://github.com/rancher/k3k/pull/786[#786], link:https://github.com/rancher/k3k/pull/791[#791])
-* Disabled the metrics server from starting by default to avoid unexpected metric collision/overhead. (link:https://github.com/rancher/k3k/pull/714[#714])
 
-Full Changelog: link:https://github.com/rancher/k3k/releases/tag/v1.1.0[k3k v1.1.0]
 
 Full Changelogs: link:https://github.com/rancher/k3k/releases/tag/v1.1.0[k3k v1.1.0] | link:https://github.com/rancher/virtual-clusters-ui/releases/tag/virtual-clusters-1.1.0[UI Extension v1.1.0]
