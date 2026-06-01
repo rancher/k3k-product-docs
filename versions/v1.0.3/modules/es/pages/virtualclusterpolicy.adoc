@@ -1,0 +1,161 @@
+= VirtualClusterPolicy: conceptos
+:revdate: 2025-11-18
+:page-revdate: {revdate}
+
+El recurso personalizado `VirtualClusterPolicy` en K3k proporciona una forma de definir y hacer cumplir configuraciones consistentes, ajustes de seguridad y reglas de gestión de recursos para sus clústeres virtuales y los espacios de nombres en los que operan.
+
+Al utilizar las VCP, los administradores pueden gestionar centralmente estos aspectos, reduciendo la configuración manual, asegurando la alineación con los estándares organizacionales y mejorando la seguridad general y la consistencia operativa del entorno K3k.
+
+WARNING: Usar una combinación de `RKE2` y `Cilium` en el clúster anfitrión podría resultar en problemas con las políticas de red. La solución recomendada es usar `VirtualClusterPolicy` para desactivar la configuración de políticas de red con K3k.
+
+== Conceptos Básicos
+
+=== ¿Qué es una Política de Clúster Virtual?
+
+Una `VirtualClusterPolicy` es un recurso personalizado de Kubernetes a nivel de clúster que especifica un conjunto de reglas y configuraciones. Estas políticas se aplican a los clústeres virtuales de K3k (`Cluster` recursos) que operan dentro de los espacios de nombres de Kubernetes que están explícitamente vinculados a una VCP.
+
+=== Vinculando una Política a un Espacio de Nombres
+
+Para aplicar una `VirtualClusterPolicy` a uno o más espacios de nombres (y, por lo tanto, a todos los recursos `Cluster` de K3k dentro de esos espacios de nombres), debe etiquetar el(los) espacio(s) de nombres deseado(s).
+
+Añada la siguiente etiqueta a los metadatos de su espacio de nombres:
+----
+`policy.k3k.io/policy-name: <YOUR_POLICY_NAME>`
+----
+
+*Ejemplo: Etiquetando un Espacio de Nombres*
+
+[,yaml]
+----
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: my-app-namespace
+  labels:
+    policy.k3k.io/policy-name: "standard-dev-policy"
+----
+
+En este ejemplo, `my-app-namespace` se adherirá a las reglas definidas en el `VirtualClusterPolicy` llamado `standard-dev-policy`. Varios espacios de nombres pueden estar vinculados a la misma política para una configuración uniforme, o diferentes espacios de nombres pueden estar vinculados a políticas distintas.
+
+También es importante notar qué sucede cuando cambia la vinculación de la política de un espacio de nombres. Si un espacio de nombres se desvincula de una Política de Clúster Virtual (eliminando la etiqueta policy.k3k.io/policy-name), K3k limpiará y eliminará los recursos (como ResourceQuotas, LimitRanges y etiquetas de espacio de nombres gestionadas) que fueron aplicados originalmente por esa política. De manera similar, si se cambia la etiqueta para vincular el espacio de nombres a una nueva Política de Clúster Virtual, K3k primero eliminará los recursos asociados con la política antigua antes de aplicar las configuraciones de la nueva, asegurando una transición limpia.
+
+=== Valores de Política Predeterminados
+
+Si creas un `VirtualClusterPolicy` sin especificar ningún campo `spec` (por ejemplo, utilizando `k3kcli policy create my-default-policy`), se creará con la configuración predeterminada. Actualmente, esto incluye que `spec.allowedMode` esté configurado en `shared`.
+
+[,yaml]
+----
+# Example of a minimal VCP (after creation with defaults)
+apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: my-default-policy
+spec:
+  allowedMode: shared
+----
+
+== Capacidades Clave y Ejemplos
+
+Un `VirtualClusterPolicy` puede configurar varios aspectos de los espacios de nombres a los que está vinculado y de los clústeres virtuales que operan dentro de ellos.
+
+=== Restringir Modos de Clúster Virtual Permitidos (`AllowedMode`)
+
+Puede restringir el `mode` (por ejemplo, "compartido" o "virtual") en el que se pueden aprovisionar los recursos `Cluster` de K3k dentro de los espacios de nombres vinculados. Si se crea un `Cluster` en un espacio de nombres vinculado con un modo no permitido en `allowedMode`, su creación puede proceder, pero se debería informar de un error en el estado del recurso `Cluster`.
+
+*Ejemplo:* Permitir solo clústeres en modo "compartido".
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: shared-only-policy
+spec:
+  allowedModeTypes:
+  - shared
+----
+
+También puedes especificar esto utilizando la CLI: `k3kcli policy create --mode shared shared-only-policy` (o `--mode virtual`).
+
+=== Definiendo Cuotas de Recursos (`quota`)
+
+Puedes definir límites de consumo de recursos para los espacios de nombres vinculados especificando un `ResourceQuota`. K3k creará un objeto `ResourceQuota` en cada espacio de nombres vinculado con las especificaciones proporcionadas.
+
+*Ejemplo:* Establecer límites de CPU, memoria y pods.
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: quota-policy
+spec:
+  quota:
+    hard:
+      cpu: "10"
+      memory: "20Gi"
+      pods: "10"
+----
+
+=== Estableciendo Rangos de Límites (`limit`)
+
+Puedes definir solicitudes/límites de recursos predeterminados y restricciones mínimas/máximas para los contenedores que se ejecutan en los espacios de nombres vinculados especificando un `LimitRange`. K3k creará un objeto `LimitRange` en cada espacio de nombres vinculado.
+
+*Ejemplo:* Define las solicitudes y los límites de CPU predeterminados, así como los valores mínimos y máximos de CPU.
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: limit-policy
+spec:
+  limit:
+    limits:
+    - default:
+        cpu: "500m"
+      defaultRequest:
+        cpu: "500m"
+      max:
+        cpu: "1"
+      min:
+        cpu: "100m"
+      type: Container
+----
+
+=== Gestionando Aislamiento de Red (`disableNetworkPolicy`)
+
+Por defecto, K3k crea un `NetworkPolicy` en los espacios de nombres vinculados para proporcionar aislamiento de red para los clústeres virtuales (especialmente en modo compartido). Puedes desactivar la creación de esta política predeterminada.
+
+*Ejemplo:* Desactiva la NetworkPolicy predeterminada.
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: no-default-netpol-policy
+spec:
+  disableNetworkPolicy: true
+----
+
+=== Aplicando la Admisión de Seguridad de Pods (`podSecurityAdmissionLevel`)
+
+Puedes aplicar los Estándares de Seguridad de Pods (PSS) especificando un nivel de Admisión de Seguridad de Pods (PSA). K3k aplica las etiquetas PSA correspondientes a cada espacio de nombres vinculado. Los valores permitidos son `privileged`, `baseline`, `restricted`, y esto añade etiquetas como `pod-security.kubernetes.io/enforce: <level>` al espacio de nombres vinculado.
+
+*Ejemplo:* Haz cumplir el nivel de PSS "base".
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: baseline-psa-policy
+spec:
+  podSecurityAdmissionLevel: baseline
+----
+
+== Información adicional
+
+* Para una referencia completa de todos los campos de especificación de `VirtualClusterPolicy`, consulta xref:./references/crds.adoc#VirtualClusterPolicy[Referencia de API para VirtualClusterPolicy].
+* Para entender cómo encajan los VCPs en el sistema general de K3k, consulta xref:./architecture.adoc[Arquitectura].

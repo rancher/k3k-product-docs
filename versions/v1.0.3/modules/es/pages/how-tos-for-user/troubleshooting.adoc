@@ -1,0 +1,153 @@
+= Solución de problemas
+:revdate: 2025-09-11
+:page-revdate: {revdate}
+
+Esta sección contiene pasos comunes para solucionar problemas de Clústeres virtuales de K3K.
+
+== `Too many open files` error
+
+El `k3k-kubelet` o `k3kcluster-server-` se encuentra con el siguiente fallo:
+
+[,sh]
+----
+E0604 13:14:53.369369       1 leaderelection.go:336] error initially creating leader election record: Post "https://k3k-http-proxy-k3kcluster-service/apis/coordination.k8s.io/v1/namespaces/kube-system/leases": context canceled
+{"level":"fatal","timestamp":"2025-06-04T13:14:53.369Z","logger":"k3k-kubelet","msg":"virtual manager stopped","error":"too many open files"}
+----
+
+Esto indica típicamente un límite bajo en los observadores inotify o descriptores de archivo en el sistema host.
+
+Para aumentar los límites de inotify, conéctate a los nodos host y ejecuta:
+
+[,sh]
+----
+sudo sysctl -w fs.inotify.max_user_watches=2099999999
+sudo sysctl -w fs.inotify.max_user_instances=2099999999
+sudo sysctl -w fs.inotify.max_queued_events=2099999999
+----
+
+Puedes persistir estas configuraciones añadiéndolas a `/etc/sysctl.conf`:
+
+[,sh]
+----
+fs.inotify.max_user_watches=2099999999
+fs.inotify.max_user_instances=2099999999
+fs.inotify.max_queued_events=2099999999
+----
+
+Aplica los cambios:
+
+[,sh]
+----
+sudo sysctl -p
+----
+
+Puedes encontrar más detalles en este https://www.suse.com/support/kb/doc/?id=000020048[documento de KB].
+
+== Inspecciona los registros del controlador para el diagnóstico de fallos
+
+Para ver los registros de un Clúster virtual fallido:
+
+[,sh]
+----
+kubectl logs -n k3k-system -l app.kubernetes.io/name=k3k
+----
+
+Esto recupera registros de los componentes del controlador de K3K.
+
+== Inspecciona los registros del clúster para el diagnóstico de fallos
+
+Para ver los registros de un Clúster virtual fallido:
+
+[,sh]
+----
+kubectl logs -n <cluster_namespace> -l cluster=<cluster_name>
+----
+
+Esto recupera registros de los componentes del clúster de K3K (`agents, server and virtual-kubelet`).
+
+NOTE: También puedes usar `kubectl describe cluster <cluster_name>` para comprobar eventos recientes y condiciones de estado.
+
+== Clúster virtual no inicia o está atascado en pendiente
+
+Algunas de las causas más comunes están relacionadas con requisitos previos faltantes o una configuración incorrecta.
+
+=== Clase de almacenamiento no disponible
+
+Al crear un Clúster virtual con `dynamic` persistencia, se necesita un PVC. Puedes comprobar si el PVC fue reclamado pero no vinculado con `kubectl get pvc -n <cluster_namespace>`. Si ves un PVC pendiente, probablemente no tienes una clase de almacenamiento predeterminada definida, o has especificado una incorrecta.
+
+==== Ejemplo con clase de almacenamiento incorrecta
+
+El `pvc` está pendiente:
+
+[,bash]
+----
+kubectl get pvc -n k3k-test-storage
+NAME                                         STATUS    VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS    VOLUMEATTRIBUTESCLASS   AGE
+varlibrancherk3s-k3k-test-storage-server-0   Pending                                      not-available   <unset>                 4s
+----
+
+El `server` está pendiente:
+
+[,bash]
+----
+kubectl get po -n k3k-test-storage
+NAME                             READY   STATUS    RESTARTS   AGE
+k3k-test-storage-kubelet-j4zn5   1/1     Running   0          54s
+k3k-test-storage-server-0        0/1     Pending   0          54s
+----
+
+Para solucionar esto, deberías usar una clase de almacenamiento válida; puedes listar las clases de almacenamiento existentes usando:
+
+[,bash]
+----
+kubectl get storageclasses.storage.k8s.io
+NAME                   PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+local-path (default)   rancher.io/local-path   Delete          WaitForFirstConsumer   false                  3d6h
+----
+
+=== Selector de nodo incorrecto
+
+Al crear un Clúster virtual con `defaultNodeSelector`, si el selector no es válido, todos los pods estarán pendientes.
+
+==== Ejemplo
+
+El `server` está pendiente:
+
+[,bash]
+----
+kubectl get po
+NAME                                  READY   STATUS    RESTARTS   AGE
+k3k-k3kcluster-node-placed-server-0   0/1     Pending   0          58s
+----
+
+La descripción del pod proporciona la razón:
+
+[,bash]
+----
+kubectl describe po k3k-k3kcluster-node-placed-server-0
+...
+Events:
+  Type     Reason            Age   From               Message
+  ----     ------            ----  ----               -------
+  Warning  FailedScheduling  84s   default-scheduler  0/1 nodes are available: 1 node(s) didn't match Pod's node affinity/selector. preemption: 0/1 nodes are available: 1 Preemption is not helpful for scheduling.
+----
+
+Para solucionar esto, deberías usar una afinidad de nodo válida o un selector de nodo válido.
+
+=== Problemas de extracción de imagen (configuración en entorno aislado)
+
+Al crear un Clúster Virtual en un entorno aislado, las imágenes deben estar disponibles en el registro configurado. Puedes comprobar el estado de `ImagePullBackOff` al obtener los pods en el espacio de nombres del clúster virtual.
+
+==== Ejemplo
+
+El `server` está fallando:
+
+[,bash]
+----
+kubectl get po -n k3k-test-registry
+NAME                             READY   STATUS          RESTARTS       AGE
+k3k-test-registry-kubelet-r4zh5   1/1     Running            0          54s
+k3k-test-registry-server-0        0/1     ImagePullBackOff   0          54s
+----
+
+Para solucionar esto, asegúrate de que la imagen que falla esté disponible. Puedes describir el pod que falla para obtener más detalles.

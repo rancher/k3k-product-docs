@@ -1,0 +1,59 @@
+= Sichern von gemeinsam genutzten virtuellen Clustern
+:revdate: 2026-03-09
+:page-revdate: {revdate}
+
+Standardmäßig erlaubt {k3k-product-name} im gemeinsamen Modus privilegierte Pods, was zu einem Zugriff auf Host-Ebene führen kann. Um Ihre Umgebung zu sichern, müssen Sie https://kubernetes.io/docs/concepts/security/pod-security-standards/[Pod-Sicherheitsstandard (PSS)] durchsetzen.
+
+Der folgende Leitfaden erklärt, wie Sie dies mit dem `VirtualClusterPolicy` Mechanismus von K3k durchsetzen können.
+
+== Erstellen Sie eine VirtualClusterPolicy
+
+Definieren Sie eine Richtlinie zur Einschränkung der Pod-Funktionen. 
+
+[NOTE]
+====
+Das *Baseline*-Profil wird empfohlen, um Privilegieneskalationen zu verhindern, ohne die meisten Workloads zu beeinträchtigen.
+====
+
+----
+apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: baseline-psa-policy
+spec:
+  podSecurityAdmissionLevel: baseline
+----
+
+*Unterstützte Ebenen*
+
+* *privilegiert*: Uneingeschränkter Zugriff (Standard).
+* *baseline*-Profil: Verhindert bekannte Privilegieneskalationen.
+* *eingeschränkt*: Maximale Härtung (höchste Sicherheit, geringere Kompatibilität).
+
+Siehe https://kubernetes.io/docs/concepts/security/pod-security-standards/[Pod-Sicherheitsstandards] für weitere Informationen.
+
+== Wenden Sie die Richtlinie an
+
+Fügen Sie die Richtlinie den Namespace(s) hinzu, in denen Ihre virtuellen Cluster bereitgestellt sind, über die Rancher-Benutzeroberfläche oder `kubectl`:
+
+----
+kubectl label namespace <namespace-name> policy.k3k.io/policy-name="baseline-psa-policy"
+----
+
+== Überprüfung
+
+Der K3k-Operator aktualisiert automatisch die Ziel-Namespace(s), um den ausgewählten Pod-Sicherheitsstandard (PSS) durchzusetzen.
+
+Beispiel eines durchgesetzten Namespace:
+
+----
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: prod-k3kcluster-ns
+  labels:
+    pod-security.kubernetes.io/enforce: baseline
+    policy.k3k.io/policy-name: baseline-psa-policy
+----
+
+Jeder Pod innerhalb des virtuellen Clusters, der diese Richtlinie verletzt (zum Beispiel, wenn `privileged: true` angefordert wird), wird abgelehnt.

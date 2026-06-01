@@ -1,0 +1,153 @@
+= 查错
+:revdate: 2025-09-11
+:page-revdate: {revdate}
+
+本节包含 K3K 虚拟集群的常见故障排除步骤。
+
+== `Too many open files` 错误
+
+`k3k-kubelet` 或 `k3kcluster-server-` 遇到以下问题：
+
+[,sh]
+----
+E0604 13:14:53.369369       1 leaderelection.go:336] error initially creating leader election record: Post "https://k3k-http-proxy-k3kcluster-service/apis/coordination.k8s.io/v1/namespaces/kube-system/leases": context canceled
+{"level":"fatal","timestamp":"2025-06-04T13:14:53.369Z","logger":"k3k-kubelet","msg":"virtual manager stopped","error":"too many open files"}
+----
+
+这通常表示主机系统上的 inotify 观察者或文件描述符的限制过低。
+
+要增加 inotify 限制，请连接到主机节点并运行：
+
+[,sh]
+----
+sudo sysctl -w fs.inotify.max_user_watches=2099999999
+sudo sysctl -w fs.inotify.max_user_instances=2099999999
+sudo sysctl -w fs.inotify.max_queued_events=2099999999
+----
+
+您可以通过将这些设置添加到 `/etc/sysctl.conf` 来使其持久化：
+
+[,sh]
+----
+fs.inotify.max_user_watches=2099999999
+fs.inotify.max_user_instances=2099999999
+fs.inotify.max_queued_events=2099999999
+----
+
+应用更改：
+
+[,sh]
+----
+sudo sysctl -p
+----
+
+您可以在此 https://www.suse.com/support/kb/doc/?id=000020048[KB 文档] 中找到更多详细信息。
+
+== 检查控制器日志以进行故障诊断
+
+要查看失败的虚拟集群的日志：
+
+[,sh]
+----
+kubectl logs -n k3k-system -l app.kubernetes.io/name=k3k
+----
+
+这将从 K3K 控制器组件中检索日志。
+
+== 检查集群日志以进行故障诊断
+
+要查看失败的虚拟集群的日志：
+
+[,sh]
+----
+kubectl logs -n <cluster_namespace> -l cluster=<cluster_name>
+----
+
+这将从 K3K 集群组件 (`agents, server and virtual-kubelet`) 中检索日志。
+
+NOTE: 您还可以使用 `kubectl describe cluster <cluster_name>` 检查最近的事件和状态条件。
+
+== 虚拟集群未启动或卡在待处理状态
+
+一些最常见的原因与缺少先决条件或配置错误有关。
+
+=== 存储类不可用
+
+在使用 `dynamic` 持久性创建虚拟集群时，需要一个 PVC。您可以使用 `kubectl get pvc -n <cluster_namespace>` 检查 PVC 是否已声明但未绑定。如果您看到待处理的 PVC，您可能没有定义默认存储类，或者您指定了错误的存储类。
+
+==== 错误的存储类示例
+
+`pvc` 正在等待中：
+
+[,bash]
+----
+kubectl get pvc -n k3k-test-storage
+NAME                                         STATUS    VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS    VOLUMEATTRIBUTESCLASS   AGE
+varlibrancherk3s-k3k-test-storage-server-0   Pending                                      not-available   <unset>                 4s
+----
+
+`server` 正在等待中：
+
+[,bash]
+----
+kubectl get po -n k3k-test-storage
+NAME                             READY   STATUS    RESTARTS   AGE
+k3k-test-storage-kubelet-j4zn5   1/1     Running   0          54s
+k3k-test-storage-server-0        0/1     Pending   0          54s
+----
+
+要解决此问题，您应该使用有效的存储类，您可以使用以下命令列出现有的存储类：
+
+[,bash]
+----
+kubectl get storageclasses.storage.k8s.io
+NAME                   PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+local-path (default)   rancher.io/local-path   Delete          WaitForFirstConsumer   false                  3d6h
+----
+
+=== 错误的节点选择器
+
+在使用 `defaultNodeSelector` 创建虚拟集群时，如果选择器无效，所有的 pod 将处于等待状态。
+
+==== 示例
+
+`server` 正在等待中：
+
+[,bash]
+----
+kubectl get po
+NAME                                  READY   STATUS    RESTARTS   AGE
+k3k-k3kcluster-node-placed-server-0   0/1     Pending   0          58s
+----
+
+pod 的描述中显示了原因：
+
+[,bash]
+----
+kubectl describe po k3k-k3kcluster-node-placed-server-0
+...
+Events:
+  Type     Reason            Age   From               Message
+  ----     ------            ----  ----               -------
+  Warning  FailedScheduling  84s   default-scheduler  0/1 nodes are available: 1 node(s) didn't match Pod's node affinity/selector. preemption: 0/1 nodes are available: 1 Preemption is not helpful for scheduling.
+----
+
+要解决此问题，您应该使用有效的节点亲和性/选择器。
+
+=== 镜像拉取问题（隔离的设置）
+
+在隔离的环境中创建虚拟集群时，镜像需要在配置的注册表中可用。在获取虚拟集群命名空间中的 pod 时，您可以检查 `ImagePullBackOff` 的状态。
+
+==== 示例
+
+`server` 出现故障：
+
+[,bash]
+----
+kubectl get po -n k3k-test-registry
+NAME                             READY   STATUS          RESTARTS       AGE
+k3k-test-registry-kubelet-r4zh5   1/1     Running            0          54s
+k3k-test-registry-server-0        0/1     ImagePullBackOff   0          54s
+----
+
+要解决此问题，请确保出现故障的镜像可用。您可以描述出现故障的 pod 以获取更多详细信息。

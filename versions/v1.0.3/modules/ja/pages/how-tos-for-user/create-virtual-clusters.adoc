@@ -1,0 +1,295 @@
+= ハウツー：仮想クラスターを作成する
+:revdate: 2025-11-17
+:page-revdate: {revdate}
+
+このガイドでは、K3kでの仮想クラスターの作成と管理に関する手順を提供し、*カスタムリソース定義（CRD）*と*K3K CLI*の両方を使用した一般的なユースケースをカバーしているため、ワークフローに合った方法を選択できます。
+
+----
+For full reference:
+
+* xref:/references/crds.adoc[CRD Reference Documentation]
+* xref:/references/k3kcli.adoc[CLI Reference Documentation]
+* xref:/advanced-usage.adoc[Full example]
+----
+
+NOTE: 一部の機能はCRDインターフェースを介してのみ利用可能です。
+
+== 使用事例:基本的な仮想クラスターを作成して公開する
+
+=== CRD方式
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-ingress
+spec:
+  tlsSANs:
+    - my-cluster.example.com
+  expose:
+    ingress:
+      ingressClassName: nginx
+      annotations:
+        nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+        nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+        nginx.ingress.kubernetes.io/ssl-redirect: "HTTPS"
+----
+
+これにより、`shared`モードで仮想クラスターが作成され、指定されたホスト名でイングレスを介して公開されます。
+
+== 使用事例:永続ストレージを持つ仮想クラスターを作成する（*デフォルト*）
+
+=== CRD方式
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-persistent
+spec:
+  persistence:
+    type: dynamic
+    storageClassName: local-path
+    storageRequestSize: 30Gi
+----
+
+これにより、仮想クラスターは30Giのボリュームで状態を永続的に保存します。 +
+`storageClassName`が設定されていない場合、デフォルトのStorageClassが使用されます。 +
+`storageRequestSize`が設定されていない場合、デフォルトで1Giのボリュームが要求されます。
+
+=== CLI方式
+
+[,sh]
+----
+k3kcli cluster create \
+  --persistence-type dynamic \
+  --storage-class-name local-path \
+  --storage-request-size 30Gi \
+  k3kcluster-persistent
+----
+
+== 使用事例:`shared`モードで高可用性の仮想クラスターを作成する
+
+=== CRD方式
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-ha
+spec:
+  servers: 3
+----
+
+これにより、3台のサーバーと永続性のためのデフォルトの1Giボリュームを持つ仮想クラスターが作成されます。
+
+=== CLI方式
+
+[,sh]
+----
+k3kcli cluster create \
+  --servers 3 \
+  k3kcluster-ha
+----
+
+== 使用事例:`virtual`モードで高可用性の仮想クラスターを作成する
+
+=== CRD方式
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-virtual
+spec:
+  mode: virtual
+  servers: 3
+  agents: 3
+----
+
+これにより、3台のサーバーと3つのエージェント、そして永続性のためのデフォルトの1Giボリュームを持つ仮想クラスターが作成されます。
+
+NOTE: エージェントは`virtual`モードのためにのみ存在します。
+
+=== CLI方式
+
+[,sh]
+----
+k3kcli cluster create \
+  --agents 3 \
+  --servers 3 \
+  --mode virtual \
+  k3kcluster-virtual
+----
+
+== 使用事例:一時的な仮想クラスターを作成する
+
+=== CRD方式
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-ephemeral
+spec:
+  persistence:
+    type: ephemeral
+----
+
+これにより、永続性のない一時的な仮想クラスターが作成され、単一のサーバーが含まれます。
+
+=== CLI方式
+
+[,sh]
+----
+k3kcli cluster create \
+  --persistence-type ephemeral \
+  k3kcluster-ephemeral
+----
+
+== 使用事例:カスタムKubernetesバージョンを持つ仮想クラスターを作成する
+
+=== CRD方式
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-custom-k8s
+spec:
+  version: "v1.33.1-k3s1"
+----
+
+これにより、仮想クラスターのKubernetesバージョンが明示的に設定されます。
+
+NOTE: サポートされているのは、 https://k3s.io[K3s] のディストリビューションのみです。互換性のあるバージョンは、K3s GitHub の https://github.com/k3s-io/k3s/releases[リリースページ] で見つけることができます。
+
+=== CLI方式
+
+[,sh]
+----
+k3kcli cluster create \
+  --version v1.33.1-k3s1 \
+  k3kcluster-custom-k8s
+----
+
+== 使用事例:カスタムリソース制限を持つ仮想クラスターを作成する。
+
+=== CRD方式
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-resourced
+spec:
+  mode: virtual
+  serverLimit:
+    cpu: "1"
+    memory: "2Gi"
+  workerLimit:
+    cpu: "1"
+    memory: "2Gi"
+----
+
+これは、仮想クラスターの CPU とメモリの制限を設定します。
+
+=== CLI方式
+
+_CLI方式はまだ利用できません_
+
+== 使用事例:特定のホストノードに仮想クラスターを作成します。
+
+=== CRD方式
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-node-placed
+spec:
+  nodeSelector:
+    disktype: ssd
+----
+
+これは、ラベル `disktype: ssd` を持つノードに仮想クラスターを配置します。
+
+NOTE: `shared` モードでは、ワークロードも選択したノードにスケジュールされます。
+
+=== CLI方式
+
+_CLI方式はまだ利用できません_
+
+== 使用事例:Rancher ホストクラスター Kubeconfig を使用して仮想クラスターを作成します。
+
+Rancher で生成された `kubeconfig` を使用する場合、仮想クラスター `kubeconfig` のために CLI で希望するホストを指定する必要があります。 +
+デフォルトでは、`k3kcli` は現在のホスト `kubeconfig` を使用してターゲットクラスターを決定します。
+
+=== CRD方式
+
+_対象外。_
+
+=== CLI方式
+
+[,sh]
+----
+k3kcli cluster create \
+  --kubeconfig-server https://abc.xyz \
+  k3kcluster-host-rancher
+----
+
+== 使用事例:HTTP プロキシの背後に仮想クラスターを作成します。
+
+=== CRD方式
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-http-proxy
+spec:
+  serverEnvs:
+    - name: HTTP_PROXY
+      value: "http://abc.xyz"
+  agentEnvs:
+    - name: HTTP_PROXY
+      value: "http://abc.xyz"
+----
+
+これは、仮想クラスター内のサーバーとエージェントの両方に HTTP プロキシを設定します。
+
+NOTE: これは、サーバーとエージェントに *任意のカスタム環境変数* を渡すために活用でき、プロキシ設定に限りません。
+
+=== CLI方式
+
+[,sh]
+----
+k3kcli cluster create  \
+  --server-envs HTTP_PROXY=http://abc.xyz \
+  --agent-envs HTTP_PROXY=http://abc.xyz \
+  k3kcluster-http-proxy
+----
+
+== ハウツー：仮想クラスターに接続します。
+
+仮想クラスターが実行されているときは、CLI を使用して接続できます：
+
+=== CLI方式
+
+[,sh]
+----
+k3kcli kubeconfig generate --namespace k3k-mycluster --name mycluster
+export KUBECONFIG=$PWD/mycluster-kubeconfig.yaml
+kubectl get nodes
+----
+
+このコマンドは `kubeconfig` ファイルを生成し、これを使用して `kubectl` 経由で仮想クラスターにアクセスできます。

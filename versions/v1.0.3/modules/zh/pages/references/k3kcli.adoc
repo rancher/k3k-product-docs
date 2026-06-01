@@ -1,0 +1,321 @@
+= K3k CLI 命令 
+:revdate: "2026-01-28"
+:page-revdate: {revdate}
+
+== k3kcli
+
+K3K 的 CLI。
+
+=== 选项
+
+----
+      --debug               Turn on debug logs
+  -h, --help                help for k3kcli
+      --kubeconfig string   kubeconfig path ($HOME/.kube/config or $KUBECONFIG if set)
+----
+
+== k3kcli 集群
+
+K3k 集群命令。
+
+=== 选项
+
+----
+  -h, --help   help for cluster
+----
+
+=== 从父命令继承的选项
+
+----
+      --debug               Turn on debug logs
+      --kubeconfig string   kubeconfig path ($HOME/.kube/config or $KUBECONFIG if set)
+----
+
+== k3kcli 集群创建
+
+创建一个新的集群。
+
+----
+k3kcli cluster create [flags]
+----
+
+=== 示例
+
+----
+k3kcli cluster create [command options] NAME
+----
+
+=== 选项
+
+----
+      --agent-args strings            agents extra arguments
+      --agent-envs strings            agents extra Envs
+      --agents int                    number of agents
+      --annotations stringArray       Annotations to add to the cluster object (e.g. key=value)
+      --cluster-cidr string           cluster CIDR
+      --custom-certs string           The path for custom certificate directory
+  -h, --help                          help for create
+      --kubeconfig-server string      override the kubeconfig server host
+      --labels stringArray            Labels to add to the cluster object (e.g. key=value)
+      --mirror-host-nodes             Mirror Host Cluster Nodes
+      --mode string                   k3k mode type (shared, virtual) (default "shared")
+  -n, --namespace string              namespace of the k3k cluster
+      --persistence-type string       persistence mode for the nodes (dynamic, ephemeral) (default "dynamic")
+      --policy string                 The policy to create the cluster in
+      --server-args strings           servers extra arguments
+      --server-envs strings           servers extra Envs
+      --servers int                   number of servers (default 1)
+      --service-cidr string           service CIDR
+      --storage-class-name string     storage class name for dynamic persistence type
+      --storage-request-size string   storage size for dynamic persistence type
+      --timeout duration              The timeout for waiting for the cluster to become ready (e.g., 10s, 5m, 1h). (default 3m0s)
+      --token string                  token of the cluster
+      --version string                k3s version
+----
+
+=== 从父命令继承的选项
+
+----
+      --debug               Turn on debug logs
+      --kubeconfig string   kubeconfig path ($HOME/.kube/config or $KUBECONFIG if set)
+----
+
+== k3kcli 集群删除
+
+删除现有的集群。
+
+----
+k3kcli cluster delete [flags]
+----
+
+=== 示例
+
+----
+k3kcli cluster delete [command options] NAME
+----
+
+=== 选项
+
+----
+  -h, --help               help for delete
+      --keep-data          keeps persistence volumes created for the cluster after deletion
+  -n, --namespace string   namespace of the k3k cluster
+----
+
+=== 从父命令继承的选项
+
+----
+      --debug               Turn on debug logs
+      --kubeconfig string   kubeconfig path ($HOME/.kube/config or $KUBECONFIG if set)
+----
+
+== k3kcli 集群列表
+
+列出所有现有的集群。
+
+----
+k3kcli cluster list [flags]
+----
+
+=== 示例
+
+----
+k3kcli cluster list [command options]
+----
+
+=== 选项
+
+----
+  -h, --help               help for list
+  -n, --namespace string   namespace of the k3k cluster
+----
+
+=== 从父命令继承的选项
+
+----
+      --debug               Turn on debug logs
+      --kubeconfig string   kubeconfig path ($HOME/.kube/config or $KUBECONFIG if set)
+----
+
+== k3kcli 集群更新
+
+更新现有的集群
+
+----
+k3kcli cluster update [flags]
+----
+
+=== 示例
+
+----
+k3kcli cluster update [command options] NAME
+----
+
+=== 选项
+
+----
+      --agents int32              number of agents
+      --annotations stringArray   Annotations to add to the cluster object (e.g. key=value)
+  -h, --help                      help for update
+      --labels stringArray        Labels to add to the cluster object (e.g. key=value)
+  -n, --namespace string          namespace of the k3k cluster
+  -y, --no-confirm                Skip interactive approval before applying update
+      --servers int32             number of servers (default 1)
+      --version string            k3s version
+----
+
+=== 从父命令继承的选项
+
+----
+      --debug               Turn on debug logs
+      --kubeconfig string   kubeconfig path ($HOME/.kube/config or $KUBECONFIG if set)
+----
+
+== k3kcli kubeconfig
+
+管理集群的 kubeconfig。
+
+=== 选项
+
+----
+  -h, --help   help for kubeconfig
+----
+
+=== 从父命令继承的选项
+
+----
+      --debug               Turn on debug logs
+      --kubeconfig string   kubeconfig path ($HOME/.kube/config or $KUBECONFIG if set)
+----
+
+== k3kcli kubeconfig generate
+
+为集群生成 kubeconfig。
+
+----
+k3kcli kubeconfig generate [flags]
+----
+
+=== 选项
+
+----
+      --altNames strings           altNames of the generated certificates for the kubeconfig
+      --cn string                  Common name (CN) of the generated certificates for the kubeconfig (default "system:admin")
+      --config-name string         the name of the generated kubeconfig file
+      --expiration-days int        Expiration date of the certificates used for the kubeconfig (default 365)
+  -h, --help                       help for generate
+      --kubeconfig-server string   override the kubeconfig server host
+      --name string                cluster name
+  -n, --namespace string           namespace of the k3k cluster
+      --org strings                Organization name (ORG) of the generated certificates for the kubeconfig
+----
+
+=== 从父命令继承的选项
+
+----
+      --debug               Turn on debug logs
+      --kubeconfig string   kubeconfig path ($HOME/.kube/config or $KUBECONFIG if set)
+----
+
+== k3kcli 策略
+
+K3k 策略命令。
+
+=== 选项
+
+----
+  -h, --help   help for policy
+----
+
+=== 从父命令继承的选项
+
+----
+      --debug               Turn on debug logs
+      --kubeconfig string   kubeconfig path ($HOME/.kube/config or $KUBECONFIG if set)
+----
+
+== k3kcli 策略创建
+
+创建新策略。
+
+----
+k3kcli policy create [flags]
+----
+
+=== 示例
+
+----
+k3kcli policy create [command options] NAME
+----
+
+=== 选项
+
+----
+      --annotations stringArray   Annotations to add to the policy object (e.g. key=value)
+  -h, --help                      help for create
+      --labels stringArray        Labels to add to the policy object (e.g. key=value)
+      --mode string               The allowed mode type of the policy (default "shared")
+      --namespace strings         The namespaces where to bind the policy
+      --overwrite                 Overwrite namespace binding of existing policy
+----
+
+=== 从父命令继承的选项
+
+----
+      --debug               Turn on debug logs
+      --kubeconfig string   kubeconfig path ($HOME/.kube/config or $KUBECONFIG if set)
+----
+
+== k3kcli 策略删除
+
+删除现有的策略。
+
+----
+k3kcli policy delete [flags]
+----
+
+=== 示例
+
+----
+k3kcli policy delete [command options] NAME
+----
+
+=== 选项
+
+----
+  -h, --help   help for delete
+----
+
+=== 从父命令继承的选项
+
+----
+      --debug               Turn on debug logs
+      --kubeconfig string   kubeconfig path ($HOME/.kube/config or $KUBECONFIG if set)
+----
+
+== k3kcli 策略列表
+
+列出所有现有的策略。
+
+----
+k3kcli policy list [flags]
+----
+
+=== 示例
+
+----
+k3kcli policy list [command options]
+----
+
+=== 选项
+
+----
+  -h, --help   help for list
+----
+
+=== 从父命令继承的选项
+
+----
+      --debug               Turn on debug logs
+      --kubeconfig string   kubeconfig path ($HOME/.kube/config or $KUBECONFIG if set)
+----

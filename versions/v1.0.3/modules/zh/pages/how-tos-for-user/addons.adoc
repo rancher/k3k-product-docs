@@ -1,0 +1,67 @@
+= 附加组件
+:revdate: 2025-11-07
+:page-revdate: {revdate}
+
+本文件提供有关使用 `add-ons` 功能配置 K3k 集群的信息。
+
+IMPORTANT: 将秘密密钥命名为 '.yaml' 扩展名，以便 K3s 能够检测到它。
+
+== 使用附加组件创建 K3k 集群
+
+. 安装 K3k 控制器 chart。
+ifdef::comm-build[] 
+有关更多信息，请参见 xref:/quickstart.adoc#_install_the_k3k_controller[安装 K3k 控制器]。
+endif::comm-build[]
+
+. 创建一个秘密密钥：
++
+.示例
+[,yaml]
+----
+apiVersion: v1
+kind: Secret
+metadata:
+  name: rancher-init
+  namespace: default
+stringData:
+  manifests.yaml: |-
+    apiVersion: v1
+    kind: Namespace
+    metadata:
+      name: cattle-system
+----
+
+. 使用 `add-ons` 创建 K3k 集群：
++
+.示例
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: rancher-k3k
+  namespace: rancher-k3k-system
+spec:
+  mode: shared
+  persistence:
+    type: ephemeral
+  addons:
+    - secretRef: rancher-init
+      secretNamespace: default
+----
+
+== 校验
+
+* 验证集群是否已成功配置：
++
+[,yaml]
+----
+k exec -it -n rancher-k3k-system k3k-rancher-k3k-server-0 -- /bin/sh
+~ # kubectl get ns
+NAME              STATUS   AGE
+cattle-system     Active   98s
+default           Active   104s
+kube-node-lease   Active   104s
+kube-public       Active   105s
+kube-system       Active   105s
+----

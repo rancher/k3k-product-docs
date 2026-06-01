@@ -1,0 +1,59 @@
+= Asegurando Clústeres Virtuales en Modo Compartido
+:revdate: 2026-03-09
+:page-revdate: {revdate}
+
+Por defecto, {k3k-product-name} en modo compartido permite pods privilegiados, lo que puede llevar a un acceso a nivel de host. Para asegurar tu entorno, debes hacer cumplir https://kubernetes.io/docs/concepts/security/pod-security-standards/[el Estándar de Seguridad de Pods (PSS)].
+
+La siguiente guía explica cómo hacer cumplir esto utilizando el mecanismo `VirtualClusterPolicy` de K3k.
+
+== Crea una Directiva de Clúster Virtual
+
+Define una directiva para restringir las capacidades de los pods. 
+
+[NOTE]
+====
+Se recomienda el perfil *Base* para prevenir la escalada de privilegios sin romper la mayoría de las cargas de trabajo.
+====
+
+----
+apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: baseline-psa-policy
+spec:
+  podSecurityAdmissionLevel: baseline
+----
+
+*Niveles Soportados*
+
+* *privilegiado*: Acceso no restringido (Por defecto).
+* *Base*: Previene escaladas de privilegios conocidas.
+* *restringido*: Protección máxima (mayor seguridad, menor compatibilidad).
+
+Consulta https://kubernetes.io/docs/concepts/security/pod-security-standards/[Estándares de Seguridad de Pods] para más información.
+
+== Aplica la Directiva
+
+Adjunta la directiva a los espacio(s) de nombres donde se despliegan tus clústeres virtuales utilizando la interfaz de usuario de Rancher o `kubectl`:
+
+----
+kubectl label namespace <namespace-name> policy.k3k.io/policy-name="baseline-psa-policy"
+----
+
+== Verificación
+
+El operador K3k actualiza automáticamente el/los espacio(s) de nombres objetivo para hacer cumplir el Estándar de Seguridad de Pods (PSS) seleccionado.
+
+Ejemplo de un espacio de nombres aplicado:
+
+----
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: prod-k3kcluster-ns
+  labels:
+    pod-security.kubernetes.io/enforce: baseline
+    policy.k3k.io/policy-name: baseline-psa-policy
+----
+
+Cualquier pod dentro del clúster virtual que viole esta política (por ejemplo, solicitando `privileged: true`) es rechazado.

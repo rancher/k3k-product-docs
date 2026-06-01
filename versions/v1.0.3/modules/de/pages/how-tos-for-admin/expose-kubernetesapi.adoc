@@ -1,0 +1,93 @@
+= How-to: Die Kubernetes-API des virtuellen Clusters freigeben
+:revdate: 2025-11-11
+:page-revdate: {revdate}
+
+Diese Anleitung erklärt, wie man die Kubernetes-API der virtuellen Cluster für externe Netzwerke freigibt. Die Praktiken gelten sowohl für _virtuellen Modus_ als auch für _gemeinsamen Modus_.
+
+[NOTE]
+====
+Es ist wichtig, die TLS-SAN-Argumente zum Cluster hinzuzufügen, damit die IP-Adresse oder der Host nicht abgelehnt werden.
+====
+
+[CAUTION]
+====
+Das Ausführen von `k3kcli cluster delete clustername` löscht den virtuellen Cluster, hat jedoch keine Auswirkungen auf die Ingresses oder Dienste, die mit den folgenden Methoden erstellt wurden.
+====
+
+== Ingress
+
+Es ist möglich, die Kubernetes-API des virtuellen Clusters über einen Ingress-Controller, der auf dem Host vorhanden ist, freizugeben. Es ist jedoch wichtig zu beachten, dass die TLS-Terminierung am virtuellen Cluster durchgeführt werden muss, was einige Änderungen an normalen Ingress-Objekten erfordert.
+
+=== Traefik
+
+Im Falle von Traefik wird die API des virtuellen Clusters über eine IngressRouteTCP-Ressource freigegeben. Hier ist ein Beispiel für eine Konfiguration:
+
+----
+apiVersion: traefik.io/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name: cluster-ingress-rt
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: HostSNI(`cluster.example.com`)
+      services:
+        - name: k3k-clustername-service
+          port: 443
+  tls:
+    passthrough: true
+----
+
+=== Ingress Nginx
+
+Ingress Nginx hat standardmäßig keine SSL-Passthrough-Funktion aktiviert und muss mit dem --enable-ssl-passthrough-Flag aktiviert werden. Siehe die Dokumentation von ingress-nginx { https://kubernetes.github.io/ingress-nginx/user-guide/tls/#ssl-passthrough}[hier].
+
+Danach ist es möglich, eine normale Ingress-Ressource mit der Annotation "nginx.ingress.kubernetes.io/ssl-passthrough" zu erstellen. Beispiel:
+
+----
+apiVersion: networking.k8s.io
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "https"
+  name: cluster-ingress
+spec:
+  rules:
+  - host: cluster.example.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: k3k-clustername-service
+            port:
+              number: 443
+        path: /
+        pathType: Prefix
+----
+
+== Service
+
+Die bei der Erstellung des virtuellen Clusters erstellten Dienste können nicht geändert werden. Es ist notwendig, einen neuen Dienst des gewünschten Typs (LoadBalancer oder NodePort) zu erstellen.
+
+=== LoadBalancer
+Wenn ein Load Balancer für den Host-Cluster verfügbar ist, entweder von einem Cloud-Service-Anbieter oder von einem Add-On wie MetalLB, ist es möglich, die API des virtuellen Clusters über seine eigene eindeutige IP-Adresse freizugeben.
+
+Für einen Beispiel-Cluster namens _test_ im Namespace _k3k_test_ erstellen Sie einen LoadBalancer-Dienst mit dem folgenden Befehl:
+
+[bash, shell]
+----
+kubectl -n k3k_test expose service k3k-test-service --type=LoadBalancer --name=k3k-test-servicelb
+----
+
+=== NodePort
+
+In Ermangelung der oben genannten Lösungen kann die virtuelle Kubernetes-API über einen NodePort-Dienst unter Verwendung der IP-Adresse eines der Host-Knoten freigegeben werden.
+
+Für einen Beispiel-Cluster namens _test_ im Namespace _k3k_test_ erstellen Sie einen NodePort-Dienst mit dem folgenden Befehl:
+
+[bash, shell]
+----
+kubectl -n k3k_test expose service k3k-test-service --type=NodePort --name=k3k-test-servicenp
+----

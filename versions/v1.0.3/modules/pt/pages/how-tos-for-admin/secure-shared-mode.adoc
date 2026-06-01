@@ -1,0 +1,59 @@
+= Protegendo Clusters Virtuais em Modo Compartilhado
+:revdate: 2026-03-09
+:page-revdate: {revdate}
+
+Por padrão, {k3k-product-name} no modo compartilhado permite pods privilegiados, o que pode levar ao acesso em nível de host. Para garantir a segurança do seu ambiente, você deve impor https://kubernetes.io/docs/concepts/security/pod-security-standards/[Padrão de Segurança de Pods (PSS)].
+
+O guia a seguir explica como impor isso usando o mecanismo `VirtualClusterPolicy` do K3k.
+
+== Crie uma VirtualClusterPolicy
+
+Defina uma política para restringir as capacidades dos pods. 
+
+[NOTE]
+====
+O perfil *Baseline* é recomendado para evitar a escalada de privilégios sem comprometer a maioria das cargas de trabalho.
+====
+
+----
+apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: baseline-psa-policy
+spec:
+  podSecurityAdmissionLevel: baseline
+----
+
+*Níveis Suportados*
+
+* *privilegiado*: Acesso irrestrito (Padrão).
+* *baseline*: Previne escaladas de privilégios conhecidas.
+* *restrito*: Proteção máxima (maior segurança, menor compatibilidade).
+
+Veja https://kubernetes.io/docs/concepts/security/pod-security-standards/[os Padrões de Segurança de Pods] para mais informações.
+
+== Aplique a Política
+
+Anexe a política ao(s) namespace(s) onde seus clusters virtuais estão implantados usando a interface do Rancher ou `kubectl`:
+
+----
+kubectl label namespace <namespace-name> policy.k3k.io/policy-name="baseline-psa-policy"
+----
+
+== Verificação
+
+O operador K3k atualiza automaticamente o(s) namespace(s) alvo para impor o Padrão de Segurança de Pods (PSS) selecionado.
+
+Exemplo de um namespace com política imposta:
+
+----
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: prod-k3kcluster-ns
+  labels:
+    pod-security.kubernetes.io/enforce: baseline
+    policy.k3k.io/policy-name: baseline-psa-policy
+----
+
+Qualquer pod dentro do cluster virtual que viole esta política (por exemplo, solicitando `privileged: true`) é rejeitado.

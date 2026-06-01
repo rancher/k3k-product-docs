@@ -1,0 +1,82 @@
+= Cómo elegir entre el modo compartido y el modo virtual
+:revdate: 2025-09-16
+:page-revdate: {revdate}
+
+Esta guía te ayuda a elegir el modo adecuado para tu clúster virtual: *Compartido* o *Virtual*. 
+
+Si no estás seguro, comienza con *modo compartido* - es el predeterminado y se adapta a la mayoría de los escenarios comunes.
+
+== Modo compartido (predeterminado)
+
+*Mejor para:*
+
+* Desarrolladores que quieren ejecutar cargas de trabajo rápidamente sin gestionar los internos de Kubernetes
+* Equipos de plataforma que requieren visibilidad y control sobre todas las cargas de trabajo
+* Usuarios que necesitan acceso a recursos a nivel de host (por ejemplo, GPUs)
+
+En *modo compartido*, el clúster virtual ejecuta su propio servidor K3s pero depende del host para ejecutar cargas de trabajo. El kubelet virtual sincroniza recursos, permitiendo un aprovisionamiento ligero y rápido con soporte para el aislamiento de recursos del clúster. Más detalles sobre la link:./../architecture.adoc#shared-mode[arquitectura].
+
+=== Casos de uso por persona
+
+==== Acciones del
+
+_"Estoy construyendo una aplicación web que debería estar expuesta fuera del clúster virtual."_ +
+→ Usa *modo compartido*. Te permite xref:how-tos-for-user/expose-workloads.adoc[exponer] tu aplicación.
+
+==== Científico de datos:
+
+_"`I need to run Jupyter notebooks that leverage the cluster's GPU.`"_ +
+→ Usa *modo compartido*. Te da acceso a dispositivos físicos mientras mantiene bajo el overhead.
+
+==== Administrador de plataforma
+
+_"Quiero monitorizar y asegurar todas las cargas de trabajo de los inquilinos desde una ubicación central."_ +
+→ Usa *modo compartido*. Los agentes a nivel de host (por ejemplo, observabilidad, aplicación de directivas) funcionan en todos los clústeres virtuales.
+
+==== Ingeniero de Seguridad
+
+_"Necesito hacer cumplir directivas de seguridad como directivas de red o escaneo en tiempo de ejecución en todas las cargas de trabajo."_ +
+→ Usa *modo compartido*. La plataforma puede hacer cumplir directivas a nivel global sin que los inquilinos las eludan.
+
+_"Necesito probar un nuevo controlador de admisión o motor de directivas."_ +
+→ Utiliza *modo compartido*, si está limitado a tu clúster virtual. Puedes ejecutar herramientas como Kubewarden sin afectar al host.
+
+==== Ingeniero de CI/CD
+
+_"Quiero crear clústeres virtuales desechables por cada ejecución de pipeline, rápido y con bajo coste de recursos."_ +
+→ Usa *modo compartido*. Es rápido de aprovisionar y ideal para entornos de corta duración y limitados a un espacio de nombres.
+
+== modo virtual
+
+*Mejor para:*
+
+* Usuarios avanzados que necesitan aislamiento completo de Kubernetes
+* Desarrolladores que prueban características experimentales o a nivel de clúster
+* Casos de uso que requieren control sobre todo el plano de control de Kubernetes
+
+En *modo virtual*, el clúster virtual ejecuta su propio plano de control de Kubernetes aislado. Soporta diferentes CNIs y configuraciones de API -- ideales para experimentación profunda o cargas de trabajo avanzadas. Más detalles sobre la link:./../architecture.adoc#virtual-mode[arquitectura].
+
+=== Casos de uso por persona
+
+==== Acciones del
+
+_"Necesito probar una nueva puerta de enlace de características de Kubernetes que está deshabilitada en el clúster host."_ +
+→ Utiliza *modo virtual*. Puedes configurar tus propias banderas del plano de control y características de la API.
+
+==== Administrador de plataforma
+
+_"Estamos probando actualizaciones en varias versiones de Kubernetes, incluyendo nuevos comportamientos de la API."_→ Utiliza modo virtual. Puedes ejecutar diferentes versiones de Kubernetes y validar de forma segura las vías de actualización de versión.
+
+==== Ingeniero de redes
+
+_"Estoy evaluando un nuevo CNI que necesita control total de la red del clúster."_ +
+→ Utiliza *modo virtual*. Puedes ejecutar una pila CNI separada sin afectar al host ni a otros inquilinos.
+
+==== Ingeniero de Seguridad
+
+_"Estoy probando un nuevo controlador de admisión y motor de directivas antes de implementarlo en todo el clúster."_ +
+→ Utiliza *modo virtual*, si necesitas probar directivas a nivel de clúster, flujo de admisión personalizado o extensiones avanzadas con control total.
+
+== Información adicional
+
+Si estás evaluando casos de uso más avanzados o deseas una comparación más profunda, consulta el desglose completo de compensaciones en la xref:../architecture.adoc[documentación de Arquitectura].

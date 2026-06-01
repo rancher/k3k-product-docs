@@ -1,0 +1,82 @@
+= Comment choisir entre le mode partagé et le mode virtuel
+:revdate: 2025-09-16
+:page-revdate: {revdate}
+
+Ce guide vous aide à choisir le bon mode pour votre cluster virtuel{nbsp}: *Partagé* ou *Virtuel*. 
+
+Si vous n'êtes pas sûr, commencez par le *mode partagé* - c'est le mode par défaut et il convient à la plupart des scénarios courants.
+
+== Mode partagé (par défaut)
+
+*Idéal pour :*
+
+* Les développeurs qui souhaitent exécuter des charges de travail rapidement sans gérer les détails internes de Kubernetes
+* Les équipes de plateforme qui nécessitent visibilité et contrôle sur toutes les charges de travail
+* Les utilisateurs qui ont besoin d'accéder aux ressources au niveau de l'hôte (par exemple, les GPU)
+
+Dans le *mode partagé*, le cluster virtuel exécute son propre serveur K3s mais s'appuie sur l'hôte pour exécuter les charges de travail. Le kubelet virtuel synchronise les ressources, permettant un provisionnement léger et rapide avec un support pour l'isolation des ressources du cluster. Plus de détails sur l'link:./../architecture.adoc#shared-mode[architecture].
+
+=== Cas d'utilisation par persona
+
+==== Développeur
+
+_"Je construis une application web qui doit être exposée à l'extérieur du cluster virtuel."_ +
+→ Utilisez le *mode partagé*. Cela vous permet de xref:how-tos-for-user/expose-workloads.adoc[exposer] votre application.
+
+==== Scientifique des données{nbsp}:
+
+_"`I need to run Jupyter notebooks that leverage the cluster's GPU.`"_ +
+→ Utilisez le *mode partagé*. Cela donne accès à des dispositifs physiques tout en maintenant une faible surcharge.
+
+==== Administrateur de plateforme
+
+_"Je veux surveiller et sécuriser toutes les charges de travail des locataires depuis un emplacement central."_ +
+→ Utilisez le *mode partagé*. Les agents au niveau de l'hôte (par exemple, observabilité, application des politiques) fonctionnent sur tous les clusters virtuels.
+
+==== Ingénieur en sécurité
+
+_Je dois appliquer des politiques de sécurité telles que des politiques réseau ou le scan du composant d'exécution sur toutes les charges de travail._ +
+→ Utilisez le *mode partagé*. La plateforme peut appliquer des politiques à l'échelle mondiale sans contournement par les locataires.
+
+_Je dois tester un nouveau contrôleur d'admission ou un moteur de politiques._ +
+→ Utilisez le *mode partagé*, s'il est limité à votre cluster virtuel. Vous pouvez exécuter des outils comme Kubewarden sans affecter l'hôte.
+
+==== Ingénieur CI/CD
+
+_"Je veux créer des clusters virtuels jetables par exécution de pipeline, rapidement et à faible coût en ressources."_ +
+→ Utilisez le *mode partagé*. C'est rapide à provisionner et idéal pour des environnements à durée de vie courte, limités à un espace de noms.
+
+== Mode virtuel
+
+*Idéal pour :*
+
+* Utilisateurs avancés qui ont besoin d'une isolation complète de Kubernetes
+* Développeurs testant des fonctionnalités expérimentales ou à l'échelle du cluster
+* Cas d'utilisation nécessitant un contrôle sur l'ensemble du plan de contrôle Kubernetes
+
+Dans le *mode virtuel*, le cluster virtuel exécute son propre plan de contrôle Kubernetes isolé. Il prend en charge différents CNI et configurations API --, idéal pour des expérimentations approfondies ou des charges de travail avancées. Plus de détails sur l'link:./../architecture.adoc#virtual-mode[architecture].
+
+=== Cas d'utilisation par persona
+
+==== Développeur
+
+_"Je dois tester une nouvelle fonctionnalité Kubernetes qui est désactivée dans le cluster hôte."_ +
+→ Utilisez le *mode virtuel*. Vous pouvez configurer vos propres options du plan de contrôle et fonctionnalités de l'API.
+
+==== Administrateur de plateforme
+
+_"Nous testons des mises à niveau entre les versions de Kubernetes, y compris de nouveaux comportements API."_ → Utilisez le mode virtuel. Vous pouvez exécuter différentes versions de Kubernetes et valider en toute sécurité les chemins de mise à niveau.
+
+==== Network Engineer
+
+_"J'évalue un nouveau CNI qui nécessite un contrôle total du réseau du cluster."_ +
+→ Utilisez le *mode virtuel*. Vous pouvez exécuter une pile CNI séparée sans affecter l'hôte ou d'autres locataires.
+
+==== Ingénieur en sécurité
+
+_Je teste un nouveau contrôleur d'admission et un moteur de politiques avant de le déployer à l'échelle du cluster._ +
+→ Utilisez le *mode virtuel*, si vous devez tester des politiques à l'échelle du cluster, un flux d'admission personnalisé ou des extensions avancées avec un contrôle total.
+
+== Informations supplémentaires
+
+Si vous évaluez des cas d'utilisation plus avancés ou souhaitez une comparaison plus approfondie, consultez l'intégralité de l'analyse des compromis dans la xref:../architecture.adoc[documentation sur l'architecture].

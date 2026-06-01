@@ -1,0 +1,687 @@
+[id="k3k-api-reference"]
+= Referencia de la API
+:revdate: "2026-01-28"
+:page-revdate: {revdate}
+:anchor_prefix: k8s-api
+
+== Problemas relacionados
+- xref:{anchor_prefix}-k3k-io-v1beta1[$$k3k.io/v1beta1$$]
+
+
+[id="{anchor_prefix}-k3k-io-v1beta1"]
+== k3k.io/v1beta1
+
+
+=== Tipos de Recursos
+- xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-cluster[$$Cluster$$]
+- xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clusterlist[$$ClusterList$$]
+- xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-virtualclusterpolicy[$$VirtualClusterPolicy$$]
+- xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-virtualclusterpolicylist[$$VirtualClusterPolicyList$$]
+
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-addon"]
+=== Complemento
+
+
+
+El complemento especifica un Secreto que contiene YAML para desplegar al iniciar el clúster.
+
+
+
+_Aparece en:_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clusterspec[$$ClusterSpec$$]
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| Campo | Descripción | Default | Validación
+| *`secretNamespace`* __cadena__ | SecretNamespace es el espacio de nombres del Secreto. + |  | 
+| *`secretRef`* __cadena__ | SecretRef es el nombre del Secreto. + |  | 
+|===
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-cluster"]
+=== Clúster
+
+
+
+El clúster define un clúster virtual de Kubernetes gestionado por k3k.
+Especifica el estado deseado de un clúster virtual, incluyendo la versión, la configuración de nodos y la red. k3k utiliza esto para aprovisionar y gestionar estos clústeres virtuales.
+
+
+
+_Aparece en:_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clusterlist[$$ClusterList$$]
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| Campo | Descripción | Default | Validación
+| *`apiVersion`* __cadena__ | `k3k.io/v1beta1` | |
+| *`kind`* __cadena__ | `Cluster` | |
+| *`metadata`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#objectmeta-v1-meta[$$ObjectMeta$$]__ | Consulta la documentación de la API de Kubernetes para los campos de `metadata`.
+ |  | 
+| *`spec`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clusterspec[$$ClusterSpec$$]__ | Spec define el estado deseado del Clúster. + | {  } | 
+|===
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clusterlist"]
+=== Lista de Clústeres
+
+
+
+ClusterList es una lista de recursos de Clúster.
+
+
+
+
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| Campo | Descripción | Default | Validación
+| *`apiVersion`* __cadena__ | `k3k.io/v1beta1` | |
+| *`kind`* __cadena__ | `ClusterList` | |
+| *`metadata`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#listmeta-v1-meta[$$ListMeta$$]__ | Consulta la documentación de la API de Kubernetes para los campos de `metadata`.
+ |  | 
+| *`items`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-cluster[$$Cluster$$] array__ |  |  | 
+|===
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clustermode"]
+=== ClusterMode
+
+_Tipo subyacente:_ _cadena_
+
+ClusterMode es el modo de aprovisionamiento posible de un clúster.
+
+_Validación:_
+- Enum: [shared virtual]
+
+_Aparece en:_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clusterspec[$$ClusterSpec$$]
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-virtualclusterpolicyspec[$$VirtualClusterPolicySpec$$]
+
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clusterphase"]
+=== ClusterPhase
+
+_Tipo subyacente:_ _cadena_
+
+ClusterPhase es un resumen de alto nivel del estado actual del ciclo de vida del clúster.
+
+
+
+_Aparece en:_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clusterstatus[$$ClusterStatus$$]
+
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clusterspec"]
+=== ClusterSpec
+
+
+
+ClusterSpec define el estado deseado de un clúster virtual de Kubernetes.
+
+
+
+_Aparece en:_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-cluster[$$Cluster$$]
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| Campo | Descripción | Default | Validación
+| *`version`* __cadena__ | La versión es la versión de K3s que se utilizará para los nodos virtuales. +
+Debería seguir la convención de versionado de K3s (por ejemplo, v1.28.2-k3s1). +
+Si no se especifica, se utilizará la versión de Kubernetes del nodo host. + |  | 
+| *`mode`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clustermode[$$ClusterMode$$]__ | El modo especifica el modo de aprovisionamiento del clúster: "compartido" o "virtual". +
+Predeterminado a "compartido". Este campo es inmutable. + | shared | Enum: [shared virtual] +
+
+| *`servers`* __entero__ | Servers especifica el número de pods de K3s que se ejecutarán en modo servidor (plano de control). +
+Debe ser al menos 1. El valor predeterminado es 1. + | 1 | 
+| *`agents`* __entero__ | Los agentes especifican el número de pods de K3s que se ejecutarán en modo agente (trabajador). +
+Debe ser 0 o mayor. El valor predeterminado es 0. +
+Este campo se ignora en modo "compartido". + | 0 | 
+| *`clusterCIDR`* __cadena__ | ClusterCIDR es el rango CIDR para las IPs de los pods. +
+El valor predeterminado es 10.42.0.0/16 en modo compartido y 10.52.0.0/16 en modo virtual. +
+Este campo es inmutable. + |  | 
+| *`serviceCIDR`* __cadena__ | ServiceCIDR es el rango CIDR para las IPs de los servicios. +
+El valor predeterminado es 10.43.0.0/16 en modo compartido y 10.53.0.0/16 en modo virtual. +
+Este campo es inmutable. + |  | 
+| *`clusterDNS`* __cadena__ | ClusterDNS es la dirección IP para el servicio CoreDNS. +
+Debe estar dentro del rango ServiceCIDR. El valor predeterminado es 10.43.0.10. +
+Este campo es inmutable. + |  | 
+| *`persistence`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-persistenceconfig[$$PersistenceConfig$$]__ | Persistence especifica opciones para persistir los datos de etcd. +
+El valor predeterminado es persistencia dinámica, que utiliza un PersistentVolumeClaim para proporcionar persistencia de datos. +
+Se requiere una StorageClass predeterminada para la persistencia dinámica. + |  | 
+| *`expose`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-exposeconfig[$$ExposeConfig$$]__ | Expose especifica opciones para exponer el servidor API. +
+Por defecto, solo se expone como un ClusterIP. + |  | 
+| *`nodeSelector`* __object (keys:string, values:string)__ | NodeSelector especifica etiquetas de nodo para restringir dónde se programan los pods del servidor/agente. +
+En modo "compartido", esto también se aplica a las cargas de trabajo. + |  | 
+| *`priorityClass`* __cadena__ | PriorityClass especifica el priorityClassName para los pods del servidor/agente. +
+En modo "compartido", esto también se aplica a las cargas de trabajo. + |  | 
+| *`tokenSecretRef`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#secretreference-v1-core[$$SecretReference$$]__ | TokenSecretRef es una referencia de secreto que contiene el token utilizado por los nodos trabajadores para unirse al clúster. +
+El secreto debe tener un campo "token" en sus datos. + |  | 
+| *`tlsSANs`* __matriz de cadenas__ | TLSSANs especifica nombres alternativos de sujeto para el certificado del servidor K3s. + |  | 
+| *`serverArgs`* __matriz de cadenas__ | ServerArgs especifica pares clave-valor ordenados para los pods del servidor K3s. +
+Ejemplo: ["--tls-san=example.com"] + |  | 
+| *`agentArgs`* __matriz de cadenas__ | AgentArgs especifica pares clave-valor ordenados para los pods del agente K3s. +
+Ejemplo: ["--node-name=my-agent-node"] + |  | 
+| *`serverEnvs`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#envvar-v1-core[$$EnvVar$$] array__ | ServerEnvs especifica una lista de variables de entorno para establecer en el pod del servidor. + |  | 
+| *`agentEnvs`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#envvar-v1-core[$$EnvVar$$] array__ | AgentEnvs especifica una lista de variables de entorno para establecer en el pod del agente. + |  | 
+| *`addons`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-addon[$$Addon$$] array__ | Addons especifica secretos que contienen YAML en bruto para desplegar al iniciar el clúster. + |  | 
+| *`serverLimit`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#resourcelist-v1-core[$$ResourceList$$]__ | ServerLimit especifica límites de recursos para los nodos del servidor. + |  | 
+| *`workerLimit`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#resourcelist-v1-core[$$ResourceList$$]__ | WorkerLimit especifica límites de recursos para los nodos del agente. + |  | 
+| *`mirrorHostNodes`* __boolean__ | MirrorHostNodes controla si los objetos de nodo del clúster anfitrión +
+se reflejan en el clúster virtual. + |  | 
+| *`customCAs`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-customcas[$$CustomCAs$$]__ | CustomCAs especifica los pares de cert/key para certificados CA personalizados. + |  | 
+| *`sync`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-syncconfig[$$SyncConfig$$]__ | Sync especifica los tipos de recursos que se sincronizarán del clúster virtual al clúster anfitrión. + | {  } | 
+| *`secretMounts`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-secretmount[$$SecretMount$$] array__ | SecretMounts especifica una lista de secretos que se montarán en los pods del servidor y del agente. +
+Cada entrada define un secreto y su ruta de montaje dentro de los pods. + |  | 
+|===
+
+
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-configmapsyncconfig"]
+=== ConfigMapSyncConfig
+
+
+
+ConfigMapSyncConfig especifica las opciones de sincronización para los servicios.
+
+
+
+_Aparece en:_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-syncconfig[$$SyncConfig$$]
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| Campo | Descripción | Default | Validación
+| *`enabled`* __boolean__ | Enabled es un interruptor de encendido/apagado para sincronizar recursos. + | true | 
+| *`selector`* __object (keys:string, values:string)__ | Selector especifica un conjunto de etiquetas de los recursos que se sincronizarán, si está vacío +
+entonces todos los recursos del tipo dado se sincronizarán. + |  | 
+|===
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-credentialsource"]
+=== CredentialSource
+
+
+
+CredentialSource define de dónde obtener una credencial.
+Puede representar ya sea un par de claves TLS o una única clave privada.
+
+
+
+_Aparece en:_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-credentialsources[$$CredentialSources$$]
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| Campo | Descripción | Default | Validación
+| *`secretName`* __cadena__ | El secreto debe contener claves específicas según el tipo de credencial: +
+- Para pares de certificados TLS (por ejemplo, ServerCA): `tls.crt` y `tls.key`. +
+- Para la clave de firma del ServiceAccountToken: `tls.key`. + |  | 
+|===
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-credentialsources"]
+=== CredentialSources
+
+
+
+CredentialSources lista todas las credenciales requeridas, incluyendo tanto pares de claves TLS como claves de firma individuales.
+
+
+
+_Aparece en:_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-customcas[$$CustomCAs$$]
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| Campo | Descripción | Default | Validación
+| *`serverCA`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-credentialsource[$$CredentialSource$$]__ | ServerCA especifica el par de certificados y claves de server-ca. + |  | 
+| *`clientCA`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-credentialsource[$$CredentialSource$$]__ | ClientCA especifica el par de certificados/claves client-ca. + |  | 
+| *`requestHeaderCA`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-credentialsource[$$CredentialSource$$]__ | RequestHeaderCA especifica el par de certificados/claves request-header-ca. + |  | 
+| *`etcdServerCA`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-credentialsource[$$CredentialSource$$]__ | ETCDServerCA especifica el par de certificados/claves etcd-server-ca. + |  | 
+| *`etcdPeerCA`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-credentialsource[$$CredentialSource$$]__ | ETCDPeerCA especifica el par de certificados/claves etcd-peer-ca. + |  | 
+| *`serviceAccountToken`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-credentialsource[$$CredentialSource$$]__ | ServiceAccountToken especifica la clave del service-account-token. + |  | 
+|===
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-customcas"]
+=== CustomCAs
+
+
+
+CustomCAs especifica los pares de certificados/claves para certificados CA personalizados.
+
+
+
+_Aparece en:_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clusterspec[$$ClusterSpec$$]
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| Campo | Descripción | Default | Validación
+| *`enabled`* __boolean__ | Enabled activa o desactiva esta función. + | true | 
+| *`sources`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-credentialsources[$$CredentialSources$$]__ | Sources define las fuentes para todos los certificados CA personalizados requeridos. + |  | 
+|===
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-exposeconfig"]
+=== ExposeConfig
+
+
+
+ExposeConfig especifica las opciones para exponer el servidor API.
+
+
+
+_Aparece en:_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clusterspec[$$ClusterSpec$$]
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| Campo | Descripción | Default | Validación
+| *`ingress`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-ingressconfig[$$IngressConfig$$]__ | Ingress especifica las opciones para exponer el servidor API a través de un Ingress. + |  | 
+| *`loadBalancer`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-loadbalancerconfig[$$LoadBalancerConfig$$]__ | LoadBalancer especifica las opciones para exponer el servidor API a través de un servicio LoadBalancer. + |  | 
+| *`nodePort`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-nodeportconfig[$$NodePortConfig$$]__ | NodePort especifica las opciones para exponer el servidor API a través de NodePort. + |  | 
+|===
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-ingressconfig"]
+=== IngressConfig
+
+
+
+IngressConfig especifica las opciones para exponer el servidor API a través de un Ingress.
+
+
+
+_Aparece en:_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-exposeconfig[$$ExposeConfig$$]
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| Campo | Descripción | Default | Validación
+| *`annotations`* __objeto (claves:cadena, valores:cadena)__ | Annotations especifica las anotaciones que se añadirán al Ingress. + |  | 
+| *`ingressClassName`* __cadena__ | IngressClassName especifica la IngressClass que se debe utilizar para el Ingress. + |  | 
+|===
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-ingresssyncconfig"]
+=== IngressSyncConfig
+
+
+
+IngressSyncConfig especifica las opciones de sincronización para los servicios.
+
+
+
+_Aparece en:_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-syncconfig[$$SyncConfig$$]
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| Campo | Descripción | Default | Validación
+| *`enabled`* __boolean__ | Enabled es un interruptor de encendido/apagado para sincronizar recursos. + | false | 
+| *`selector`* __objeto (claves:cadena, valores:cadena)__ | Selector especifica un conjunto de etiquetas de los recursos que se sincronizarán, si está vacío +
+entonces todos los recursos del tipo dado se sincronizarán. + |  | 
+|===
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-loadbalancerconfig"]
+=== LoadBalancerConfig
+
+
+
+LoadBalancerConfig especifica las opciones para exponer el servidor API a través de un servicio LoadBalancer.
+
+
+
+_Aparece en:_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-exposeconfig[$$ExposeConfig$$]
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| Campo | Descripción | Default | Validación
+| *`serverPort`* __entero__ | ServerPort es el puerto en el que se expone el servidor K3s cuando el tipo es LoadBalancer. +
+Si no se especifica, se asignará el puerto https 443 por defecto. +
+Si es 0 o negativo, el puerto no será expuesto. + |  | 
+| *`etcdPort`* __entero__ | ETCDPort es el puerto en el que se expone el servicio ETCD cuando el tipo es LoadBalancer. +
+Si no se especifica, se asignará el puerto etcd 2379 por defecto. +
+Si es 0 o negativo, el puerto no será expuesto. + |  | 
+|===
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-nodeportconfig"]
+=== NodePortConfig
+
+
+
+NodePortConfig especifica las opciones para exponer el servidor API a través de NodePort.
+
+
+
+_Aparece en:_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-exposeconfig[$$ExposeConfig$$]
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| Campo | Descripción | Default | Validación
+| *`serverPort`* __entero__ | ServerPort es el puerto en cada nodo en el que se expone el servidor K3s cuando el tipo es NodePort. +
+Si no se especifica, se asignará un puerto aleatorio entre 30000-32767. +
+Si está fuera de rango, el puerto no será expuesto. + |  | 
+| *`etcdPort`* __entero__ | ETCDPort es el puerto en cada nodo en el que se expone el servicio ETCD cuando el tipo es NodePort. +
+Si no se especifica, se asignará un puerto aleatorio entre 30000-32767. +
+Si está fuera de rango, el puerto no será expuesto. + |  | 
+|===
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-persistenceconfig"]
+=== PersistenceConfig
+
+
+
+PersistenceConfig especifica las opciones para persistir los datos de etcd.
+
+
+
+_Aparece en:_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clusterspec[$$ClusterSpec$$]
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| Campo | Descripción | Default | Validación
+| *`type`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-persistencemode[$$PersistenceMode$$]__ | Type especifica el modo de persistencia. + | dinámico | 
+| *`storageClassName`* __cadena__ | StorageClassName es el nombre de la StorageClass que se utilizará para el PVC. +
+Este campo solo es relevante en modo "dinámico". + |  | 
+| *`storageRequestSize`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#quantity-resource-api[$$Quantity$$]__ | StorageRequestSize es el tamaño solicitado para el PVC. +
+Este campo solo es relevante en modo "dinámico". + | 2 G | 
+|===
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-persistencemode"]
+=== PersistenceMode
+
+_Tipo subyacente:_ _cadena_
+
+PersistenceMode es el modo de almacenamiento de un clúster.
+
+
+
+_Aparece en:_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-persistenceconfig[$$PersistenceConfig$$]
+
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-persistentvolumeclaimsyncconfig"]
+=== PersistentVolumeClaimSyncConfig
+
+
+
+PersistentVolumeClaimSyncConfig especifica las opciones de sincronización para los servicios.
+
+
+
+_Aparece en:_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-syncconfig[$$SyncConfig$$]
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| Campo | Descripción | Default | Validación
+| *`enabled`* __boolean__ | Enabled es un interruptor de encendido/apagado para sincronizar recursos. + | true | 
+| *`selector`* __objeto (claves:cadena, valores:cadena)__ | Selector especifica un conjunto de etiquetas de los recursos que se sincronizarán, si está vacío +
+entonces todos los recursos del tipo dado se sincronizarán. + |  | 
+|===
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-podsecurityadmissionlevel"]
+=== PodSecurityAdmissionLevel
+
+_Tipo subyacente:_ _cadena_
+
+PodSecurityAdmissionLevel es el nivel de directiva aplicado a los pods en el espacio de nombres.
+
+_Validación:_
+- Enum: [privilegiado base restringido]
+
+_Aparece en:_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-virtualclusterpolicyspec[$$VirtualClusterPolicySpec$$]
+
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-priorityclasssyncconfig"]
+=== PriorityClassSyncConfig
+
+
+
+PriorityClassSyncConfig especifica las opciones de sincronización para los servicios.
+
+
+
+_Aparece en:_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-syncconfig[$$SyncConfig$$]
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| Campo | Descripción | Default | Validación
+| *`enabled`* __boolean__ | Enabled es un interruptor de encendido/apagado para sincronizar recursos. + | false | 
+| *`selector`* __objeto (claves:cadena, valores:cadena)__ | Selector especifica un conjunto de etiquetas de los recursos que se sincronizarán, si está vacío +
+entonces todos los recursos del tipo dado se sincronizarán. + |  | 
+|===
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-secretmount"]
+=== SecretMount
+
+
+
+SecretMount define un secreto que se montará en los pods del servidor o del agente, permitiendo configuraciones personalizadas, certificados u otros datos sensibles.
+
+
+
+_Aparece en:_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clusterspec[$$ClusterSpec$$]
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| Campo | Descripción | Default | Validación
+| *`secretName`* __cadena__ | secretName es el nombre del secreto en el espacio de nombres del pod que se utilizará. +
+Más información: https://kubernetes.io/docs/concepts/storage/volumes#secret + |  | 
+| *`items`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#keytopath-v1-core[$$KeyToPath$$] array__ | items Si no se especifica, cada par clave-valor en el campo Data del +
+Secret se proyectará en el volumen como un archivo cuyo nombre es el +
+clave y el contenido es el valor. Si se especifica, las claves enumeradas serán +
+proyectado en las rutas especificadas, y las claves no listadas no estarán +
+presente. Si se especifica una clave que no está presente en el Secret, +
+la configuración del volumen dará error a menos que esté marcada como opcional. Las rutas deben ser +
+relativas y no pueden contener la ruta '..' ni comenzar con '..'. + |  | 
+| *`defaultMode`* __entero__ | defaultMode es Opcional: bits de modo utilizados para establecer permisos en los archivos creados por defecto. +
+Debe ser un valor octal entre 0000 y 0777 o un valor decimal entre 0 y 511. +
+YAML acepta tanto valores octales como decimales, JSON requiere valores decimales +
+para los bits de modo. Predeterminado a 0644. +
+Los directorios dentro de la ruta no se ven afectados por esta configuración. +
+Esto podría estar en conflicto con otras opciones que afectan el archivo +
+modo, como fsGroup, y el resultado puede ser otros bits de modo establecidos. + |  | 
+| *`optional`* __boolean__ | el campo opcional especifica si el Secret o sus claves deben estar definidos + |  | 
+| *`mountPath`* __cadena__ | MountPath es la vía dentro de los pods del servidor y del agente donde se +
+montarán los contenidos del secreto. + |  | 
+| *`subPath`* __cadena__ | SubPath es una vía opcional dentro del secreto para montar en lugar de la raíz. +
+Cuando se especifica, solo la clave especificada del secreto se montará como un archivo +
+en MountPath, manteniendo el directorio padre escribible. + |  | 
+| *`role`* __cadena__ | El rol es el tipo de pod k3k que se utilizará para montar el secreto. +
+Esto puede ser 'servidor', 'agente' o 'todos' (para ambos). + |  | Enum: [server agent all] +
+
+|===
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-secretsyncconfig"]
+=== SecretSyncConfig
+
+
+
+SecretSyncConfig especifica las opciones de sincronización para los servicios.
+
+
+
+_Aparece en:_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-syncconfig[$$SyncConfig$$]
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| Campo | Descripción | Default | Validación
+| *`enabled`* __boolean__ | Enabled es un interruptor de encendido/apagado para sincronizar recursos. + | true | 
+| *`selector`* __object (keys:string, values:string)__ | Selector especifica un conjunto de etiquetas de los recursos que se sincronizarán, si está vacío +
+entonces todos los recursos del tipo dado se sincronizarán. + |  | 
+|===
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-servicesyncconfig"]
+=== ServiceSyncConfig
+
+
+
+ServiceSyncConfig especifica las opciones de sincronización para los servicios.
+
+
+
+_Aparece en:_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-syncconfig[$$SyncConfig$$]
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| Campo | Descripción | Default | Validación
+| *`enabled`* __boolean__ | Enabled es un interruptor de encendido/apagado para sincronizar recursos. + | true | 
+| *`selector`* __object (keys:string, values:string)__ | Selector especifica un conjunto de etiquetas de los recursos que se sincronizarán, si está vacío +
+entonces todos los recursos del tipo dado se sincronizarán. + |  | 
+|===
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-syncconfig"]
+=== SyncConfig
+
+
+
+SyncConfig contendrá los recursos que deben ser sincronizados del clúster virtual al clúster anfitrión.
+
+
+
+_Aparece en:_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clusterspec[$$ClusterSpec$$]
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-virtualclusterpolicyspec[$$VirtualClusterPolicySpec$$]
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| Campo | Descripción | Default | Validación
+| *`services`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-servicesyncconfig[$$ServiceSyncConfig$$]__ | Configuración de sincronización de recursos de servicios. + | { enabled:true } | 
+| *`configMaps`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-configmapsyncconfig[$$ConfigMapSyncConfig$$]__ | Configuración de sincronización de recursos de ConfigMaps. + | { enabled:true } | 
+| *`secrets`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-secretsyncconfig[$$SecretSyncConfig$$]__ | Configuración de sincronización de recursos de secretos. + | { enabled:true } | 
+| *`ingresses`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-ingresssyncconfig[$$IngressSyncConfig$$]__ | Configuración de sincronización de recursos de Ingresses. + | { enabled:false } | 
+| *`persistentVolumeClaims`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-persistentvolumeclaimsyncconfig[$$PersistentVolumeClaimSyncConfig$$]__ | Configuración de sincronización de recursos de PersistentVolumeClaims. + | { enabled:true } | 
+| *`priorityClasses`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-priorityclasssyncconfig[$$PriorityClassSyncConfig$$]__ | Configuración de sincronización de recursos de PriorityClasses. + | { enabled:false } | 
+|===
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-virtualclusterpolicy"]
+=== VirtualClusterPolicy
+
+
+
+VirtualClusterPolicy permite definir configuraciones y restricciones comunes para clústeres dentro de una política de clúster.
+
+
+
+_Aparece en:_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-virtualclusterpolicylist[$$VirtualClusterPolicyList$$]
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| Campo | Descripción | Default | Validación
+| *`apiVersion`* __cadena__ | `k3k.io/v1beta1` | |
+| *`kind`* __cadena__ | `VirtualClusterPolicy` | |
+| *`metadata`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#objectmeta-v1-meta[$$ObjectMeta$$]__ | Consulta la documentación de la API de Kubernetes para los campos de `metadata`.
+ |  | 
+| *`spec`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-virtualclusterpolicyspec[$$VirtualClusterPolicySpec$$]__ | Spec define el estado deseado de la VirtualClusterPolicy. + | {  } | 
+|===
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-virtualclusterpolicylist"]
+=== VirtualClusterPolicyList
+
+
+
+VirtualClusterPolicyList es una lista de recursos de VirtualClusterPolicy.
+
+
+
+
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| Campo | Descripción | Default | Validación
+| *`apiVersion`* __cadena__ | `k3k.io/v1beta1` | |
+| *`kind`* __cadena__ | `VirtualClusterPolicyList` | |
+| *`metadata`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#listmeta-v1-meta[$$ListMeta$$]__ | Consulta la documentación de la API de Kubernetes para los campos de `metadata`.
+ |  | 
+| *`items`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-virtualclusterpolicy[$$VirtualClusterPolicy$$] array__ |  |  | 
+|===
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-virtualclusterpolicyspec"]
+=== VirtualClusterPolicySpec
+
+
+
+VirtualClusterPolicySpec define el estado deseado de una VirtualClusterPolicy.
+
+
+
+_Aparece en:_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-virtualclusterpolicy[$$VirtualClusterPolicy$$]
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| Campo | Descripción | Default | Validación
+| *`quota`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#resourcequotaspec-v1-core[$$ResourceQuotaSpec$$]__ | La cuota especifica los límites de recursos para los clústeres dentro de una política de clúster. + |  | 
+| *`limit`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#limitrangespec-v1-core[$$LimitRangeSpec$$]__ | El límite especifica el LimitRange que se aplicará a todos los pods dentro de la VirtualClusterPolicy +
+para establecer valores predeterminados y restricciones (mín./máx.) + |  | 
+| *`defaultNodeSelector`* __object (keys:string, values:string)__ | DefaultNodeSelector especifica el selector de nodo que se aplica a todos los clústeres (servidor + agente) en el espacio de nombres de destino. + |  | 
+| *`defaultPriorityClass`* __cadena__ | DefaultPriorityClass especifica el priorityClassName aplicado a todos los pods de todos los clústeres en el espacio de nombres de destino. + |  | 
+| *`allowedMode`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clustermode[$$ClusterMode$$]__ | AllowedMode especifica el modo de aprovisionamiento de clúster permitido. Por defecto es “compartido” + | shared | Enum: [compartido virtual] +
+
+| *`disableNetworkPolicy`* __boolean__ | DisableNetworkPolicy indica si se debe desactivar la creación de una directiva de red predeterminada para el aislamiento del clúster. + |  | 
+| *`podSecurityAdmissionLevel`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-podsecurityadmissionlevel[$$PodSecurityAdmissionLevel$$]__ | PodSecurityAdmissionLevel especifica el nivel de admisión de seguridad de pods aplicado a los pods en el espacio de nombres. + |  | Enum: [privileged baseline restricted] +
+
+| *`sync`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-syncconfig[$$SyncConfig$$]__ | Sync especifica los tipos de recursos que se sincronizarán del clúster virtual al clúster anfitrión. + | {  } | 
+|===
+
+
+
+

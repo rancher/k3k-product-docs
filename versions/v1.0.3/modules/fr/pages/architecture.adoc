@@ -1,0 +1,152 @@
+= Architecture
+:revdate: 2025-11-07
+:page-revdate: {revdate}
+
+Les clusters virtuels sont des clusters Kubernetes isolés provisionnés sur un cluster physique. K3k utilise link:https://k3s.io/[K3s] comme plan de contrôle du cluster Kubernetes en raison de son empreinte légère.
+
+K3k propose deux modes pour déployer des clusters virtuels{nbsp}: 
+- Partagé (par défaut) 
+- Virtuel
+
+== Mode partagé
+
+Le mode par défaut *partagé* utilise un serveur K3s comme plan de contrôle avec une https://docs.k3s.io/advanced#running-agentless-servers-experimental[configuration de serveurs sans agent]. Avec cette option activée, les serveurs ne fonctionnent pas avec le kubelet, l'environnement d'exécution de conteneur ou le CNI. Le serveur utilise une https://virtual-kubelet.io/[implémentation de Virtual Kubelet] spécifique à K3k, qui planifie les charges de travail et d'autres ressources éventuellement nécessaires sur le cluster hôte. Ce fournisseur Virtual Kubelet de K3k gère la synchronisation des ressources ainsi que l'exécution des charges de travail dans l'environnement partagé du cluster hôte.
+
+image::architecture/shared-mode.png[Mode partagé]
+
+=== Mise en réseau et stockage
+
+En raison de cette infrastructure partagée, le CNI est le même que celui configuré dans le cluster hôte. Il en va de même pour le stockage disponible où les classes de stockage et les volumes sont ceux du cluster hôte. 
+
+Pour fournir l'isolement nécessaire, K3k utilise des politiques réseau.
+
+=== Partage et limites des ressources
+
+En mode *partagé*, K3k utilise les 'ResourceQuotas' et 'LimitRanges' de Kubernetes pour gérer le partage des ressources et faire respecter les limites. Puisque toutes les charges de travail des clusters virtuels s'exécutent dans le même espace de noms sur le cluster hôte, les ResourceQuotas sont appliquées à cet espace de noms pour limiter les ressources totales consommées par un cluster virtuel. Les LimitRanges sont utilisés pour définir des demandes et des limites de ressources par défaut pour les pods, garantissant que les charges de travail disposent d'allocations de ressources raisonnables même si elles ne les spécifient pas explicitement.
+
+Chaque pod dans un cluster virtuel se voit attribuer un nom unique qui incorpore le nom du pod, l'espace de noms et le nom du cluster. Cela empêche les collisions de noms dans l'espace de noms partagé du cluster hôte.
+
+Il est important de comprendre que les ResourceQuotas sont appliquées au niveau de l'espace de noms. Cela signifie que tous les pods au sein d'un cluster virtuel partagent le même quota. Bien que cela fournisse des limites globales pour le cluster virtuel, cela signifie également que l'allocation des ressources est dynamique. Si une charge de travail n'utilise pas l'intégralité de son allocation de ressources, d'autres charges de travail au sein du _même_ cluster virtuel peuvent utiliser ces ressources, même si elles appartiennent à différents déploiements ou services.
+
+Ce partage dynamique peut être à la fois un avantage et un défi. Il permet une utilisation efficace des ressources, mais cela peut également entraîner des performances imprévisibles si les charges de travail ont des demandes de ressources variées. De plus, cette approche rend difficile la garantie d'une isolation stricte des ressources entre les charges de travail au sein du même cluster virtuel.
+
+NOTE: Le partage des ressources GPU est un domaine d'investigation en cours. K3k explore activement des solutions potentielles dans ce domaine.
+
+=== Isolation et sécurité
+
+L'isolation entre les clusters virtuels en mode partagé repose fortement sur les politiques réseau de Kubernetes. Les politiques réseau définissent des règles qui contrôlent le trafic réseau autorisé vers et depuis les pods. K3k configure les politiques réseau pour s'assurer que les pods d'un cluster virtuel ne peuvent pas communiquer avec les pods d'autres clusters virtuels ou avec les pods du cluster hôte lui-même, fournissant une base solide pour l'isolation réseau.
+
+Bien que les politiques réseau offrent des capacités d'isolation robustes, il est important de comprendre leurs caractéristiques{nbsp}:
+
+* *Intégration CNI :* Les politiques réseau s'intègrent parfaitement avec les plugins CNI pris en charge. K3k tire parti de cette intégration pour imposer l'isolation réseau.
+
+* *Contrôle granulaire :* Les politiques réseau fournissent un contrôle granulaire sur le trafic réseau, permettant des politiques de sécurité finement ajustées.
+
+* *Évolutivité :* Les politiques réseau évoluent bien avec le nombre de clusters virtuels et d'applications, garantissant une isolation cohérente à mesure que l'environnement se développe.
+
+K3k utilise également l'admission de sécurité des pods Kubernetes (PSA) pour imposer des politiques de sécurité au sein des clusters virtuels en fonction des normes de sécurité des pods (PSS). Les PSS définissent différents niveaux de sécurité pour les pods, restreignant les actions que les pods peuvent effectuer. En configurant PSA pour imposer un niveau PSS spécifique (par exemple, `baseline` ou `restricted`) pour un cluster virtuel, K3k s'assure que les pods respectent les meilleures pratiques de sécurité établies et les empêche d'utiliser des fonctionnalités privilégiées ou d'effectuer des opérations potentiellement dangereuses.
+
+Les aspects clés de l'intégration de PSA incluent{nbsp}:
+
+* *Mise en application au niveau de l'espace de noms :* La configuration de PSA est appliquée au niveau de l'espace de noms, fournissant une posture de sécurité cohérente pour tous les pods au sein du cluster virtuel.
+* *Profils Standardisés :* PSS offre un ensemble de profils de sécurité prédéfinis alignés sur les meilleures pratiques de l'industrie, simplifiant la configuration de la sécurité et garantissant un niveau de sécurité de base.
+
+L'architecture en mode partagé est conçue avec la sécurité à l'esprit. K3k emploie plusieurs couches de contrôles de sécurité, y compris les politiques réseau et PSA, pour protéger les clusters virtuels et le cluster hôte. Bien que le modèle de namespace partagé nécessite une configuration et une gestion minutieuses, ces contrôles fournissent une base de sécurité robuste pour exécuter des charges de travail dans un environnement multi-locataire. K3k évalue et améliore en continu ses mécanismes de sécurité pour faire face aux menaces évolutives et garantir le plus haut niveau de protection pour ses utilisateurs.
+
+== Mode Virtuel
+
+Le mode `virtual` dans K3k déploie des clusters K3s entièrement fonctionnels (y compris les composants serveur et agent) en tant que clusters virtuels. Ces clusters K3s fonctionnent en tant que pods au sein du cluster hôte. Chaque cluster virtuel dispose de son propre serveur K3s dédié et d'un ou plusieurs agents K3s agissant comme nœuds de travail. Cette approche offre une forte isolation, chaque cluster virtuel fonctionnant indépendamment avec son propre plan de contrôle et ses nœuds de travail. Bien que ces clusters virtuels fonctionnent en tant que pods sur le cluster hôte, ils fonctionnent comme des environnements Kubernetes complets et séparés.
+
+image::architecture/virtual-mode.png[Mode Virtuel]
+
+=== Mise en réseau et stockage
+
+Les clusters virtuels en mode `virtual` ont chacun leur propre configuration réseau indépendante gérée par leurs serveurs K3s respectifs. Chaque cluster virtuel exécute son propre plugin CNI, configuré au sein de son serveur K3s, fournissant une isolation réseau complète par rapport aux autres clusters virtuels et au cluster hôte. Bien que les réseaux des clusters virtuels fonctionnent finalement sur l'infrastructure réseau du cluster hôte, la configuration réseau et la gestion du trafic sont entièrement séparées.
+
+=== Partage et limites des ressources
+
+Le partage des ressources en mode `virtual` est géré en appliquant des limites de ressources aux pods qui composent le cluster virtuel (à la fois le pod serveur K3s et les pods agents K3s). Chaque pod se voit attribuer une quantité spécifique d'UC, de mémoire et d'autres ressources. Les charges de travail s'exécutant _dans_ le cluster virtuel utilisent ensuite ces ressources allouées. Cela signifie que le cluster virtuel dans son ensemble dispose d'un pool de ressources défini, déterminé par les limites imposées à ses pods constitutifs.
+
+Cette approche offre un moyen clair et direct de contrôler les ressources disponibles pour chaque cluster virtuel. Cependant, elle nécessite une planification minutieuse des ressources pour garantir que chaque cluster virtuel dispose d'une capacité suffisante pour ses charges de travail.
+
+=== Isolation et sécurité
+
+Le mode `virtual` offre une forte isolation grâce aux clusters K3s dédiés déployés pour chaque cluster virtuel. Parce que chaque cluster virtuel exécute son propre plan de contrôle et ses nœuds de travail séparés, les charges de travail sont effectivement isolées les unes des autres et du cluster hôte. Cette architecture minimise le risque qu'un cluster virtuel n'impacte d'autres clusters ou le cluster hôte.
+
+La sécurité en mode `virtual` bénéficie de l'isolation inhérente fournie par les clusters K3s séparés. Cependant, les meilleures pratiques de sécurité Kubernetes standard s'appliquent toujours, et K3k met l'accent sur une approche de sécurité en couches. Bien que les pods serveur K3s fonctionnent souvent avec des privilèges élevés (en raison de la nature de leur fonction, nécessitant un accès aux ressources système), K3k recommande de minimiser ces privilèges autant que possible et de respecter le principe du moindre privilège. Cela peut être réalisé en configurant soigneusement les capacités nécessaires au lieu de s'appuyer sur le mode `privileged` complet. Des informations supplémentaires sur les meilleures pratiques de sécurité K3s peuvent être trouvées dans la documentation officielle de K3s{nbsp}: https://docs.k3s.io/security (Ce lien fournit des conseils de sécurité généraux, y compris des discussions sur les capacités et d'autres sujets pertinents).
+
+Actuellement, la sécurité en mode virtuel présente un risque d'escalade de privilèges, car les pods serveur fonctionnent avec des privilèges élevés en raison de la nature de leur fonction, nécessitant un accès aux ressources système.
+
+== Composants K3k
+
+K3k se compose de deux composants principaux{nbsp}:
+
+* *Contrôleur :* Le contrôleur K3k est un composant noyau qui s'exécute sur le cluster hôte. Il surveille les ressources personnalisées `Cluster` (CR) et gère le cycle de vie des clusters virtuels. Lorsqu'un nouveau `Cluster` CR est créé, le contrôleur provisionne les ressources nécessaires, y compris les espaces de noms, le serveur K3s et les pods agents, ainsi que les configurations réseau, pour créer le cluster virtuel.
+
+* *CLI:* La CLI K3k fournit une interface de ligne de commande pour interagir avec K3k. Il permet aux utilisateurs de créer, gérer et accéder facilement aux clusters virtuels. La CLI simplifie les tâches courantes telles que la création de `Cluster` CRs, la récupération des kubeconfigs pour accéder aux clusters virtuels et l'exécution d'autres opérations de gestion.
+
+== VirtualClusterPolicy
+
+K3k introduit la ressource personnalisée VirtualClusterPolicy, un moyen de mettre en place et d'appliquer des configurations communes et de définir le fonctionnement de vos clusters virtuels dans l'environnement K3k.
+
+L'objectif principal des VCP est de permettre aux administrateurs de gérer et d'appliquer des stratégies cohérentes de manière centralisée. Cela réduit la configuration répétée, aide à respecter les normes organisationnelles et améliore la sécurité et la cohérence opérationnelle des clusters virtuels gérés par K3k.
+
+Une VirtualClusterPolicy est liée à un ou plusieurs espaces de noms Kubernetes. Une fois liée, les règles définies dans le VCP s'appliquent à tous les clusters virtuels K3k qui fonctionnent ou qui sont créés dans cet espace de noms. Cela permet une application flexible des stratégies, ce qui signifie que différents espaces de noms peuvent utiliser leurs propres VCP uniques, tandis que d'autres peuvent partager un seul VCP pour une configuration cohérente.
+
+Les cas d'utilisation courants pour les administrateurs utilisant VirtualClusterPolicy incluent{nbsp}:
+
+* Définir le mode opérationnel (comme "partagé" ou "virtuel") pour les clusters virtuels.
+* Configurer des quotas de ressources et des plages de limites pour gérer efficacement la quantité de ressources que les clusters virtuels et leurs charges de travail peuvent utiliser.
+* Faire respecter les normes de sécurité, par exemple, en configurant des étiquettes d'admission de sécurité des pods (PSA) pour les espaces de noms.
+
+Le contrôleur K3k surveille activement les ressources VirtualClusterPolicy et les liaisons d'espace de noms correspondantes. Lorsqu'un VCP est appliqué ou mis à jour, le contrôleur s'assure que les configurations définies sont appliquées sur les clusters virtuels concernés et leurs ressources associées dans les espaces de noms ciblés.
+
+Pour une plongée approfondie sur ce que VirtualClusterPolicy peut faire, ainsi que d'autres exemples, consultez la page xref:./virtualclusterpolicy.adoc[Concepts de VirtualClusterPolicy]. Pour une liste complète de tous les champs de spécification, voir le link:./crds/crd-docs.adoc#virtualclusterpolicy[Référence API pour VirtualClusterPolicy].
+
+== Comparaison et compromis
+
+K3k propose deux modes distincts pour déployer des clusters virtuels{nbsp}: `shared` et `virtual`. Chaque mode a ses propres forces et faiblesses, et le meilleur choix dépend des besoins et priorités spécifiques de l'utilisateur. Voici une comparaison pour vous aider à prendre une décision éclairée{nbsp}:
+
+|===
+| Fonctionnalité | Mode partagé | Mode virtuel
+
+| *Architecture*
+| Serveur K3s sans agent avec Virtual Kubelet
+| Cluster K3s complet (serveur et agents) sous forme de pods
+
+| *Isolation*
+| Politiques Réseau
+| Plan de contrôle et nœuds de travail dédiés sous forme de pods
+
+| *Partage des ressources*
+| Quotas de ressources dynamiques au niveau de l'espace de noms
+| Limites de ressources sur les pods du cluster virtuel
+
+| *Réseautique*
+| CNI du cluster hôte
++
+Contrôleur d'Ingress du cluster hôte (option)
+| CNI propre au cluster virtuel
++
+Contrôleur d'Ingress propre au cluster virtuel
+
+| *Stockage*
+| Stockage du cluster hôte
+| Apportez votre propre fournisseur de stockage
+
+| *Sécurité*
+| Admission de sécurité des pods (PSA), Politiques réseau
+| Isolation inhérente, PSA, Politiques réseau
+
+| *Performances*
+| Empreinte plus petite, plus efficace grâce à un fonctionnement direct sur l'hôte
+| Surcharge plus élevée en raison de l'exécution de clusters K3s complets
+|===
+
+*Compromis :*
+
+* *Isolation vs. Surcharge :* Le mode `shared` a une surcharge inférieure mais une isolation plus faible, tandis que le mode `virtual` offre une isolation plus forte mais une surcharge potentiellement plus élevée en raison de l'exécution de clusters K3s complets.
+
+* *Partage des ressources :* Le mode `shared` propose un partage dynamique des ressources au sein d'un espace de noms, ce qui peut être efficace mais moins prévisible. Le mode `virtual` fournit des ressources dédiées à chaque cluster virtuel, offrant plus de contrôle mais nécessitant une planification minutieuse.
+
+Pour plus d'informations sur la façon de choisir le bon mode, voir xref:./how-tos-for-admin/choose-mode.adoc[Choisir le mode].

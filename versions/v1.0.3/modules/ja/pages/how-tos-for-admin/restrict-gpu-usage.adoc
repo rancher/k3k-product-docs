@@ -1,0 +1,62 @@
+= SUSE仮想クラスターにおけるGPUリソースの制限
+:revdate: 2026-03-09
+:page-revdate: {revdate}
+
+このガイドでは、ポリシーの概念{k3k-product-name}を使用して、テナント内でGPUの制限を定義する方法を説明します。
+
+[NOTE]
+==== 
+これは`shared`モードにのみ適用されます。
+====
+
+== VirtualClusterPolicyを作成する
+
+まず、YAMLファイル（例えば、`gpu-policy.yaml`）で`VirtualClusterPolicy`を定義し、それをクラスターに適用します。
+
+----
+apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: quota-policy
+spec:
+  quota:
+    hard:
+      requests.nvidia.com/gpu: 4
+----
+
+kubectlを使用してポリシーを適用します：
+
+----
+kubectl apply -f gpu-policy.yaml
+----
+
+このポリシーでは、4つのGPUの消費が許可されます。
+
+== ポリシーをテナントに適用する
+
+希望するネームスペースに注釈を付けてポリシーを適用します：
+
+----
+kubectl label namespace <namespace-name> policy.k3k.io/policy-name="quota-policy"
+----
+
+ネームスペース内にリソースクォータが自動的に作成されます。
+
+== GPU消費の追跡
+
+仮想クラスター（共有モード）内でGPUワークロードが作成されると、割り当てられたGPUリソースの1つを消費します。
+
+`quota`コマンドを使用して消費を追跡できます：
+
+[,bash]
+----
+kubectl get quota -n testgpu
+NAME               REQUEST                        LIMIT   AGE
+k3k-quota-policy   requests.nvidia.com/gpu: 0/4           4s
+----
+
+制限に達し、ユーザーがGPUを消費する新しいポッドをデプロイしようとすると、ポッドは次のステータスで`Pending`状態のままになります。
+
+----
+Warning  ProviderCreateFailed  1s    ubuntu/pod-controller  pods "cuda-vectoradd-default-sharedclustergpu-637564612d7665637-865e4" is forbidden: exceeded quota: k3k-quota-policy, requested: requests.nvidia.com/gpu=1, used: requests.nvidia.com/gpu=4, limited: requests.nvidia.com/gpu=4
+----

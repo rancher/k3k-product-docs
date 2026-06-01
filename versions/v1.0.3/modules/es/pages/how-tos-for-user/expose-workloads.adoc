@@ -1,0 +1,68 @@
+= How-to: Exponer cargas de trabajo fuera del clúster virtual
+:revdate: 2025-09-10
+:page-revdate: {revdate}
+
+Esta guía explica cómo exponer cargas de trabajo que se ejecutan en clústeres virtuales gestionados por k3k a redes externas. El comportamiento varía según el modo de operación del clúster virtual.
+
+== Modo virtual
+
+[CAUTION]
+====
+En _modo virtual_, la exposición externa directa de cargas de trabajo no está *disponible*. Este modo está diseñado para un fuerte aislamiento y no expone directamente la red del clúster virtual.
+====
+
+== Modo compartido
+
+En _modo compartido_, cargas de trabajo pueden ser expuestas a la red externa utilizando tipos de servicio estándar de Kubernetes o un controlador de Ingress, dependiendo de tus requisitos.
+
+[NOTE]
+====
+_`Services`_ siempre se sincronizan desde el clúster virtual al clúster anfitrión siguiendo el mismo principio descrito link:../architecture.adoc#shared-mode[aquí] para los pods.
+====
+
+=== Opción 1: Usa `NodePort` o `LoadBalancer`
+
+Para exponer un servicio como una aplicación web fuera del clúster anfitrión:
+
+* *`NodePort`*: Expone el servicio en un puerto estático en la IP de cada nodo. Accede al servicio en `http://<NodeIP>:<NodePort>`.
+* *`LoadBalancer`*: Proporciona un equilibrador de carga externo (si es compatible con el entorno) y expone el servicio a través de la IP del equilibrador de carga.
+
+[NOTE]
+====
+La IP `LoadBalancer` actualmente no se refleja de vuelta al servicio del clúster virtual. +
+\https://github.com/rancher/k3k/issues/365[problema k3k #365]
+====
+
+=== Opción 2: Usa `ClusterIP` para comunicación interna
+
+Si la carga de trabajo solo debe ser accesible a otros servicios o pods _dentro_ del clúster anfitrión:
+
+* Utiliza el tipo de servicio `ClusterIP`. Esto expone el servicio en una IP interna, accesible solo dentro del clúster anfitrión.
+
+=== Opción 3: Utiliza Ingress para el enrutamiento HTTP/HTTPS
+
+Para un enrutamiento más avanzado, como el enrutamiento basado en nombre de host o en ruta, despliega un *controlador de Ingress* en el clúster virtual y expónlo a través de `NodePort` o `LoadBalancer`.
+
+Esto te permite:
+
+* Definir recursos de Ingress en el clúster virtual.
+* Enrutar tráfico externo a servicios dentro del clúster virtual.
+
+=== Opciones 4: Utiliza Ingress de Host
+
+Para utilizar el controlador de Ingress de host, habilita `sync.ingresses`. Dado que los Ingress se sincronizan con el clúster anfitrión, los usuarios del clúster virtual no necesitan desplegar un controlador de Ingress.
+
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-shared-mode
+spec:
+  mode: shared
+  ...
+  sync: 
+    ingresses: 
+      enabled: true
+----
+
+Con esta sincronización habilitada, el certificado también puede ser emitido por el clúster anfitrión. Por ejemplo, el certificado puede ser emitido si estás utilizando `Cert-Manager`.

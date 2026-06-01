@@ -1,0 +1,123 @@
+= 高级用途
+:revdate: 2025-09-16
+:page-revdate: {revdate}
+
+本文件提供了 k3k 的高级使用信息，包括详细的用例以及对 `Cluster` 资源字段自定义的说明。
+
+== 自定义集群资源
+
+`Cluster` 资源提供了多种字段，用于自定义虚拟集群的行为。请参阅 xref:/references/crds.adoc[CRD 文档] 以获取完整规格。
+
+NOTE: 大多数自定义选项也可以使用 `k3kcli` 工具进行配置。有关更多详细信息，请参阅 xref:/references/k3kcli.adoc[k3kcli 文档]。
+
+此示例创建了一个 "共享" 模式的 K3k 集群，包含：
+
+* 3 台服务器
+* K3s 版本 v1.31.3-k3s1
+* 自定义网络配置
+* 在特定节点上部署，使用 `nodeSelector`
+* 通过入口暴露 `kube-api`
+* 自定义 K3s `serverArgs`
+* 使用 `PVC` 持久化 ETCD 数据
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: my-virtual-cluster
+  namespace: my-namespace
+spec:
+  mode: shared
+  version: v1.31.3-k3s1
+  servers: 3
+  tlsSANs:
+    - my-cluster.example.com
+  nodeSelector:
+    disktype: ssd
+  expose:
+    ingress:
+      ingressClassName: nginx
+      annotations:
+        nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+        nginx.ingress.kubernetes.io/backend-protocol: "true"
+        nginx.ingress.kubernetes.io/ssl-redirect: "HTTPS"
+  clusterCIDR: 10.42.0.0/16
+  serviceCIDR: 10.43.0.0/16
+  clusterDNS: 10.43.0.10
+  serverArgs:
+  - --tls-san=my-cluster.example.com
+  persistence:
+    type: dynamic
+    storageClassName: local-path
+----
+
+=== `mode`
+
+`mode` 字段指定集群配置模式，可以是 `shared` 或 `virtual`。默认模式为 `shared`。
+
+* *`shared` 模式：*在此模式下，虚拟集群共享主集群的资源和网络。此模式适用于轻量级工作负载和开发环境，其中隔离不是主要关注点。
+* *`virtual` 模式：*在此模式下，虚拟集群作为主集群内的独立 K3s 集群运行。此模式提供更强的隔离，适用于生产工作负载或需要专用资源的情况。
+
+=== `version`
+
+`version` 字段指定虚拟节点使用的 Kubernetes 版本。如果未指定，K3k 将使用与主集群相同的 K3s 版本。例如，如果主集群运行的是 Kubernetes v1.31.3，K3k 将使用相应的 K3s 版本（例如，`v1.31.3-k3s1`）。
+
+=== `servers`
+
+`servers` 字段指定要为虚拟集群部署的 K3s 服务器节点数量。默认值为 1。
+
+=== `agents`
+
+`agents` 字段指定要为虚拟集群部署的 K3s 代理节点数量。默认值为 0。
+
+NOTE: 在 `shared` 模式下，此字段被忽略，因为虚拟 Kubelet 充当代理，并且没有 K3s 工作节点。
+
+=== `nodeSelector`
+
+`nodeSelector` 字段允许您指定一个节点选择器，该选择器将应用于所有服务器/代理 Pod。在 `shared` 模式下，节点选择器也将应用于工作负载。
+
+=== `expose`
+
+`expose` 字段包含用于暴露虚拟集群 API 服务器的选项。默认情况下，API 服务器仅作为 `ClusterIP` 暴露，这相对安全，但从集群外部访问较困难。
+
+您可以使用 `expose` 字段通过 `NodePort`、`LoadBalancer` 或 `Ingress` 启用暴露。
+
+在这个例子中，我们通过 Nginx ingress-controller 暴露集群，该控制器必须使用 `--enable-ssl-passthrough` 标志进行配置。
+
+=== `clusterCIDR`
+
+`clusterCIDR` 字段指定集群 Pod 的 CIDR 范围。在共享模式下，默认值为 `10.42.0.0/16`，在虚拟模式下，默认值为 `10.52.0.0/16`。
+
+=== `serviceCIDR`
+
+`serviceCIDR` 字段指定集群中服务的 CIDR 范围。在共享模式下，默认值为 `10.43.0.0/16`，在虚拟模式下，默认值为 `10.53.0.0/16`。
+
+NOTE: 在 `shared` 模式下，`serviceCIDR` 应与主集群的 `serviceCIDR` 匹配，以防止冲突，而在 `virtual` 模式下，`serviceCIDR` 和 `clusterCIDR` 应与主集群不同。
+
+=== `clusterDNS`
+
+`clusterDNS` 字段指定 CoreDNS 服务的 IP 地址。它需要在 `serviceCIDR` 提供的范围内。默认值为 `10.43.0.10`。
+
+=== `serverArgs`
+
+`serverArgs` 字段允许您指定要传递给 K3s 服务器 Pod 的附加参数。
+
+== 使用 CLI
+
+您可以查看xref:/references/k3kcli.adoc[k3kcli 文档]以获取完整规格。
+
+=== 没有存储提供者：
+
+* 临时存储：
++
+[,bash]
+----
+  k3kcli cluster create --persistence-type ephemeral my-cluster
+----
+
+[IMPORTANT]
+====
+* 使用`--persistence-type ephemeral`将导致节点重启时数据丢失。
+* 强烈建议使用已配置存储类的`--persistence-type dynamic`。
+====

@@ -1,0 +1,295 @@
+= 如何：创建虚拟集群
+:revdate: 2025-11-17
+:page-revdate: {revdate}
+
+本指南提供了在K3K中创建和管理虚拟集群的说明，并涵盖了使用*自定义资源定义（CRD）*和*K3K CLI*的常见用例，以便您可以选择适合您工作流程的方法。
+
+----
+For full reference:
+
+* xref:/references/crds.adoc[CRD Reference Documentation]
+* xref:/references/k3kcli.adoc[CLI Reference Documentation]
+* xref:/advanced-usage.adoc[Full example]
+----
+
+NOTE: 某些功能仅通过CRD接口提供。
+
+== 适用场景：创建并暴露基本虚拟集群
+
+=== CRD方法
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-ingress
+spec:
+  tlsSANs:
+    - my-cluster.example.com
+  expose:
+    ingress:
+      ingressClassName: nginx
+      annotations:
+        nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+        nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+        nginx.ingress.kubernetes.io/ssl-redirect: "HTTPS"
+----
+
+这将在`shared`模式下创建一个虚拟集群，并通过指定的主机名暴露它。
+
+== 适用场景：创建具有持久存储的虚拟集群（*默认*）
+
+=== CRD方法
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-persistent
+spec:
+  persistence:
+    type: dynamic
+    storageClassName: local-path
+    storageRequestSize: 30Gi
+----
+
+这确保虚拟集群以 30 Gi 的卷持久存储其状态。 +
+如果未设置`storageClassName`，则默认为默认的StorageClass。 +
+如果未设置`storageRequestSize`，则默认请求 1 Gi 的卷。
+
+=== CLI方法
+
+[,sh]
+----
+k3kcli cluster create \
+  --persistence-type dynamic \
+  --storage-class-name local-path \
+  --storage-request-size 30Gi \
+  k3kcluster-persistent
+----
+
+== 适用场景：在`shared`模式下创建高可用虚拟集群
+
+=== CRD方法
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-ha
+spec:
+  servers: 3
+----
+
+这将创建一个具有3台服务器和默认 1 Gi 卷以实现持久性的虚拟集群。
+
+=== CLI方法
+
+[,sh]
+----
+k3kcli cluster create \
+  --servers 3 \
+  k3kcluster-ha
+----
+
+== 适用场景：在`virtual`模式下创建高可用虚拟集群
+
+=== CRD方法
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-virtual
+spec:
+  mode: virtual
+  servers: 3
+  agents: 3
+----
+
+这将创建一个具有3台服务器和3个代理以及默认 1 Gi 卷以实现持久性的虚拟集群。
+
+NOTE: 代理仅存在于`virtual`模式下。
+
+=== CLI方法
+
+[,sh]
+----
+k3kcli cluster create \
+  --agents 3 \
+  --servers 3 \
+  --mode virtual \
+  k3kcluster-virtual
+----
+
+== 适用场景：创建一个临时虚拟集群
+
+=== CRD方法
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-ephemeral
+spec:
+  persistence:
+    type: ephemeral
+----
+
+这将创建一个没有持久性且只有一台服务器的临时虚拟集群。
+
+=== CLI方法
+
+[,sh]
+----
+k3kcli cluster create \
+  --persistence-type ephemeral \
+  k3kcluster-ephemeral
+----
+
+== 适用场景：创建具有自定义Kubernetes版本的虚拟集群
+
+=== CRD方法
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-custom-k8s
+spec:
+  version: "v1.33.1-k3s1"
+----
+
+这将明确设置虚拟集群的Kubernetes版本。
+
+NOTE: 仅支持 https://k3s.io[K3s] 发行版。您可以在 K3s GitHub https://github.com/k3s-io/k3s/releases[发布页面] 上找到兼容的版本。
+
+=== CLI方法
+
+[,sh]
+----
+k3kcli cluster create \
+  --version v1.33.1-k3s1 \
+  k3kcluster-custom-k8s
+----
+
+== 适用场景：创建具有自定义资源限制的虚拟集群
+
+=== CRD方法
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-resourced
+spec:
+  mode: virtual
+  serverLimit:
+    cpu: "1"
+    memory: "2Gi"
+  workerLimit:
+    cpu: "1"
+    memory: "2Gi"
+----
+
+这会为虚拟集群配置 CPU 和内存限制。
+
+=== CLI方法
+
+_目前没有可用的 CLI 方法_
+
+== 适用场景：在特定主机节点上创建虚拟集群
+
+=== CRD方法
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-node-placed
+spec:
+  nodeSelector:
+    disktype: ssd
+----
+
+这会将虚拟集群放置在带有标签 `disktype: ssd` 的节点上。
+
+NOTE: 在 `shared` 模式下，工作负载也会在选定的节点上调度。
+
+=== CLI方法
+
+_目前没有可用的 CLI 方法_
+
+== 适用场景：创建带有 Rancher 主机集群 Kubeconfig 的虚拟集群
+
+使用 Rancher 生成的 `kubeconfig` 时，您需要通过 CLI 指定虚拟集群的目标主机 `kubeconfig`。 +
+默认情况下，`k3kcli` 使用当前主机 `kubeconfig` 来确定目标集群。
+
+=== CRD方法
+
+_不适用_
+
+=== CLI方法
+
+[,sh]
+----
+k3kcli cluster create \
+  --kubeconfig-server https://abc.xyz \
+  k3kcluster-host-rancher
+----
+
+== 适用场景：在 HTTP 代理后创建虚拟集群
+
+=== CRD方法
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-http-proxy
+spec:
+  serverEnvs:
+    - name: HTTP_PROXY
+      value: "http://abc.xyz"
+  agentEnvs:
+    - name: HTTP_PROXY
+      value: "http://abc.xyz"
+----
+
+这会为虚拟集群中的服务器和代理配置 HTTP 代理。
+
+NOTE: 这可以用于将 *任何自定义环境变量* 传递给服务器和代理，而不仅仅是代理设置。
+
+=== CLI方法
+
+[,sh]
+----
+k3kcli cluster create  \
+  --server-envs HTTP_PROXY=http://abc.xyz \
+  --agent-envs HTTP_PROXY=http://abc.xyz \
+  k3kcluster-http-proxy
+----
+
+== 如何：连接到虚拟集群
+
+一旦虚拟集群运行，您可以使用CLI连接到它：
+
+=== CLI方法
+
+[,sh]
+----
+k3kcli kubeconfig generate --namespace k3k-mycluster --name mycluster
+export KUBECONFIG=$PWD/mycluster-kubeconfig.yaml
+kubectl get nodes
+----
+
+此命令生成一个 `kubeconfig` 文件，您可以使用该文件通过 `kubectl` 访问您的虚拟集群。

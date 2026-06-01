@@ -1,0 +1,153 @@
+= トラブルシューティング
+:revdate: 2025-09-11
+:page-revdate: {revdate}
+
+このセクションには、K3K仮想クラスターの一般的なトラブルシューティング手順が含まれています。
+
+== `Too many open files` エラー
+
+`k3k-kubelet` または `k3kcluster-server-` が次の問題に直面しています:
+
+[,sh]
+----
+E0604 13:14:53.369369       1 leaderelection.go:336] error initially creating leader election record: Post "https://k3k-http-proxy-k3kcluster-service/apis/coordination.k8s.io/v1/namespaces/kube-system/leases": context canceled
+{"level":"fatal","timestamp":"2025-06-04T13:14:53.369Z","logger":"k3k-kubelet","msg":"virtual manager stopped","error":"too many open files"}
+----
+
+これは通常、ホストシステムのinotifyウォッチャーまたはファイルディスクリプタの制限が低いことを示しています。
+
+inotifyの制限を増やすには、ホストノードに接続して次のコマンドを実行します:
+
+[,sh]
+----
+sudo sysctl -w fs.inotify.max_user_watches=2099999999
+sudo sysctl -w fs.inotify.max_user_instances=2099999999
+sudo sysctl -w fs.inotify.max_queued_events=2099999999
+----
+
+これらの設定を`/etc/sysctl.conf`に追加することで、永続化できます:
+
+[,sh]
+----
+fs.inotify.max_user_watches=2099999999
+fs.inotify.max_user_instances=2099999999
+fs.inotify.max_queued_events=2099999999
+----
+
+変更を適用します:
+
+[,sh]
+----
+sudo sysctl -p
+----
+
+この https://www.suse.com/support/kb/doc/?id=000020048[KBドキュメント]に詳細があります。
+
+== エラー診断のためにコントローラーログを確認します：
+
+失敗した仮想クラスターのログを表示するには:
+
+[,sh]
+----
+kubectl logs -n k3k-system -l app.kubernetes.io/name=k3k
+----
+
+これはK3Kコントローラーコンポーネントからログを取得します。
+
+== エラー診断のためにクラスターログを確認します：
+
+失敗した仮想クラスターのログを表示するには:
+
+[,sh]
+----
+kubectl logs -n <cluster_namespace> -l cluster=<cluster_name>
+----
+
+これはK3Kクラスターコンポーネント(`agents, server and virtual-kubelet`)からログを取得します。
+
+NOTE: 最近のイベントや状態条件を確認するには、`kubectl describe cluster <cluster_name>`を使用することもできます。
+
+== 仮想クラスターが起動しないか、保留中の状態です
+
+最も一般的な原因のいくつかは、欠落している前提条件や誤った設定に関連しています。
+
+=== ストレージクラスが利用できません
+
+`dynamic`の永続性を持つ仮想クラスターを作成する際には、PVCが必要です。PVCが請求されたがバインドされていないかどうかは`kubectl get pvc -n <cluster_namespace>`で確認できます。保留中のPVCが表示される場合、デフォルトのストレージクラスが定義されていないか、誤ったものを指定している可能性があります。
+
+==== 誤ったストレージクラスの例
+
+`pvc` は保留中です：
+
+[,bash]
+----
+kubectl get pvc -n k3k-test-storage
+NAME                                         STATUS    VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS    VOLUMEATTRIBUTESCLASS   AGE
+varlibrancherk3s-k3k-test-storage-server-0   Pending                                      not-available   <unset>                 4s
+----
+
+`server` は保留中です：
+
+[,bash]
+----
+kubectl get po -n k3k-test-storage
+NAME                             READY   STATUS    RESTARTS   AGE
+k3k-test-storage-kubelet-j4zn5   1/1     Running   0          54s
+k3k-test-storage-server-0        0/1     Pending   0          54s
+----
+
+これを修正するには、有効なストレージクラスを使用する必要があります。既存のストレージクラスをリストするには、次のコマンドを使用できます：
+
+[,bash]
+----
+kubectl get storageclasses.storage.k8s.io
+NAME                   PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+local-path (default)   rancher.io/local-path   Delete          WaitForFirstConsumer   false                  3d6h
+----
+
+=== 誤ったノードセレクタ
+
+`defaultNodeSelector` で仮想クラスターを作成する際に、セレクタが無効な場合、すべてのポッドは保留状態になります。
+
+==== 例
+
+`server` は保留中です：
+
+[,bash]
+----
+kubectl get po
+NAME                                  READY   STATUS    RESTARTS   AGE
+k3k-k3kcluster-node-placed-server-0   0/1     Pending   0          58s
+----
+
+ポッドの説明に、原因が記されています：
+
+[,bash]
+----
+kubectl describe po k3k-k3kcluster-node-placed-server-0
+...
+Events:
+  Type     Reason            Age   From               Message
+  ----     ------            ----  ----               -------
+  Warning  FailedScheduling  84s   default-scheduler  0/1 nodes are available: 1 node(s) didn't match Pod's node affinity/selector. preemption: 0/1 nodes are available: 1 Preemption is not helpful for scheduling.
+----
+
+これを修正するには、有効なノードアフィニティ/セレクタを使用する必要があります。
+
+=== イメージプルの問題（エアギャップされたセットアップ）
+
+エアギャップ(された)環境で仮想クラスターを作成する際には、イメージが構成されたレジストリで利用可能である必要があります。仮想クラスターの名前空間でポッドを取得する際に、`ImagePullBackOff` のステータスを確認できます。
+
+==== 例
+
+`server` はエラーが発生しています：
+
+[,bash]
+----
+kubectl get po -n k3k-test-registry
+NAME                             READY   STATUS          RESTARTS       AGE
+k3k-test-registry-kubelet-r4zh5   1/1     Running            0          54s
+k3k-test-registry-server-0        0/1     ImagePullBackOff   0          54s
+----
+
+これを修正するには、エラーが発生しているイメージが利用可能であることを確認してください。エラーが発生しているポッドの詳細情報を取得するには、describe コマンドを実行してください。

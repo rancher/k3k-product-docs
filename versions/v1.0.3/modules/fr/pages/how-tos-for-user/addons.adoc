@@ -1,0 +1,67 @@
+= Modules complémentaires
+:revdate: 2025-11-07
+:page-revdate: {revdate}
+
+Ce document fournit des informations sur la mise en service du cluster K3k en utilisant la fonctionnalité `add-ons`.
+
+IMPORTANT: Nommez la clé secrète avec l'extension '.yaml' pour qu'elle soit prise en compte par K3s.
+
+== Création du cluster K3k en utilisant des modules complémentaires
+
+. Installez le chart du contrôleur K3k. 
+ifdef::comm-build[] 
+Pour plus d'informations, voir xref:/quickstart.adoc#_install_the_k3k_controller[Installer le contrôleur K3k].
+endif::comm-build[]
+
+. Créez une clé secrète{nbsp}:
++
+.Par exemple :
+[,yaml]
+----
+apiVersion: v1
+kind: Secret
+metadata:
+  name: rancher-init
+  namespace: default
+stringData:
+  manifests.yaml: |-
+    apiVersion: v1
+    kind: Namespace
+    metadata:
+      name: cattle-system
+----
+
+. Créez le cluster K3k en utilisant le `add-ons`{nbsp}:
++
+.Par exemple :
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: rancher-k3k
+  namespace: rancher-k3k-system
+spec:
+  mode: shared
+  persistence:
+    type: ephemeral
+  addons:
+    - secretRef: rancher-init
+      secretNamespace: default
+----
+
+== Vérification
+
+* Vérifiez si le cluster a été correctement mis en service{nbsp}:
++
+[,yaml]
+----
+k exec -it -n rancher-k3k-system k3k-rancher-k3k-server-0 -- /bin/sh
+~ # kubectl get ns
+NAME              STATUS   AGE
+cattle-system     Active   98s
+default           Active   104s
+kube-node-lease   Active   104s
+kube-public       Active   105s
+kube-system       Active   105s
+----

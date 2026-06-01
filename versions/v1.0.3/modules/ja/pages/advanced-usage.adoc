@@ -1,0 +1,123 @@
+= 高度な使用方法
+:revdate: 2025-09-16
+:page-revdate: {revdate}
+
+このドキュメントは、k3kの高度な使用情報を提供し、カスタマイズのための`Cluster`リソースフィールドの詳細な使用例と説明を含んでいます。
+
+== クラスタリソースのカスタマイズ
+
+`Cluster`リソースは、仮想クラスタの動作をカスタマイズするためのさまざまなフィールドを提供します。完全な仕様については、xref:/references/crds.adoc[CRDドキュメント]を参照してください。
+
+NOTE: これらのカスタマイズオプションのほとんどは、`k3kcli`ツールを使用しても構成できます。詳細については、xref:/references/k3kcli.adoc[k3kcliドキュメント]を参照してください。
+
+この例では、次のような「共有」モードのK3kクラスタを作成します：
+
+* 3台のサーバ
+* K3sバージョンv1.31.3-k3s1
+* カスタムネットワーク設定
+* 特定のノードへのデプロイメント`nodeSelector`を使用して
+* `kube-api`はイングレスを使用して公開されます。
+* カスタムK3s `serverArgs`
+* ETCDデータは`PVC`を使用して永続化されます。
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: my-virtual-cluster
+  namespace: my-namespace
+spec:
+  mode: shared
+  version: v1.31.3-k3s1
+  servers: 3
+  tlsSANs:
+    - my-cluster.example.com
+  nodeSelector:
+    disktype: ssd
+  expose:
+    ingress:
+      ingressClassName: nginx
+      annotations:
+        nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+        nginx.ingress.kubernetes.io/backend-protocol: "true"
+        nginx.ingress.kubernetes.io/ssl-redirect: "HTTPS"
+  clusterCIDR: 10.42.0.0/16
+  serviceCIDR: 10.43.0.0/16
+  clusterDNS: 10.43.0.10
+  serverArgs:
+  - --tls-san=my-cluster.example.com
+  persistence:
+    type: dynamic
+    storageClassName: local-path
+----
+
+=== `mode`
+
+`mode`フィールドは、クラスタプロビジョニングモードを指定し、`shared`または`virtual`のいずれかになります。デフォルトのモードは`shared`です。
+
+* *`shared`モード:*このモードでは、仮想クラスタはホストクラスタのリソースとネットワークを共有します。このモードは、軽量のワークロードや、隔離が主要な懸念事項でない開発環境に適しています。
+* *`virtual`モード:*このモードでは、仮想クラスタはホストクラスタ内の別のK3sクラスタとして実行されます。このモードは、より強力な隔離を提供し、プロダクションワークロードや専用リソースが必要な場合に適しています。
+
+=== `version`
+
+`version`フィールドは、仮想ノードで使用されるKubernetesのバージョンを指定します。指定されていない場合、K3kはホストクラスタと同じK3sバージョンを使用します。例えば、ホストクラスタがKubernetes v1.31.3を実行している場合、K3kは対応するK3sバージョン（例：`v1.31.3-k3s1`）を使用します。
+
+=== `servers`
+
+`servers`フィールドは、仮想クラスタにデプロイするK3sサーバーノードの数を指定します。デフォルトは1です。
+
+=== `agents`
+
+`agents`フィールドは、仮想クラスタにデプロイするK3sエージェントノードの数を指定します。デフォルト値は「0」です。
+
+NOTE: `shared`モードでは、このフィールドは無視されます。なぜなら、Virtual Kubeletがエージェントとして機能し、K3sワーカーノードが存在しないからです。
+
+=== `nodeSelector`
+
+`nodeSelector`フィールドでは、すべてのサーバー/エージェントポッドに適用されるノードセレクターを指定できます。`shared`モードでは、ノードセレクターはワークロードにも適用されます。
+
+=== `expose`
+
+`expose`フィールドには、仮想クラスタのAPIサーバーを公開するためのオプションが含まれています。デフォルトでは、APIサーバーは`ClusterIP`としてのみ公開され、比較的安全ですが、クラスタの外部からアクセスするのは難しいです。
+
+`expose`フィールドを使用して、`NodePort`、`LoadBalancer`、または`Ingress`を介しての公開を有効にできます。
+
+この例では、`--enable-ssl-passthrough`フラグで構成する必要があるNginxイングレスコントローラーを使用してクラスタを公開しています。
+
+=== `clusterCIDR`
+
+`clusterCIDR`フィールドは、クラスタのポッドのCIDR範囲を指定します。デフォルト値は、共有モードで`10.42.0.0/16`、仮想モードで`10.52.0.0/16`です。
+
+=== `serviceCIDR`
+
+`serviceCIDR`フィールドは、クラスタ内のサービスのCIDR範囲を指定します。デフォルト値は、共有モードで`10.43.0.0/16`、仮想モードで`10.53.0.0/16`です。
+
+NOTE: `shared`モードでは、`serviceCIDR`はホストクラスタの`serviceCIDR`と一致する必要があり、`virtual`モードでは`serviceCIDR`と`clusterCIDR`はホストクラスタとは異なる必要があります。
+
+=== `clusterDNS`
+
+`clusterDNS`フィールドは、CoreDNSサービスのIPアドレスを指定します。それは`serviceCIDR`によって提供された範囲内である必要があります。デフォルト値は、`10.43.0.10`です。
+
+=== `serverArgs`
+
+`serverArgs`フィールドでは、K3sサーバーポッドに渡す追加の引数を指定できます。
+
+== CLIの使用
+
+完全な仕様についてはxref:/references/k3kcli.adoc[k3kcliのドキュメント]を確認できます。
+
+=== ストレージプロバイダーがありません：
+
+* エフェメラルストレージ：
++
+[,bash]
+----
+  k3kcli cluster create --persistence-type ephemeral my-cluster
+----
+
+[IMPORTANT]
+====
+* `--persistence-type ephemeral`を使用すると、ノードが再起動された場合にデータが失われる可能性があります。
+* 設定されたストレージクラスと共に`--persistence-type dynamic`を使用することを強くお勧めします。
+====

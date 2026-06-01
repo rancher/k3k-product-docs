@@ -1,0 +1,32 @@
+ifndef::ss-build-community[]
+* 发行说明
+** xref:release-notes/version-1.0.3.adoc[v1.0.3]
+endif::[]
+
+* xref:introduction.adoc[简介]
+
+* xref:quickstart.adoc[快速入门]
+
+* xref:architecture.adoc[体系结构]
+
+* xref:advanced-usage.adoc[高级用途]
+
+* xref:virtualclusterpolicy.adoc[VirtualClusterPolicy：概念]
+
+* 用户操作指南
+** xref:how-tos-for-user/create-virtual-clusters.adoc[创建虚拟集群]
+** xref:how-tos-for-user/expose-workloads.adoc[将工作负载暴露在虚拟集群外部]
+** xref:how-tos-for-user/addons.adoc[插件]
+
+* 管理员操作指南
+** xref:how-tos-for-admin/choose-mode.adoc[在共享模式和虚拟模式之间进行选择]
+** xref:how-tos-for-admin/adding-custom-cert.adoc[为来自K3k集群的K3s添加自定义证书]
+** xref:how-tos-for-admin/restrict-gpu-usage.adoc[限制GPU使用]
+** xref:how-tos-for-admin/secure-shared-mode.adoc[保障共享模式安全]
+
+* 参考资料
+** xref:references/crds.adoc[自定义资源定义（CRD）]
+** xref:references/k3kcli.adoc[k3kcli]
+
+* xref:how-tos-for-user/troubleshooting.adoc[查错]
+
