@@ -12,3 +12,9 @@ asciidoc:
     rancher-product-name: "SUSE® Rancher Prime"
 nav:
 - modules/en/nav.adoc
+- modules/de/nav.adoc
+- modules/es/nav.adoc
+- modules/fr/nav.adoc
+- modules/ja/nav.adoc
+- modules/pt/nav.adoc
+- modules/zh/nav.adoc
