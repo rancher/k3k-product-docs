@@ -1,4 +1,5 @@
 = Procedimentos: Expor cargas de trabalho fora do cluster virtual
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2025-09-10
 :page-revdate: {revdate}
 

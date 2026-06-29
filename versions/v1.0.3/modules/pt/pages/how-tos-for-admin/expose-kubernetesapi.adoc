@@ -1,4 +1,5 @@
 = Procedimentos: Expor a API do Cluster Virtual Kubernetes
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2025-11-11
 :page-revdate: {revdate}
 

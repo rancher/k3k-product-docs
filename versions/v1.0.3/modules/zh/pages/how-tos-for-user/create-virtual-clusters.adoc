@@ -1,4 +1,5 @@
 = 如何：创建虚拟集群
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2025-11-17
 :page-revdate: {revdate}
 

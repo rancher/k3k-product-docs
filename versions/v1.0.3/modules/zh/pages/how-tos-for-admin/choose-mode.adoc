@@ -1,4 +1,5 @@
 = 如何选择共享模式和虚拟模式
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2025-09-16
 :page-revdate: {revdate}
 

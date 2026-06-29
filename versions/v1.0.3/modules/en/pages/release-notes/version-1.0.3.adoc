@@ -1,4 +1,5 @@
 = SUSE Virtual Cluster v1.0.3 Release Highlights
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-02-23
 :page-revdate: {revdate}
 

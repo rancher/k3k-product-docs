@@ -1,4 +1,5 @@
 = ハウツー：仮想クラスターを作成する
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2025-11-17
 :page-revdate: {revdate}
 

@@ -1,4 +1,5 @@
 = Comandos CLI de K3k 
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: "2026-01-28"
 :page-revdate: {revdate}
 

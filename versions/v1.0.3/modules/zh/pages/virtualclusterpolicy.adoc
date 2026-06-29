@@ -1,4 +1,5 @@
 = 虚拟集群策略：概念
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2025-11-18
 :page-revdate: {revdate}
 

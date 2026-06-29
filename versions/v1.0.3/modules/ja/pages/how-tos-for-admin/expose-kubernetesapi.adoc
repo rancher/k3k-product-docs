@@ -1,4 +1,5 @@
 = ハウツー：仮想クラスターKubernetes APIを公開する
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2025-11-11
 :page-revdate: {revdate}
 

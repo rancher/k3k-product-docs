@@ -1,4 +1,5 @@
 = Restringindo recursos de GPU em clusters virtuais SUSE
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-09
 :page-revdate: {revdate}
 

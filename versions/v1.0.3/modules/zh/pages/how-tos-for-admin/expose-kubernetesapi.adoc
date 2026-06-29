@@ -1,4 +1,5 @@
 = 操作指南：暴露虚拟集群Kubernetes API
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2025-11-11
 :page-revdate: {revdate}
 

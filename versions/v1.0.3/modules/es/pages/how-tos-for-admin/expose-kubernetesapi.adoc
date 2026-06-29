@@ -1,4 +1,5 @@
 = How-to: Exponer la API del clúster virtual de Kubernetes
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2025-11-11
 :page-revdate: {revdate}
 

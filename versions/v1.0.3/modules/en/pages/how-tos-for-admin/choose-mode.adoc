@@ -1,4 +1,5 @@
 = How to Choose Between Shared and Virtual Mode
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2025-09-16
 :page-revdate: {revdate}
 

@@ -1,4 +1,5 @@
 = Cómo elegir entre el modo compartido y el modo virtual
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2025-09-16
 :page-revdate: {revdate}
 

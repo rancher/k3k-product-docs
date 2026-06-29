@@ -1,4 +1,5 @@
 [id="k3k-api-reference"]
+:page-languages: [en, de, es, fr, ja, pt, zh]
 = Referência da API
 :revdate: "2026-01-28"
 :page-revdate: {revdate}

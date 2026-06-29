@@ -1,4 +1,5 @@
 = 将自定义证书从k3k集群添加到k3s
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2025-09-16
 :page-revdate: {revdate}
 

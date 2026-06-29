@@ -1,4 +1,5 @@
 = 共有モードの仮想クラスターを保護する
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-09
 :page-revdate: {revdate}
 
