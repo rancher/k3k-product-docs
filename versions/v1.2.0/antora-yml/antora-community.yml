@@ -1,12 +1,13 @@
 name: k3k
 title: K3k
-version: 1.0.2
-display_version: 'v1.0.2'
+version: 1.2.0
+display_version: 'v1.2.0 (Dev)'
+prerelease: -dev
 start_page: en:introduction.adoc
 asciidoc:
   attributes:
     product-name: "K3k"
-    k3k-latest-version: 'v1.0.2'
+    k3k-latest-version: 'v1.2.0'
     k3s-product-name: "K3s"
     rancher-product-name: "SUSE® Rancher Prime"
 nav:

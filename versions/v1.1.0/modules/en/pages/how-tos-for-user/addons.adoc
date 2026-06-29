@@ -1,0 +1,67 @@
+= Add-ons
+:revdate: 2025-11-07
+:page-revdate: {revdate}
+
+This document provides information on provisioning the K3k cluster uisng the `add-ons` feature.
+
+IMPORTANT: Name the secret key with '.yaml' extension to be picked up by K3s.
+
+== K3k cluster creation using Add-ons
+
+. Install the K3k controller chart. 
+ifdef::comm-build[] 
+For more information, see xref:/quickstart.adoc#_install_the_k3k_controller[Install the K3k controller].
+endif::comm-build[]
+
+. Create a secret key:
++
+.Example
+[,yaml]
+----
+apiVersion: v1
+kind: Secret
+metadata:
+  name: rancher-init
+  namespace: default
+stringData:
+  manifests.yaml: |-
+    apiVersion: v1
+    kind: Namespace
+    metadata:
+      name: cattle-system
+----
+
+. Create the K3k cluster using the `add-ons`:
++
+.Example
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: rancher-k3k
+  namespace: rancher-k3k-system
+spec:
+  mode: shared
+  persistence:
+    type: ephemeral
+  addons:
+    - secretRef: rancher-init
+      secretNamespace: default
+----
+
+== Verification
+
+* Verify if the cluster has been successfully provisioned:
++
+[,yaml]
+----
+k exec -it -n rancher-k3k-system k3k-rancher-k3k-server-0 -- /bin/sh
+~ # kubectl get ns
+NAME              STATUS   AGE
+cattle-system     Active   98s
+default           Active   104s
+kube-node-lease   Active   104s
+kube-public       Active   105s
+kube-system       Active   105s
+----
