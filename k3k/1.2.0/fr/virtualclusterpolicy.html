@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Stratégie de Cluster Virtuel&#160;: Concepts :: K3k</title>
+    <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="stylesheet" href="../../../_/css/search.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="../../../_/css/font-styles.css">
+<link rel="stylesheet" href="../../../_/fonts/css/all.css">
+<link rel="stylesheet" href="../../../_/css/site-extra.css">
+<link rel="stylesheet" href="../../../_/css/vendor/tabs.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=SUSE:wght@100..800&display=swap&family=SUSE+Mono:ital,wght@0,100..800;1,100..800" rel="stylesheet">
+<link href="https://documentation.suse.com/docserv/res/fonts/poppins/poppins.css" rel="stylesheet">
+<!-- <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto&display=swap" rel="stylesheet"> -->
+<link rel="stylesheet" href="../../../_/css/vendor/light.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs'; mermaid.initialize({"startOnLoad":true});</script><header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-item">
+        <a class=" navbar-logo" href="https://docs.k3k.io/" aria-label="K3k Documentation Home"><img class="logo"
+            src="../../../_/img/logo-horizontal-positive-k3k.svg" alt="K3k logo"/></a>
+      </div>
+      <div class="navbar-item search hide-for-print">
+        <div id="search-field" class="field">
+          <label class="visual-search-label" for="search-input">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+          <input label="Search" aria-label="Search" id="search-input" type="text" placeholder="Search the docs" >
+          <label class="filter checkbox" style="display: none">
+            <input type="checkbox" data-facet-filter="component:k3k" checked> Only this project
+          </label>
+        </div>
+      </div>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link">
+            <img src="../../../_/img/resources.png" class="langIcon Resources" alt="Resources" title="Resources">
+          </div>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs"><i class="fab fa-github"></i>&nbsp;K3k</a>
+            <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs/issues"><i class="fab fa-github"></i>&nbsp;GitHub Issue</a>
+            <!-- <div class="has-submenu">
+              <a class="navbar-item" href="#" ><i class="fas fa-file-alt"></i>&nbsp;Report Issue &nbsp;<i class="fas fa-chevron-right"></i></a>
+              <div class="submenu">
+                <a class="navbar-item" href="https://scc.suse.com">SCC (Recommended)</a>
+                <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs/issues">GitHub Issue</a>
+              </div>
+            </div> -->
+            <a class="navbar-item" href="https://github.com/rancher/k3k/blob/main/docs/development.md"><i class="fas fa-user-edit"></i>&nbsp;Contribute</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link"><img src="../../../_/img/language.png" class="langIcon Language" alt="Language"
+              title="Language"></div>
+          <div class="navbar-dropdown">
+            <!--  </div><div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div> -->
+              <a role="button" class="navbar-item" id="en" onclick="selectLanguage(this.id)">
+                <!--<img src="../../../_/img/engFlag.svg" class="langIcon english">-->
+                &nbsp;English
+              </a>
+            <!-- LANGUAGESELECTOR -->
+          </div>
+        </div>
+        <!--
+        <div class="navbar-item">
+          <a href="https://twitter.com/SUSE">
+            <img alt="X-logo" class="x-logo" src="../../../_/img/x-logo-white.png">
+          </a>
+        </div>
+        -->
+      </div>
+    </div>
+
+    <!--   <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+      </div> -->
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="k3k" data-version="1.2.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../en/introduction.html">K3k</a></h3>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">K3k</span>
+    <span class="version">v1.2.0 (Dev)</span>
+  </div>
+  <ul class="components">
+        <li class="component is-current">
+          <div class="title"><a href="../../1.1.0/en/introduction.html">K3k</a></div>
+          <ul class="versions">
+            <li class="version is-current">
+              <a href="../en/introduction.html">v1.2.0 (Dev)</a>
+            </li>
+            <li class="version is-latest">
+              <a href="../../1.1.0/en/introduction.html">v1.1.0-latest</a>
+            </li>
+            <li class="version">
+              <a href="../../1.0.2/en/introduction.html">v1.0.2</a>
+            </li>
+            <li class="version">
+              <a href="../../v1.0.1/en/introduction.html">v1.0.1</a>
+            </li>
+            <li class="version">
+              <a href="../../v1.0.0/en/introduction.html">v1.0.0</a>
+            </li>
+          </ul>
+        </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../v1.0.1/en/introduction.html" aria-label="Home" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../en/introduction.html">K3k</a></li>
+    <li><a href="virtualclusterpolicy.html">Stratégie de Cluster Virtuel&#160;: Concepts</a></li>
+  </ul>
+</nav>
+<div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">v1.2.0 (Dev)</button>
+  <div class="version-menu">
+    <a class="version is-current" href="virtualclusterpolicy.html">v1.2.0 (Dev)</a>
+    <a class="version is-missing" href="../../1.1.0/en/introduction.html">v1.1.0-latest</a>
+    <a class="version is-missing" href="../../1.0.2/en/introduction.html">v1.0.2</a>
+    <a class="version is-missing" href="../../v1.0.1/en/introduction.html">v1.0.1</a>
+    <a class="version is-missing" href="../../v1.0.0/en/introduction.html">v1.0.0</a>
+  </div>
+</div>
+  <div class="edit-this-page"><a href="https://github.com/rancher/k3k-product-docs/edit/main/versions/v1.2.0/modules/fr/pages/virtualclusterpolicy.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<aside class="toc sidebar" data-title="On this page" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>This is unreleased documentation for K3k v1.2.0 (Dev).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<h1 class="page">Stratégie de Cluster Virtuel&#160;: Concepts</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>La ressource personnalisée <code>VirtualClusterPolicy</code> dans K3k fournit un moyen de définir et d&#8217;appliquer des configurations cohérentes, des paramètres de sécurité et des règles de gestion des ressources pour vos clusters virtuels et les espaces de noms dans lesquels ils opèrent.</p>
+</div>
+<div class="paragraph">
+<p>En utilisant des VCP, les administrateurs peuvent gérer ces aspects de manière centralisée, réduisant la configuration manuelle, garantissant l&#8217;alignement avec les normes organisationnelles et améliorant la sécurité globale et la cohérence opérationnelle de l&#8217;environnement K3k.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Avertissement"></i>
+</td>
+<td class="content">
+Utiliser une combinaison de <code>RKE2</code> et <code>Cilium</code> dans le cluster hôte pourrait entraîner des problèmes avec les stratégies réseau. La solution recommandée est d&#8217;utiliser <code>VirtualClusterPolicy</code> pour désactiver la configuration des stratégies réseau avec K3k.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_concepts_du_noyau"><a class="anchor" href="#_concepts_du_noyau"></a>Concepts du noyau</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_quest_ce_quune_stratégie_de_cluster_virtuel"><a class="anchor" href="#_quest_ce_quune_stratégie_de_cluster_virtuel"></a>Qu&#8217;est-ce qu&#8217;une Stratégie de Cluster Virtuel&#160;?</h3>
+<div class="paragraph">
+<p>Une <code>VirtualClusterPolicy</code> est une ressource personnalisée Kubernetes à portée de cluster qui spécifie un ensemble de règles et de configurations. Ces stratégies sont ensuite appliquées aux clusters virtuels K3k (ressources <code>Cluster</code>) opérant au sein des espaces de noms Kubernetes qui sont explicitement liés à une VCP.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_lier_une_stratégie_à_un_espace_de_noms"><a class="anchor" href="#_lier_une_stratégie_à_un_espace_de_noms"></a>Lier une Stratégie à un Espace de Noms</h3>
+<div class="paragraph">
+<p>Pour appliquer une <code>VirtualClusterPolicy</code> à un ou plusieurs espaces de noms (et donc à toutes les ressources K3k <code>Cluster</code> au sein de ces espaces de noms), vous devez étiqueter le(s) espace(s) de noms souhaité(s).</p>
+</div>
+<div class="paragraph">
+<p>Ajoutez l&#8217;étiquette suivante à vos métadonnées d&#8217;espace de noms&#160;:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>`policy.k3k.io/policy-name: &lt;YOUR_POLICY_NAME&gt;`</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>*Exemple : Étiquetage d&#8217;un Espace de Noms *</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: v1
+kind: Namespace
+metadata:
+  name: my-app-namespace
+  labels:
+    policy.k3k.io/policy-name: "standard-dev-policy"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Dans cet exemple, <code>my-app-namespace</code> respectera les règles définies dans le <code>VirtualClusterPolicy</code> nommé <code>standard-dev-policy</code>. Plusieurs espaces de noms peuvent être liés à la même stratégie pour une configuration uniforme, ou différents espaces de noms peuvent être liés à des stratégies distinctes.</p>
+</div>
+<div class="paragraph">
+<p>Il est également important de noter ce qui se passe lorsque le lien de stratégie d&#8217;un espace de noms change. Si un espace de noms est dissocié d&#8217;une Stratégie de Cluster Virtuel (en supprimant l&#8217;étiquette policy.k3k.io/policy-name), K3k nettoiera et supprimera les ressources (telles que les quotas de ressources, les limites de ressources et les étiquettes d&#8217;espace de noms gérées) qui étaient initialement appliquées par cette stratégie. De même, si l&#8217;étiquette est modifiée pour lier l&#8217;espace de noms à une nouvelle Stratégie de Cluster Virtuel, K3k supprimera d&#8217;abord les ressources associées à l&#8217;ancienne stratégie avant d&#8217;appliquer les configurations de la nouvelle, garantissant une transition propre.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_valeurs_de_stratégie_par_défaut"><a class="anchor" href="#_valeurs_de_stratégie_par_défaut"></a>Valeurs de Stratégie par défaut</h3>
+<div class="paragraph">
+<p>Si vous créez un <code>VirtualClusterPolicy</code> sans spécifier de champs <code>spec</code> (par exemple, en utilisant <code>k3kcli policy create my-default-policy</code>), il sera créé avec des paramètres par défaut. Actuellement, cela inclut que <code>spec.allowedMode</code> soit défini sur <code>shared</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml"># Example of a minimal VCP (after creation with defaults)
+apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: my-default-policy
+spec:
+  allowedMode: shared</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_fonctionnalités_clés_et_exemples"><a class="anchor" href="#_fonctionnalités_clés_et_exemples"></a>Fonctionnalités clés et exemples</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Un <code>VirtualClusterPolicy</code> peut configurer plusieurs aspects des espaces de noms auxquels il est lié et des clusters virtuels qui y opèrent.</p>
+</div>
+<div class="sect2">
+<h3 id="_restriction_des_modes_de_cluster_virtuel_autorisés_allowedmode"><a class="anchor" href="#_restriction_des_modes_de_cluster_virtuel_autorisés_allowedmode"></a>Restriction des modes de cluster virtuel autorisés (<code>AllowedMode</code>)</h3>
+<div class="paragraph">
+<p>Vous pouvez restreindre le <code>mode</code> (par exemple, "partagé" ou "virtuel") dans lequel les ressources K3k <code>Cluster</code> peuvent être provisionnées au sein des espaces de noms liés. Si un <code>Cluster</code> est créé dans un espace de noms lié avec un mode non autorisé dans <code>allowedMode</code>, sa création peut se poursuivre mais une erreur devrait être signalée dans le statut de la ressource <code>Cluster</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Exemple :</strong> Autoriser uniquement les clusters en mode "partagé".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: shared-only-policy
+spec:
+  allowedModeTypes:
+  - shared</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Vous pouvez également spécifier cela en utilisant la CLI&#160;: <code>k3kcli policy create --mode shared shared-only-policy</code> (ou <code>--mode virtual</code>).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_définir_des_quotas_de_ressources_quota"><a class="anchor" href="#_définir_des_quotas_de_ressources_quota"></a>Définir des quotas de ressources (<code>quota</code>)</h3>
+<div class="paragraph">
+<p>Vous pouvez définir des limites de consommation de ressources pour les espaces de noms liés en spécifiant un <code>ResourceQuota</code>. K3k créera un objet <code>ResourceQuota</code> dans chaque espace de noms lié avec les spécifications fournies.</p>
+</div>
+<div class="paragraph">
+<p><strong>Exemple :</strong> Définir des limites de CPU, de mémoire et de pods.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: quota-policy
+spec:
+  quota:
+    hard:
+      cpu: "10"
+      memory: "20Gi"
+      pods: "10"</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_définir_des_plages_de_limites_limit"><a class="anchor" href="#_définir_des_plages_de_limites_limit"></a>Définir des plages de limites (<code>limit</code>)</h3>
+<div class="paragraph">
+<p>Vous pouvez définir des demandes/limites de ressources par défaut et des contraintes min/max pour les conteneurs fonctionnant dans des espaces de noms liés en spécifiant un <code>LimitRange</code>. K3k créera un objet <code>LimitRange</code> dans chaque espace de noms lié.</p>
+</div>
+<div class="paragraph">
+<p><strong>Exemple :</strong> Définir des demandes/limites de CPU par défaut et min/max CPU.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: limit-policy
+spec:
+  limit:
+    limits:
+    - default:
+        cpu: "500m"
+      defaultRequest:
+        cpu: "500m"
+      max:
+        cpu: "1"
+      min:
+        cpu: "100m"
+      type: Container</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_gestion_de_lisolement_réseau_disablenetworkpolicy"><a class="anchor" href="#_gestion_de_lisolement_réseau_disablenetworkpolicy"></a>Gestion de l&#8217;isolement réseau (<code>disableNetworkPolicy</code>)</h3>
+<div class="paragraph">
+<p>Par défaut, K3k crée un <code>NetworkPolicy</code> dans les espaces de noms liés pour fournir un isolement réseau pour les clusters virtuels (surtout en mode partagé). Vous pouvez désactiver la création de cette politique par défaut.</p>
+</div>
+<div class="paragraph">
+<p><strong>Exemple :</strong> Désactiver la NetworkPolicy par défaut.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: no-default-netpol-policy
+spec:
+  disableNetworkPolicy: true</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_application_de_ladmission_de_sécurité_des_pods_podsecurityadmissionlevel"><a class="anchor" href="#_application_de_ladmission_de_sécurité_des_pods_podsecurityadmissionlevel"></a>Application de l&#8217;admission de sécurité des pods (<code>podSecurityAdmissionLevel</code>)</h3>
+<div class="paragraph">
+<p>Vous pouvez appliquer les normes de sécurité des pods (PSS) en spécifiant un niveau d&#8217;admission de sécurité des pods (PSA). K3k applique les étiquettes PSA correspondantes à chaque espace de noms lié. Les valeurs autorisées sont <code>privileged</code>, <code>baseline</code>, <code>restricted</code>, et cela ajoute des étiquettes comme <code>pod-security.kubernetes.io/enforce: &lt;level&gt;</code> à l&#8217;espace de noms lié.</p>
+</div>
+<div class="paragraph">
+<p><strong>Exemple :</strong> Appliquer le niveau PSS "de base".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: baseline-psa-policy
+spec:
+  podSecurityAdmissionLevel: baseline</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_informations_supplémentaires"><a class="anchor" href="#_informations_supplémentaires"></a>Informations supplémentaires</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Pour une référence complète de tous les champs de spécification <code>VirtualClusterPolicy</code>, voir <a href="references/crds.html#VirtualClusterPolicy" class="xref page">Référence API pour VirtualClusterPolicy</a>.</p>
+</li>
+<li>
+<p>Pour comprendre comment les VCP s&#8217;intègrent dans l&#8217;ensemble du système K3k, voir <a href="architecture.html" class="xref page">Architecture</a>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<script src="../../../_/js/site.js"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+<script src="../../../_/js/vendor/langSelection.js"></script>
+<script async src="../../../_/js/vendor/tabs.js"></script>
+
+
+  </body>
+</html>

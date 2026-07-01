@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Dépannage :: K3k</title>
+    <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+<link rel="stylesheet" href="../../../../_/css/search.css">
+<link rel="icon" href="../../../../_/img/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="../../../../_/css/font-styles.css">
+<link rel="stylesheet" href="../../../../_/fonts/css/all.css">
+<link rel="stylesheet" href="../../../../_/css/site-extra.css">
+<link rel="stylesheet" href="../../../../_/css/vendor/tabs.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=SUSE:wght@100..800&display=swap&family=SUSE+Mono:ital,wght@0,100..800;1,100..800" rel="stylesheet">
+<link href="https://documentation.suse.com/docserv/res/fonts/poppins/poppins.css" rel="stylesheet">
+<!-- <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto&display=swap" rel="stylesheet"> -->
+<link rel="stylesheet" href="../../../../_/css/vendor/light.css">
+    <script>var uiRootPath = '../../../../_'</script>
+  </head>
+  <body class="article">
+<script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs'; mermaid.initialize({"startOnLoad":true});</script><header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-item">
+        <a class=" navbar-logo" href="https://docs.k3k.io/" aria-label="K3k Documentation Home"><img class="logo"
+            src="../../../../_/img/logo-horizontal-positive-k3k.svg" alt="K3k logo"/></a>
+      </div>
+      <div class="navbar-item search hide-for-print">
+        <div id="search-field" class="field">
+          <label class="visual-search-label" for="search-input">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+          <input label="Search" aria-label="Search" id="search-input" type="text" placeholder="Search the docs" >
+          <label class="filter checkbox" style="display: none">
+            <input type="checkbox" data-facet-filter="component:k3k" checked> Only this project
+          </label>
+        </div>
+      </div>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link">
+            <img src="../../../../_/img/resources.png" class="langIcon Resources" alt="Resources" title="Resources">
+          </div>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs"><i class="fab fa-github"></i>&nbsp;K3k</a>
+            <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs/issues"><i class="fab fa-github"></i>&nbsp;GitHub Issue</a>
+            <!-- <div class="has-submenu">
+              <a class="navbar-item" href="#" ><i class="fas fa-file-alt"></i>&nbsp;Report Issue &nbsp;<i class="fas fa-chevron-right"></i></a>
+              <div class="submenu">
+                <a class="navbar-item" href="https://scc.suse.com">SCC (Recommended)</a>
+                <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs/issues">GitHub Issue</a>
+              </div>
+            </div> -->
+            <a class="navbar-item" href="https://github.com/rancher/k3k/blob/main/docs/development.md"><i class="fas fa-user-edit"></i>&nbsp;Contribute</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link"><img src="../../../../_/img/language.png" class="langIcon Language" alt="Language"
+              title="Language"></div>
+          <div class="navbar-dropdown">
+            <!--  </div><div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div> -->
+              <a role="button" class="navbar-item" id="en" onclick="selectLanguage(this.id)">
+                <!--<img src="../../../../_/img/engFlag.svg" class="langIcon english">-->
+                &nbsp;English
+              </a>
+            <!-- LANGUAGESELECTOR -->
+          </div>
+        </div>
+        <!--
+        <div class="navbar-item">
+          <a href="https://twitter.com/SUSE">
+            <img alt="X-logo" class="x-logo" src="../../../../_/img/x-logo-white.png">
+          </a>
+        </div>
+        -->
+      </div>
+    </div>
+
+    <!--   <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+      </div> -->
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="k3k" data-version="1.2.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../../en/introduction.html">K3k</a></h3>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">K3k</span>
+    <span class="version">v1.2.0 (Dev)</span>
+  </div>
+  <ul class="components">
+        <li class="component is-current">
+          <div class="title"><a href="../../../1.1.0/en/introduction.html">K3k</a></div>
+          <ul class="versions">
+            <li class="version is-current">
+              <a href="../../en/introduction.html">v1.2.0 (Dev)</a>
+            </li>
+            <li class="version is-latest">
+              <a href="../../../1.1.0/en/introduction.html">v1.1.0-latest</a>
+            </li>
+            <li class="version">
+              <a href="../../../1.0.2/en/introduction.html">v1.0.2</a>
+            </li>
+            <li class="version">
+              <a href="../../../v1.0.1/en/introduction.html">v1.0.1</a>
+            </li>
+            <li class="version">
+              <a href="../../../v1.0.0/en/introduction.html">v1.0.0</a>
+            </li>
+          </ul>
+        </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../v1.0.1/en/introduction.html" aria-label="Home" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../en/introduction.html">K3k</a></li>
+    <li><a href="troubleshooting.html">Dépannage</a></li>
+  </ul>
+</nav>
+<div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">v1.2.0 (Dev)</button>
+  <div class="version-menu">
+    <a class="version is-current" href="troubleshooting.html">v1.2.0 (Dev)</a>
+    <a class="version is-missing" href="../../../1.1.0/en/introduction.html">v1.1.0-latest</a>
+    <a class="version is-missing" href="../../../1.0.2/en/introduction.html">v1.0.2</a>
+    <a class="version is-missing" href="../../../v1.0.1/en/introduction.html">v1.0.1</a>
+    <a class="version is-missing" href="../../../v1.0.0/en/introduction.html">v1.0.0</a>
+  </div>
+</div>
+  <div class="edit-this-page"><a href="https://github.com/rancher/k3k-product-docs/edit/main/versions/v1.2.0/modules/fr/pages/how-tos-for-user/troubleshooting.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<aside class="toc sidebar" data-title="On this page" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>This is unreleased documentation for K3k v1.2.0 (Dev).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<h1 class="page">Dépannage</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Cette section présente les étapes de dépannage courantes pour les clusters virtuels K3K.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_too_many_open_files_erreur"><a class="anchor" href="#_too_many_open_files_erreur"></a><code>Too many open files</code> erreur</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Le <code>k3k-kubelet</code> ou le <code>k3kcluster-server-</code> rencontre le problème suivant&#160;:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">E0604 13:14:53.369369       1 leaderelection.go:336] error initially creating leader election record: Post "https://k3k-http-proxy-k3kcluster-service/apis/coordination.k8s.io/v1/namespaces/kube-system/leases": context canceled
+{"level":"fatal","timestamp":"2025-06-04T13:14:53.369Z","logger":"k3k-kubelet","msg":"virtual manager stopped","error":"too many open files"}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Cela indique généralement que la limite du nombre d&#8217;observateurs inotify ou de descripteurs de fichiers sur le système hôte est trop basse.</p>
+</div>
+<div class="paragraph">
+<p>Pour augmenter les limites inotify, connectez-vous aux nœuds hôtes et exécutez&#160;:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">sudo sysctl -w fs.inotify.max_user_watches=2099999999
+sudo sysctl -w fs.inotify.max_user_instances=2099999999
+sudo sysctl -w fs.inotify.max_queued_events=2099999999</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Vous pouvez conserver ces paramètres en les ajoutant à <code>/etc/sysctl.conf</code>&#160;:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">fs.inotify.max_user_watches=2099999999
+fs.inotify.max_user_instances=2099999999
+fs.inotify.max_queued_events=2099999999</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Appliquez les modifications&#160;:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">sudo sysctl -p</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Vous pouvez trouver plus de détails dans ce <a href="https://www.suse.com/support/kb/doc/?id=000020048">document KB</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_inspectez_les_journaux_du_contrôleur_pour_le_diagnostic_des_échecs"><a class="anchor" href="#_inspectez_les_journaux_du_contrôleur_pour_le_diagnostic_des_échecs"></a>Inspectez les journaux du contrôleur pour le diagnostic des échecs</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Pour voir les journaux d&#8217;un cluster virtuel échoué&#160;:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">kubectl logs -n k3k-system -l app.kubernetes.io/name=k3k</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Cela récupère les journaux des composants du contrôleur K3K.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_inspectez_les_journaux_du_cluster_pour_le_diagnostic_des_échecs"><a class="anchor" href="#_inspectez_les_journaux_du_cluster_pour_le_diagnostic_des_échecs"></a>Inspectez les journaux du cluster pour le diagnostic des échecs</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Pour voir les journaux d&#8217;un cluster virtuel échoué&#160;:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">kubectl logs -n &lt;cluster_namespace&gt; -l cluster=&lt;cluster_name&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Cela récupère les journaux des composants du cluster K3K (<code>agents, server and virtual-kubelet</code>).</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Vous pouvez également utiliser <code>kubectl describe cluster &lt;cluster_name&gt;</code> pour vérifier les événements récents et les conditions d&#8217;état.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_cluster_virtuel_ne_démarre_pas_ou_bloqué_en_attente"><a class="anchor" href="#_cluster_virtuel_ne_démarre_pas_ou_bloqué_en_attente"></a>Cluster virtuel ne démarre pas ou bloqué en attente</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Certaines des causes les plus courantes sont liées à des prérequis manquants ou à une mauvaise configuration.</p>
+</div>
+<div class="sect2">
+<h3 id="_classe_de_stockage_non_disponible"><a class="anchor" href="#_classe_de_stockage_non_disponible"></a>Classe de stockage non disponible</h3>
+<div class="paragraph">
+<p>Lors de la création d&#8217;un cluster virtuel avec une persistance <code>dynamic</code>, un PVC est nécessaire. Vous pouvez vérifier si le PVC a été réclamé mais non lié avec <code>kubectl get pvc -n &lt;cluster_namespace&gt;</code>. Si vous voyez un PVC en attente, vous n&#8217;avez probablement pas de classe de stockage par défaut définie, ou vous en avez spécifié une incorrecte.</p>
+</div>
+<div class="sect3">
+<h4 id="_exemple_avec_une_classe_de_stockage_incorrecte"><a class="anchor" href="#_exemple_avec_une_classe_de_stockage_incorrecte"></a>Exemple avec une classe de stockage incorrecte</h4>
+<div class="paragraph">
+<p>Le <code>pvc</code> est en attente&#160;:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl get pvc -n k3k-test-storage
+NAME                                         STATUS    VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS    VOLUMEATTRIBUTESCLASS   AGE
+varlibrancherk3s-k3k-test-storage-server-0   Pending                                      not-available   &lt;unset&gt;                 4s</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Le <code>server</code> est en attente&#160;:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl get po -n k3k-test-storage
+NAME                             READY   STATUS    RESTARTS   AGE
+k3k-test-storage-kubelet-j4zn5   1/1     Running   0          54s
+k3k-test-storage-server-0        0/1     Pending   0          54s</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Pour corriger cela, vous devez utiliser une classe de stockage valide, vous pouvez lister les classes de stockage existantes en utilisant&#160;:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl get storageclasses.storage.k8s.io
+NAME                   PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+local-path (default)   rancher.io/local-path   Delete          WaitForFirstConsumer   false                  3d6h</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sélecteur_de_nœud_incorrect"><a class="anchor" href="#_sélecteur_de_nœud_incorrect"></a>Sélecteur de nœud incorrect</h3>
+<div class="paragraph">
+<p>Lors de la création d&#8217;un cluster virtuel avec <code>defaultNodeSelector</code>, si le sélecteur n&#8217;est pas valide, tous les pods seront en attente.</p>
+</div>
+<div class="sect3">
+<h4 id="_par_exemple"><a class="anchor" href="#_par_exemple"></a>Par exemple :</h4>
+<div class="paragraph">
+<p>Le <code>server</code> est en attente&#160;:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl get po
+NAME                                  READY   STATUS    RESTARTS   AGE
+k3k-k3kcluster-node-placed-server-0   0/1     Pending   0          58s</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>La description du pod fournit la raison&#160;:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl describe po k3k-k3kcluster-node-placed-server-0
+...
+Events:
+  Type     Reason            Age   From               Message
+  ----     ------            ----  ----               -------
+  Warning  FailedScheduling  84s   default-scheduler  0/1 nodes are available: 1 node(s) didn't match Pod's node affinity/selector. preemption: 0/1 nodes are available: 1 Preemption is not helpful for scheduling.</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Pour corriger cela, vous devez utiliser une affinité/sélecteur de nœud valide.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_problèmes_de_tirage_dimage_configuration_isolée_physiquement"><a class="anchor" href="#_problèmes_de_tirage_dimage_configuration_isolée_physiquement"></a>Problèmes de tirage d&#8217;image (configuration isolée physiquement)</h3>
+<div class="paragraph">
+<p>Lors de la création d&#8217;un cluster virtuel dans un environnement isolé physiquement, les images doivent être disponibles dans le registre configuré. Vous pouvez vérifier l&#8217;état de <code>ImagePullBackOff</code> lors de la récupération des pods dans l&#8217;espace de noms du cluster virtuel.</p>
+</div>
+<div class="sect3">
+<h4 id="_par_exemple_2"><a class="anchor" href="#_par_exemple_2"></a>Par exemple :</h4>
+<div class="paragraph">
+<p>Le <code>server</code> est en échec&#160;:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl get po -n k3k-test-registry
+NAME                             READY   STATUS          RESTARTS       AGE
+k3k-test-registry-kubelet-r4zh5   1/1     Running            0          54s
+k3k-test-registry-server-0        0/1     ImagePullBackOff   0          54s</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Pour corriger cela, assurez-vous que l&#8217;image en échec est disponible. Vous pouvez décrire le pod en échec pour obtenir plus de détails.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+<script src="../../../../_/js/vendor/lunr.js"></script>
+<script src="../../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../../.." data-snippet-length="100" data-stylesheet="../../../../_/css/search.css"></script>
+<script async src="../../../../search-index.js"></script>
+<script src="../../../../_/js/vendor/langSelection.js"></script>
+<script async src="../../../../_/js/vendor/tabs.js"></script>
+
+
+  </body>
+</html>

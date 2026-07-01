@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>如何：创建虚拟集群 :: K3k</title>
+    <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+<link rel="stylesheet" href="../../../../_/css/search.css">
+<link rel="icon" href="../../../../_/img/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="../../../../_/css/font-styles.css">
+<link rel="stylesheet" href="../../../../_/fonts/css/all.css">
+<link rel="stylesheet" href="../../../../_/css/site-extra.css">
+<link rel="stylesheet" href="../../../../_/css/vendor/tabs.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=SUSE:wght@100..800&display=swap&family=SUSE+Mono:ital,wght@0,100..800;1,100..800" rel="stylesheet">
+<link href="https://documentation.suse.com/docserv/res/fonts/poppins/poppins.css" rel="stylesheet">
+<!-- <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto&display=swap" rel="stylesheet"> -->
+<link rel="stylesheet" href="../../../../_/css/vendor/light.css">
+    <script>var uiRootPath = '../../../../_'</script>
+  </head>
+  <body class="article">
+<script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs'; mermaid.initialize({"startOnLoad":true});</script><header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-item">
+        <a class=" navbar-logo" href="https://docs.k3k.io/" aria-label="K3k Documentation Home"><img class="logo"
+            src="../../../../_/img/logo-horizontal-positive-k3k.svg" alt="K3k logo"/></a>
+      </div>
+      <div class="navbar-item search hide-for-print">
+        <div id="search-field" class="field">
+          <label class="visual-search-label" for="search-input">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+          <input label="Search" aria-label="Search" id="search-input" type="text" placeholder="Search the docs" >
+          <label class="filter checkbox" style="display: none">
+            <input type="checkbox" data-facet-filter="component:k3k" checked> Only this project
+          </label>
+        </div>
+      </div>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link">
+            <img src="../../../../_/img/resources.png" class="langIcon Resources" alt="Resources" title="Resources">
+          </div>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs"><i class="fab fa-github"></i>&nbsp;K3k</a>
+            <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs/issues"><i class="fab fa-github"></i>&nbsp;GitHub Issue</a>
+            <!-- <div class="has-submenu">
+              <a class="navbar-item" href="#" ><i class="fas fa-file-alt"></i>&nbsp;Report Issue &nbsp;<i class="fas fa-chevron-right"></i></a>
+              <div class="submenu">
+                <a class="navbar-item" href="https://scc.suse.com">SCC (Recommended)</a>
+                <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs/issues">GitHub Issue</a>
+              </div>
+            </div> -->
+            <a class="navbar-item" href="https://github.com/rancher/k3k/blob/main/docs/development.md"><i class="fas fa-user-edit"></i>&nbsp;Contribute</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link"><img src="../../../../_/img/language.png" class="langIcon Language" alt="Language"
+              title="Language"></div>
+          <div class="navbar-dropdown">
+            <!--  </div><div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div> -->
+              <a role="button" class="navbar-item" id="en" onclick="selectLanguage(this.id)">
+                <!--<img src="../../../../_/img/engFlag.svg" class="langIcon english">-->
+                &nbsp;English
+              </a>
+            <!-- LANGUAGESELECTOR -->
+          </div>
+        </div>
+        <!--
+        <div class="navbar-item">
+          <a href="https://twitter.com/SUSE">
+            <img alt="X-logo" class="x-logo" src="../../../../_/img/x-logo-white.png">
+          </a>
+        </div>
+        -->
+      </div>
+    </div>
+
+    <!--   <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+      </div> -->
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="k3k" data-version="1.2.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../../en/introduction.html">K3k</a></h3>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">K3k</span>
+    <span class="version">v1.2.0 (Dev)</span>
+  </div>
+  <ul class="components">
+        <li class="component is-current">
+          <div class="title"><a href="../../../1.1.0/en/introduction.html">K3k</a></div>
+          <ul class="versions">
+            <li class="version is-current">
+              <a href="../../en/introduction.html">v1.2.0 (Dev)</a>
+            </li>
+            <li class="version is-latest">
+              <a href="../../../1.1.0/en/introduction.html">v1.1.0-latest</a>
+            </li>
+            <li class="version">
+              <a href="../../../1.0.2/en/introduction.html">v1.0.2</a>
+            </li>
+            <li class="version">
+              <a href="../../../v1.0.1/en/introduction.html">v1.0.1</a>
+            </li>
+            <li class="version">
+              <a href="../../../v1.0.0/en/introduction.html">v1.0.0</a>
+            </li>
+          </ul>
+        </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../v1.0.1/en/introduction.html" aria-label="Home" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../en/introduction.html">K3k</a></li>
+    <li><a href="create-virtual-clusters.html">如何：创建虚拟集群</a></li>
+  </ul>
+</nav>
+<div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">v1.2.0 (Dev)</button>
+  <div class="version-menu">
+    <a class="version is-current" href="create-virtual-clusters.html">v1.2.0 (Dev)</a>
+    <a class="version is-missing" href="../../../1.1.0/en/introduction.html">v1.1.0-latest</a>
+    <a class="version is-missing" href="../../../1.0.2/en/introduction.html">v1.0.2</a>
+    <a class="version is-missing" href="../../../v1.0.1/en/introduction.html">v1.0.1</a>
+    <a class="version is-missing" href="../../../v1.0.0/en/introduction.html">v1.0.0</a>
+  </div>
+</div>
+  <div class="edit-this-page"><a href="https://github.com/rancher/k3k-product-docs/edit/main/versions/v1.2.0/modules/zh/pages/how-tos-for-user/create-virtual-clusters.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<aside class="toc sidebar" data-title="On this page" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>This is unreleased documentation for K3k v1.2.0 (Dev).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<h1 class="page">如何：创建虚拟集群</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>本指南提供了在K3K中创建和管理虚拟集群的说明，并涵盖了使用*自定义资源定义（CRD）*和*K3K CLI*的常见用例，以便您可以选择适合您工作流程的方法。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>For full reference:
+
+* xref:/references/crds.adoc[CRD Reference Documentation]
+* xref:/references/k3kcli.adoc[CLI Reference Documentation]
+* xref:/advanced-usage.adoc[Full example]</pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="注意"></i>
+</td>
+<td class="content">
+某些功能仅通过CRD接口提供。
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_适用场景创建并暴露基本虚拟集群"><a class="anchor" href="#_适用场景创建并暴露基本虚拟集群"></a>适用场景：创建并暴露基本虚拟集群</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_crd方法"><a class="anchor" href="#_crd方法"></a>CRD方法</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-ingress
+spec:
+  tlsSANs:
+    - my-cluster.example.com
+  expose:
+    ingress:
+      ingressClassName: nginx
+      annotations:
+        nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+        nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+        nginx.ingress.kubernetes.io/ssl-redirect: "HTTPS"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>这将在`shared`模式下创建一个虚拟集群，并通过指定的主机名暴露它。</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_适用场景创建具有持久存储的虚拟集群默认"><a class="anchor" href="#_适用场景创建具有持久存储的虚拟集群默认"></a>适用场景：创建具有持久存储的虚拟集群（<strong>默认</strong>）</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_crd方法_2"><a class="anchor" href="#_crd方法_2"></a>CRD方法</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-persistent
+spec:
+  persistence:
+    type: dynamic
+    storageClassName: local-path
+    storageRequestSize: 30Gi</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>这确保虚拟集群以 30 Gi 的卷持久存储其状态。<br>
+如果未设置`storageClassName`，则默认为默认的StorageClass。<br>
+如果未设置`storageRequestSize`，则默认请求 1 Gi 的卷。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_cli方法"><a class="anchor" href="#_cli方法"></a>CLI方法</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">k3kcli cluster create \
+  --persistence-type dynamic \
+  --storage-class-name local-path \
+  --storage-request-size 30Gi \
+  k3kcluster-persistent</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_适用场景在shared模式下创建高可用虚拟集群"><a class="anchor" href="#_适用场景在shared模式下创建高可用虚拟集群"></a>适用场景：在`shared`模式下创建高可用虚拟集群</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_crd方法_3"><a class="anchor" href="#_crd方法_3"></a>CRD方法</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-ha
+spec:
+  servers: 3</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>这将创建一个具有3台服务器和默认 1 Gi 卷以实现持久性的虚拟集群。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_cli方法_2"><a class="anchor" href="#_cli方法_2"></a>CLI方法</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">k3kcli cluster create \
+  --servers 3 \
+  k3kcluster-ha</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_适用场景在virtual模式下创建高可用虚拟集群"><a class="anchor" href="#_适用场景在virtual模式下创建高可用虚拟集群"></a>适用场景：在`virtual`模式下创建高可用虚拟集群</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_crd方法_4"><a class="anchor" href="#_crd方法_4"></a>CRD方法</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-virtual
+spec:
+  mode: virtual
+  servers: 3
+  agents: 3</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>这将创建一个具有3台服务器和3个代理以及默认 1 Gi 卷以实现持久性的虚拟集群。</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="注意"></i>
+</td>
+<td class="content">
+代理仅存在于`virtual`模式下。
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_cli方法_3"><a class="anchor" href="#_cli方法_3"></a>CLI方法</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">k3kcli cluster create \
+  --agents 3 \
+  --servers 3 \
+  --mode virtual \
+  k3kcluster-virtual</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_适用场景创建一个临时虚拟集群"><a class="anchor" href="#_适用场景创建一个临时虚拟集群"></a>适用场景：创建一个临时虚拟集群</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_crd方法_5"><a class="anchor" href="#_crd方法_5"></a>CRD方法</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-ephemeral
+spec:
+  persistence:
+    type: ephemeral</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>这将创建一个没有持久性且只有一台服务器的临时虚拟集群。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_cli方法_4"><a class="anchor" href="#_cli方法_4"></a>CLI方法</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">k3kcli cluster create \
+  --persistence-type ephemeral \
+  k3kcluster-ephemeral</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_适用场景创建具有自定义kubernetes版本的虚拟集群"><a class="anchor" href="#_适用场景创建具有自定义kubernetes版本的虚拟集群"></a>适用场景：创建具有自定义Kubernetes版本的虚拟集群</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_crd方法_6"><a class="anchor" href="#_crd方法_6"></a>CRD方法</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-custom-k8s
+spec:
+  version: "v1.33.1-k3s1"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>这将明确设置虚拟集群的Kubernetes版本。</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="注意"></i>
+</td>
+<td class="content">
+仅支持 <a href="https://k3s.io">K3s</a> 发行版。您可以在 K3s GitHub <a href="https://github.com/k3s-io/k3s/releases">发布页面</a> 上找到兼容的版本。
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_cli方法_5"><a class="anchor" href="#_cli方法_5"></a>CLI方法</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">k3kcli cluster create \
+  --version v1.33.1-k3s1 \
+  k3kcluster-custom-k8s</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_适用场景创建具有自定义资源限制的虚拟集群"><a class="anchor" href="#_适用场景创建具有自定义资源限制的虚拟集群"></a>适用场景：创建具有自定义资源限制的虚拟集群</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_crd方法_7"><a class="anchor" href="#_crd方法_7"></a>CRD方法</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-resourced
+spec:
+  mode: virtual
+  serverLimit:
+    cpu: "1"
+    memory: "2Gi"
+  workerLimit:
+    cpu: "1"
+    memory: "2Gi"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>这会为虚拟集群配置 CPU 和内存限制。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_cli方法_6"><a class="anchor" href="#_cli方法_6"></a>CLI方法</h3>
+<div class="paragraph">
+<p><em>目前没有可用的 CLI 方法</em></p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_适用场景在特定主机节点上创建虚拟集群"><a class="anchor" href="#_适用场景在特定主机节点上创建虚拟集群"></a>适用场景：在特定主机节点上创建虚拟集群</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_crd方法_8"><a class="anchor" href="#_crd方法_8"></a>CRD方法</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-node-placed
+spec:
+  nodeSelector:
+    disktype: ssd</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>这会将虚拟集群放置在带有标签 <code>disktype: ssd</code> 的节点上。</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="注意"></i>
+</td>
+<td class="content">
+在 <code>shared</code> 模式下，工作负载也会在选定的节点上调度。
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_cli方法_7"><a class="anchor" href="#_cli方法_7"></a>CLI方法</h3>
+<div class="paragraph">
+<p><em>目前没有可用的 CLI 方法</em></p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_适用场景创建带有_rancher_主机集群_kubeconfig_的虚拟集群"><a class="anchor" href="#_适用场景创建带有_rancher_主机集群_kubeconfig_的虚拟集群"></a>适用场景：创建带有 Rancher 主机集群 Kubeconfig 的虚拟集群</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>使用 Rancher 生成的 <code>kubeconfig</code> 时，您需要通过 CLI 指定虚拟集群的目标主机 <code>kubeconfig</code>。<br>
+默认情况下，<code>k3kcli</code> 使用当前主机 <code>kubeconfig</code> 来确定目标集群。</p>
+</div>
+<div class="sect2">
+<h3 id="_crd方法_9"><a class="anchor" href="#_crd方法_9"></a>CRD方法</h3>
+<div class="paragraph">
+<p><em>不适用</em></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_cli方法_8"><a class="anchor" href="#_cli方法_8"></a>CLI方法</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">k3kcli cluster create \
+  --kubeconfig-server https://abc.xyz \
+  k3kcluster-host-rancher</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_适用场景在_http_代理后创建虚拟集群"><a class="anchor" href="#_适用场景在_http_代理后创建虚拟集群"></a>适用场景：在 HTTP 代理后创建虚拟集群</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_crd方法_10"><a class="anchor" href="#_crd方法_10"></a>CRD方法</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-http-proxy
+spec:
+  serverEnvs:
+    - name: HTTP_PROXY
+      value: "http://abc.xyz"
+  agentEnvs:
+    - name: HTTP_PROXY
+      value: "http://abc.xyz"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>这会为虚拟集群中的服务器和代理配置 HTTP 代理。</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="注意"></i>
+</td>
+<td class="content">
+这可以用于将 <strong>任何自定义环境变量</strong> 传递给服务器和代理，而不仅仅是代理设置。
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_cli方法_9"><a class="anchor" href="#_cli方法_9"></a>CLI方法</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">k3kcli cluster create  \
+  --server-envs HTTP_PROXY=http://abc.xyz \
+  --agent-envs HTTP_PROXY=http://abc.xyz \
+  k3kcluster-http-proxy</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_如何连接到虚拟集群"><a class="anchor" href="#_如何连接到虚拟集群"></a>如何：连接到虚拟集群</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>一旦虚拟集群运行，您可以使用CLI连接到它：</p>
+</div>
+<div class="sect2">
+<h3 id="_cli方法_10"><a class="anchor" href="#_cli方法_10"></a>CLI方法</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">k3kcli kubeconfig generate --namespace k3k-mycluster --name mycluster
+export KUBECONFIG=$PWD/mycluster-kubeconfig.yaml
+kubectl get nodes</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>此命令生成一个 <code>kubeconfig</code> 文件，您可以使用该文件通过 <code>kubectl</code> 访问您的虚拟集群。</p>
+</div>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+<script src="../../../../_/js/vendor/lunr.js"></script>
+<script src="../../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../../.." data-snippet-length="100" data-stylesheet="../../../../_/css/search.css"></script>
+<script async src="../../../../search-index.js"></script>
+<script src="../../../../_/js/vendor/langSelection.js"></script>
+<script async src="../../../../_/js/vendor/tabs.js"></script>
+
+
+  </body>
+</html>
