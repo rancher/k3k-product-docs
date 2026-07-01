@@ -41,4 +41,4 @@ environment:
 	npm ci || npm install
 
 preview:
-	npx http-server build/site -c-1
+	npx http-server build-product/site -c-1
