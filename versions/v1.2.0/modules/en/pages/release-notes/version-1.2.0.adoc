@@ -4,6 +4,7 @@
 
 == New Features
 
+* *HCP (Hosted Control Plane) mode (experimental)* -- a new virtual cluster mode that provisions an agentless K3s control plane in the host cluster while letting you join your own external worker nodes via the standard K3s installer. See xref:how-tos-for-user/create-hcp-virtual-cluster.adoc[Creating an HCP Virtual Cluster].
 
 == Core Improvements
 

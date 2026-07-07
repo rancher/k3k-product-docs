@@ -1,9 +1,9 @@
-= How to Choose Between Shared and Virtual Mode
+= How to Choose Between Shared, Virtual, and HCP Mode
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2025-09-16
+:revdate: 2026-06-17
 :page-revdate: {revdate}
 
-This guide helps you choose the right mode for your virtual cluster: *Shared* or *Virtual*. 
+This guide helps you choose the right mode for your virtual cluster: *Shared*, *Virtual*, or *HCP* (Hosted Control Plane).
 
 If you are unsure, start with *Shared mode* - it is the default and fits most common scenarios.
 
@@ -78,6 +78,35 @@ _"I'm evaluating a new CNI that needs full control of the cluster's networking."
 
 _"I'm testing a new admission controller and policy engine before rolling it out cluster-wide."_ +
 → Use *Virtual mode*, if you need to test cluster-wide policies, custom admission flow, or advanced extensions with full control.
+
+== HCP Mode
+
+NOTE: HCP mode is *experimental* in {product-name} v1.2.0.
+
+*Best for:*
+
+* Users who want K3k to manage the control plane lifecycle but need *real, external* worker nodes
+* Edge and IoT scenarios where workers run outside the host data center
+* Evaluating workloads on dedicated bare-metal or VM hardware while keeping the apiserver centrally managed
+
+In *HCP mode*, K3k runs an agentless K3s control plane inside the host cluster, and you supply the worker nodes. External workers join the cluster using the standard K3s installer script. The apiserver must be reachable from your worker network via `nodePort`, `loadBalancer`, or `ingress`. More details on the link:./../architecture.adoc#_hcp_mode[architecture] and the step-by-step xref:how-tos-for-user/create-hcp-virtual-cluster.adoc[Creating an HCP Virtual Cluster] guide.
+
+=== Use Cases by Persona
+
+==== Platform Admin
+
+_"I want K3k to manage the control plane lifecycle for me, but I need real worker nodes that aren't part of the host cluster."_ +
+→ Use *HCP mode*. The control plane runs in the host cluster, while workers stay under your direct control.
+
+==== Edge / IoT Operator
+
+_"I want a managed control plane in my central cluster, with workers running at the edge."_ +
+→ Use *HCP mode*. Edge workers join over the network and run real workloads on local hardware.
+
+==== Developer
+
+_"I need to test workloads on dedicated bare-metal or VM nodes that aren't part of the host cluster."_ +
+→ Use *HCP mode*. You get a managed control plane without losing access to real-hardware features on the workers.
 
 == Additional information
 

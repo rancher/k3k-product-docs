@@ -1,0 +1,120 @@
+= How to: Create an HCP (Hosted Control Plane) Virtual Cluster
+:revdate: 2026-07-07
+:page-revdate: {revdate}
+
+In *HCP* (Hosted Control Plane) mode, K3k runs an agentless K3s control plane inside the host cluster, while you provide your own external worker nodes that join the cluster using the standard K3s installer script.
+
+This is different from `shared` and `virtual` modes:
+
+* In *shared* mode, workloads run on the host cluster through the Virtual Kubelet.
+* In *virtual* mode, both the control plane and worker nodes run as pods inside the host cluster.
+* In *hcp* mode, only the control plane runs inside the host cluster -- worker nodes live outside it, on machines that you manage.
+
+See xref:../architecture.adoc#_hcp_mode[Architecture: HCP Mode] for a deeper explanation, and xref:../how-tos-for-admin/choose-mode.adoc[Choosing a Mode] for guidance on when to pick HCP.
+
+[WARNING]
+====
+HCP mode is *experimental* in {product-name} v1.2.0. The `k3kcli` prints a warning when this mode is used. The API and behavior may change before HCP is declared stable.
+====
+
+== Prerequisites
+
+* A K3k controller installed on the host cluster (see xref:../quickstart.adoc[Quick Start]).
+* An *externally reachable endpoint* for the virtual cluster's apiserver, exposed via `nodePort`, `loadBalancer`, or `ingress`. Without one, the apiserver is only reachable from inside the host cluster and external workers won't be able to join.
+* One or more external Linux machines that can reach that endpoint over the network. They need `curl` and `systemd`, the same as a standard K3s installation.
+* Each external worker must have a unique hostname and a unique routable IP. Workers behind NAT that share the same address will register as a single node.
+
+== Step 1: Create the HCP cluster
+
+=== CRD Method
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: hcp-server
+spec:
+  mode: hcp
+  tlsSANs:
+    - "<externally-reachable-node-ip-or-dns>"
+  servers: 1
+  version: v1.33.1-k3s1
+  expose:
+    nodePort: {}
+----
+
+The `tlsSANs` field MUST include at least one non-loopback host (IP or DNS) that your external workers can reach. This entry is added to the apiserver certificate so workers can establish a TLS connection.
+
+One of `expose.nodePort`, `expose.loadBalancer`, or `expose.ingress` is required so the apiserver is reachable from outside the host cluster.
+
+NOTE: `agents` is not used in HCP mode -- worker nodes are external and join via the K3s installer.
+
+=== CLI Method
+
+[,sh]
+----
+k3kcli cluster create \
+  --mode hcp \
+  --tls-san <externally-reachable-node-ip-or-dns> \
+  --expose-node-port \
+  hcp-server
+----
+
+The CLI prints an experimental-mode warning, waits for the cluster to become ready, writes a kubeconfig file, and then prints the instructions you'll need for Steps 2 and 3.
+
+== Step 2: Fetch the join token
+
+The join token is stored in a Secret in the cluster's namespace and is intentionally not embedded in CLI output. Retrieve it with:
+
+[,sh]
+----
+kubectl get secret -n <namespace> <cluster-name>-token -o jsonpath='{.data.token}' | base64 -d
+----
+
+The token secret is named `<cluster-name>-token`. For the example above it would be `hcp-server-token`.
+
+NOTE: `k3kcli cluster create` and `k3kcli kubeconfig generate` print the exact command (with the correct namespace and secret name) for your cluster after the kubeconfig is written.
+
+== Step 3: Join an external worker
+
+On each external worker machine, run:
+
+[,sh]
+----
+curl -sfL https://get.k3s.io | K3S_URL=<serverURL> K3S_TOKEN=<TOKEN> sh -
+----
+
+Substitute:
+
+* `<serverURL>` -- the externally reachable apiserver URL. This is the `server:` value in the generated kubeconfig, and `k3kcli` prints the exact `K3S_URL=...` to use. The port depends on how you exposed the apiserver: the assigned NodePort for `nodePort` (for example `https://203.0.113.10:30001`), or the host on `443` for `loadBalancer`/`ingress`.
+* `<TOKEN>` -- the value retrieved in Step 2.
+
+Repeat on each worker you want to join. Make sure each one has a unique hostname; cloud-init's `set-hostname` or the `--node-name` flag to the K3s installer both work.
+
+== Verify
+
+Generate a kubeconfig for the virtual cluster (or use the one written by `k3kcli cluster create`):
+
+[,sh]
+----
+k3kcli kubeconfig generate --namespace <namespace> --name hcp-server
+export KUBECONFIG=$PWD/hcp-server-kubeconfig.yaml
+kubectl get nodes
+----
+
+Each external worker should appear in the output with status `Ready`.
+
+== Troubleshooting
+
+*No external endpoint configured* +
+If the `Cluster` spec has no `expose.nodePort`, `expose.loadBalancer`, or `expose.ingress`, the apiserver is only reachable from inside the host cluster and external workers can't join. Add one of those `expose` options, and make sure `tlsSANs` includes the external host the workers use.
+
+*Workers can't connect to the apiserver* +
+Confirm that `tlsSANs` contains the exact host the workers use to reach the apiserver, and that the host:port is reachable from the worker network. A TLS handshake error or `x509: certificate is valid for ..., not ...` message in `journalctl -u k3s-agent` indicates a missing SAN.
+
+*Multiple workers register as a single node* +
+The workers are sharing an IP (typically NAT). Give each worker a unique routable IP on a network segment the apiserver can reach back to, and a unique hostname.
+
+*Need a fresh kubeconfig or to re-print the join instructions* +
+Run `k3kcli kubeconfig generate --namespace <namespace> --name <cluster>` again -- the join instructions are re-printed each time.
