@@ -157,8 +157,7 @@ An externally reachable endpoint (`expose.nodePort`, `expose.loadBalancer`, or `
 ----
 k3kcli cluster create \
   --mode hcp \
-  --tls-san <externally-reachable-node-ip-or-dns> \
-  --expose-node-port \
+  --tls-sans <externally-reachable-node-ip-or-dns> \
   k3kcluster-hcp
 ----
 

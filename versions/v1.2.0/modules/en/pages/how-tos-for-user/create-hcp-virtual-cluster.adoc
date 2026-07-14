@@ -56,7 +56,7 @@ NOTE: `agents` is not used in HCP mode -- worker nodes are external and join via
 ----
 k3kcli cluster create \
   --mode hcp \
-  --tls-san <externally-reachable-node-ip-or-dns> \
+  --tls-sans <externally-reachable-node-ip-or-dns> \
   --expose-node-port \
   hcp-server
 ----
