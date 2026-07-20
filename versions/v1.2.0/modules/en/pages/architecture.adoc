@@ -81,7 +81,10 @@ Currently, security in virtual  mode has a risk of privilege escalation as the s
 
 == HCP Mode
 
-NOTE: HCP mode is *experimental* in {product-name} v1.2.0.
+[NOTE] 
+====
+HCP mode is *experimental* in {product-name} v1.2.0.
+====
 
 The `hcp` (Hosted Control Plane) mode runs an agentless K3s control plane (apiserver, scheduler, controller-manager) as pods inside the host cluster, but unlike `virtual` mode it does *not* provision any worker pods. Worker nodes live outside the host cluster -- on bare metal, virtual machines, or edge devices that you manage -- and join the virtual cluster using the standard K3s installer (`curl -sfL https://get.k3s.io | K3S_URL=... K3S_TOKEN=... sh -`).
 

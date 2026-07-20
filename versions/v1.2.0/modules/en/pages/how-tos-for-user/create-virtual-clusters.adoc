@@ -129,7 +129,10 @@ k3kcli cluster create \
 
 == Use Case: Create a Virtual Cluster in `hcp` (Hosted Control Plane) mode
 
-NOTE: HCP mode is *experimental* in {product-name} v1.2.0.
+[NOTE]
+====
+HCP mode is *experimental* in {product-name} v1.2.0.
+====
 
 In `hcp` mode the K3k controller runs an agentless K3s control plane in the host cluster, and you join your own external worker nodes via the standard K3s installer. See the full walkthrough -- including how to fetch the join token and run the installer on workers -- in xref:how-tos-for-user/create-hcp-virtual-cluster.adoc[Creating an HCP Virtual Cluster].
 

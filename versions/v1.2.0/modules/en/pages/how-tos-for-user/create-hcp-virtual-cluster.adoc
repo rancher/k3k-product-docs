@@ -48,7 +48,10 @@ The `tlsSANs` field MUST include at least one non-loopback host (IP or DNS) that
 
 One of `expose.nodePort`, `expose.loadBalancer`, or `expose.ingress` is required so the apiserver is reachable from outside the host cluster.
 
-NOTE: `agents` is not used in HCP mode -- worker nodes are external and join via the K3s installer.
+[NOTE]
+====
+`agents` is not used in HCP mode -- worker nodes are external and join via the K3s installer.
+====
 
 === CLI Method
 
@@ -57,7 +60,6 @@ NOTE: `agents` is not used in HCP mode -- worker nodes are external and join via
 k3kcli cluster create \
   --mode hcp \
   --tls-sans <externally-reachable-node-ip-or-dns> \
-  --expose-node-port \
   hcp-server
 ----
 
@@ -74,7 +76,10 @@ kubectl get secret -n <namespace> <cluster-name>-token -o jsonpath='{.data.token
 
 The token secret is named `<cluster-name>-token`. For the example above it would be `hcp-server-token`.
 
-NOTE: `k3kcli cluster create` and `k3kcli kubeconfig generate` print the exact command (with the correct namespace and secret name) for your cluster after the kubeconfig is written.
+[NOTE]
+====
+`k3kcli cluster create` and `k3kcli kubeconfig generate` print the exact command (with the correct namespace and secret name) for your cluster after the kubeconfig is written.
+====
 
 == Step 3: Join an external worker
 

@@ -81,7 +81,10 @@ _"I'm testing a new admission controller and policy engine before rolling it out
 
 == HCP Mode
 
-NOTE: HCP mode is *experimental* in {product-name} v1.2.0.
+[NOTE]
+====
+HCP mode is *experimental* in {product-name} v1.2.0.
+====
 
 *Best for:*
 
@@ -89,7 +92,7 @@ NOTE: HCP mode is *experimental* in {product-name} v1.2.0.
 * Edge and IoT scenarios where workers run outside the host data center
 * Evaluating workloads on dedicated bare-metal or VM hardware while keeping the apiserver centrally managed
 
-In *HCP mode*, K3k runs an agentless K3s control plane inside the host cluster, and you supply the worker nodes. External workers join the cluster using the standard K3s installer script. The apiserver must be reachable from your worker network via `nodePort`, `loadBalancer`, or `ingress`. More details on the link:./../architecture.adoc#_hcp_mode[architecture] and the step-by-step xref:how-tos-for-user/create-hcp-virtual-cluster.adoc[Creating an HCP Virtual Cluster] guide.
+In *HCP mode*, K3k runs an agentless K3s control plane inside the host cluster, and you supply the worker nodes. External workers join the cluster using the standard K3s installer script. The apiserver must be reachable from your worker network via `nodePort`, `loadBalancer`, or `ingress`. For more information, see xref:./../architecture.adoc#_hcp_mode[architecture] and the step-by-step xref:how-tos-for-user/create-hcp-virtual-cluster.adoc[Creating an HCP Virtual Cluster] guide.
 
 === Use Cases by Persona
 
