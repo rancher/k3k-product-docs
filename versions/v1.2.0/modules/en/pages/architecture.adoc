@@ -5,9 +5,10 @@
 
 Virtual Clusters are isolated Kubernetes clusters provisioned on a physical cluster. K3k leverages link:https://k3s.io/[K3s] as the control plane of the Kubernetes cluster because of its lightweight footprint.
 
-K3k provides two modes for deploying virtual clusters: 
-- Shared (default) 
+K3k provides three modes for deploying virtual clusters:
+- Shared (default)
 - Virtual
+- HCP (Hosted Control Plane) -- experimental
 
 == Shared Mode
 
@@ -78,6 +79,35 @@ Security in `virtual` mode benefits from the inherent isolation provided by the 
 
 Currently, security in virtual  mode has a risk of privilege escalation as the server pods run with elevated privileges due to the nature of their function, requiring access to system resources.
 
+== HCP Mode
+
+[NOTE] 
+====
+HCP mode is *experimental* in {product-name} v1.2.0.
+====
+
+The `hcp` (Hosted Control Plane) mode runs an agentless K3s control plane (apiserver, scheduler, controller-manager) as pods inside the host cluster, but unlike `virtual` mode it does *not* provision any worker pods. Worker nodes live outside the host cluster -- on bare metal, virtual machines, or edge devices that you manage -- and join the virtual cluster using the standard K3s installer (`curl -sfL https://get.k3s.io | K3S_URL=... K3S_TOKEN=... sh -`).
+
+// TODO: add image::architecture/hcp-mode.png[HCP Mode] once the diagram is available
+
+This mode gives you the operational convenience of a K3k-managed control plane combined with real, fully-isolated worker nodes. To make the apiserver reachable from outside the host cluster, an HCP cluster requires an externally reachable endpoint (`spec.expose.nodePort`, `spec.expose.loadBalancer`, or `spec.expose.ingress`) and a non-loopback entry in `spec.tlsSANs`.
+
+=== Networking and Storage
+
+Because the control plane runs in the host cluster but workers live outside it, the apiserver has no direct route to the virtual cluster's pod CIDR. K3k tunnels apiserver egress (used by webhooks, log/exec, and similar features) through the k3s-agent WebSocket connection. The in-cluster apiserver endpoint reconciler is disabled and K3k owns the `default/kubernetes` Endpoints and EndpointSlice in the virtual cluster, pointing them at the externally reachable host:port.
+
+Workers run a standard K3s agent, so the CNI, the container runtime, and the storage available on each worker are those configured at install time on the worker itself -- the host cluster's CNI and storage are not involved.
+
+=== Resource Sharing and Limits
+
+The control plane consumes resources on the host cluster, and standard pod-level limits apply to the K3s server pods. Workloads scheduled by the virtual cluster consume resources on the *external* worker nodes, completely outside the host cluster's quota and limit accounting.
+
+=== Isolation and Security
+
+HCP mode provides strong workload isolation by construction: tenant workloads never run on the host cluster. The control plane pods still run in the host cluster, but no Virtual Kubelet or k3s-agent surface is exposed for those tenants on the host.
+
+Because external workers join over the network, the security of an HCP cluster depends on the reachability and authentication of the apiserver endpoint. The join token is stored as a Secret in the virtual cluster's namespace and is not embedded in CLI output; treat it as a credential.
+
 == K3k Components
 
 K3k consists of two main components:
@@ -106,22 +136,25 @@ For a deep dive into what VirtualClusterPolicy can do, along with more examples,
 
 == Comparison and Trade-offs
 
-K3k offers two distinct modes for deploying virtual clusters: `shared` and `virtual`. Each mode has its own strengths and weaknesses, and the best choice depends on the specific needs and priorities of the user. Here's a comparison to help you make an informed decision:
+K3k offers three distinct modes for deploying virtual clusters: `shared`, `virtual`, and `hcp`. Each mode has its own strengths and weaknesses, and the best choice depends on the specific needs and priorities of the user. Here's a comparison to help you make an informed decision:
 
 |===
-| Feature | Shared Mode | Virtual Mode
+| Feature | Shared Mode | Virtual Mode | HCP Mode
 
 | *Architecture*
 | Agentless K3s server with Virtual Kubelet
 | Full K3s cluster (server and agents) as pods
+| Agentless K3s control plane in the host cluster + user-supplied external workers
 
 | *Isolation*
 | Network Policies
 | Dedicated control plane and worker nodes as pods
+| Dedicated control plane pods + workers fully outside the host cluster
 
 | *Resource Sharing*
 | Dynamic, namespace-level ResourceQuotas
 | Resource limits on virtual cluster pods
+| Control plane uses host cluster resources; workload resources come from external nodes
 
 | *Networking*
 | Host cluster's CNI
@@ -130,18 +163,24 @@ Host cluster's Ingress Controller (option)
 | Virtual cluster's own CNI
 +
 Virtual cluster's own Ingress Controller
+| Worker node's own CNI
++
+External apiserver endpoint via NodePort/LoadBalancer/Ingress
 
 | *Storage*
 | Host cluster's storage
 | Bring your own storage provider
+| Storage configured on the external worker nodes
 
 | *Security*
 | Pod Security Admission (PSA), Network Policies
 | Inherent isolation, PSA, Network Policies
+| Strong workload isolation (tenant workloads never run on the host); apiserver exposed externally
 
 | *Performance*
 | Smaller footprint, more efficient due to running directly on the host
 | Higher overhead due to running full K3s clusters
+| Low host-cluster footprint (control plane only); worker performance is native
 |===
 
 *Trade-offs:*
@@ -149,5 +188,7 @@ Virtual cluster's own Ingress Controller
 * *Isolation vs. Overhead:* The `shared` mode has lower overhead but weaker isolation, while the `virtual` mode provides stronger isolation but potentially higher overhead due to running full K3s clusters.
 
 * *Resource Sharing:* The `shared` mode offers dynamic resource sharing within a namespace, which can be efficient but less predictable. The `virtual` mode provides dedicated resources to each virtual cluster, offering more control but requiring careful planning.
+
+* *Managed control plane with real workers:* The `hcp` mode is the right choice when you need a real (non-virtualized) worker fleet -- for example bare-metal, edge, or VM-based workers -- but want K3k to manage the control plane lifecycle for you. It requires an externally reachable apiserver endpoint and is currently experimental.
 
 For more information on how to choose the right mode, see xref:./how-tos-for-admin/choose-mode.adoc[Choose Mode].
