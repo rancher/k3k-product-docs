@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>How-to: Arbeitslasten außerhalb des virtuellen Clusters exponieren :: K3k</title>
+    <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+<link rel="stylesheet" href="../../../../_/css/search.css">
+<link rel="icon" href="../../../../_/img/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="../../../../_/css/font-styles.css">
+<link rel="stylesheet" href="../../../../_/fonts/css/all.css">
+<link rel="stylesheet" href="../../../../_/css/site-extra.css">
+<link rel="stylesheet" href="../../../../_/css/vendor/tabs.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=SUSE:wght@100..800&display=swap&family=SUSE+Mono:ital,wght@0,100..800;1,100..800" rel="stylesheet">
+<link href="https://documentation.suse.com/docserv/res/fonts/poppins/poppins.css" rel="stylesheet">
+<!-- <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto&display=swap" rel="stylesheet"> -->
+<link rel="stylesheet" href="../../../../_/css/vendor/light.css">
+    <script>var uiRootPath = '../../../../_'</script>
+  </head>
+  <body class="article">
+<script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs'; mermaid.initialize({"startOnLoad":true});</script><header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-item">
+        <a class=" navbar-logo" href="https://docs.k3k.io/" aria-label="K3k Documentation Home"><img class="logo"
+            src="../../../../_/img/logo-horizontal-positive-k3k.svg" alt="K3k logo"/></a>
+      </div>
+      <div class="navbar-item search hide-for-print">
+        <div id="search-field" class="field">
+          <label class="visual-search-label" for="search-input">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+          <input label="Search" aria-label="Search" id="search-input" type="text" placeholder="Search the docs" >
+          <label class="filter checkbox" style="display: none">
+            <input type="checkbox" data-facet-filter="component:k3k" checked> Only this project
+          </label>
+        </div>
+      </div>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link">
+            <img src="../../../../_/img/resources.png" class="langIcon Resources" alt="Resources" title="Resources">
+          </div>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs"><i class="fab fa-github"></i>&nbsp;K3k</a>
+            <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs/issues"><i class="fab fa-github"></i>&nbsp;GitHub Issue</a>
+            <!-- <div class="has-submenu">
+              <a class="navbar-item" href="#" ><i class="fas fa-file-alt"></i>&nbsp;Report Issue &nbsp;<i class="fas fa-chevron-right"></i></a>
+              <div class="submenu">
+                <a class="navbar-item" href="https://scc.suse.com">SCC (Recommended)</a>
+                <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs/issues">GitHub Issue</a>
+              </div>
+            </div> -->
+            <a class="navbar-item" href="https://github.com/rancher/k3k/blob/main/docs/development.md"><i class="fas fa-user-edit"></i>&nbsp;Contribute</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link"><img src="../../../../_/img/language.png" class="langIcon Language" alt="Language"
+              title="Language"></div>
+          <div class="navbar-dropdown">
+            <!--  </div><div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div> -->
+              <a role="button" class="navbar-item" id="en" onclick="selectLanguage(this.id)">
+                <!--<img src="../../../../_/img/engFlag.svg" class="langIcon english">-->
+                &nbsp;English
+              </a>
+            <!-- LANGUAGESELECTOR -->
+          </div>
+        </div>
+        <!--
+        <div class="navbar-item">
+          <a href="https://twitter.com/SUSE">
+            <img alt="X-logo" class="x-logo" src="../../../../_/img/x-logo-white.png">
+          </a>
+        </div>
+        -->
+      </div>
+    </div>
+
+    <!--   <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+      </div> -->
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="k3k" data-version="1.2.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../../en/introduction.html">K3k</a></h3>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">K3k</span>
+    <span class="version">v1.2.0 (Dev)</span>
+  </div>
+  <ul class="components">
+        <li class="component is-current">
+          <div class="title"><a href="../../../1.1.0/en/introduction.html">K3k</a></div>
+          <ul class="versions">
+            <li class="version is-current">
+              <a href="../../en/introduction.html">v1.2.0 (Dev)</a>
+            </li>
+            <li class="version is-latest">
+              <a href="../../../1.1.0/en/introduction.html">v1.1.0-latest</a>
+            </li>
+            <li class="version">
+              <a href="../../../1.0.2/en/introduction.html">v1.0.2</a>
+            </li>
+            <li class="version">
+              <a href="../../../v1.0.1/en/introduction.html">v1.0.1</a>
+            </li>
+            <li class="version">
+              <a href="../../../v1.0.0/en/introduction.html">v1.0.0</a>
+            </li>
+          </ul>
+        </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../v1.0.1/en/introduction.html" aria-label="Home" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../en/introduction.html">K3k</a></li>
+    <li><a href="expose-workloads.html">How-to: Arbeitslasten außerhalb des virtuellen Clusters exponieren</a></li>
+  </ul>
+</nav>
+<div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">v1.2.0 (Dev)</button>
+  <div class="version-menu">
+    <a class="version is-current" href="expose-workloads.html">v1.2.0 (Dev)</a>
+    <a class="version is-missing" href="../../../1.1.0/en/introduction.html">v1.1.0-latest</a>
+    <a class="version is-missing" href="../../../1.0.2/en/introduction.html">v1.0.2</a>
+    <a class="version is-missing" href="../../../v1.0.1/en/introduction.html">v1.0.1</a>
+    <a class="version is-missing" href="../../../v1.0.0/en/introduction.html">v1.0.0</a>
+  </div>
+</div>
+  <div class="edit-this-page"><a href="https://github.com/rancher/k3k-product-docs/edit/main/versions/v1.2.0/modules/de/pages/how-tos-for-user/expose-workloads.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<aside class="toc sidebar" data-title="On this page" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>This is unreleased documentation for K3k v1.2.0 (Dev).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<h1 class="page">How-to: Arbeitslasten außerhalb des virtuellen Clusters exponieren</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Dieser Leitfaden erklärt, wie Arbeitslasten, die in k3k-verwalteten virtuellen Clustern laufen, extern exponiert werden können. Das Verhalten variiert je nach Betriebsmodus des virtuellen Clusters.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_virtueller_modus"><a class="anchor" href="#_virtueller_modus"></a>Virtueller Modus</h2>
+<div class="sectionbody">
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Achtung"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Im <em>virtuellen Modus</em> ist die direkte externe Exponierung von Arbeitslasten <strong>nicht verfügbar</strong>. Dieser Modus ist für starke Isolation konzipiert und exponiert das Netzwerk des virtuellen Clusters nicht direkt.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_geteilter_modus"><a class="anchor" href="#_geteilter_modus"></a>Geteilter Modus</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Im <em>geteilten Modus</em> können Arbeitslasten je nach Ihren Anforderungen über Standard-Kubernetes-Diensttypen oder einen Ingress-Controller an das externe Netzwerk exponiert werden.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Anmerkung"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p><em>`Services`</em> werden immer vom virtuellen Cluster zum Host-Cluster synchronisiert, gemäß dem gleichen Prinzip, das <a href="../architecture.adoc#shared-mode">hier</a> für Pods beschrieben ist.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_option_1_verwenden_sie_nodeport_oder_loadbalancer"><a class="anchor" href="#_option_1_verwenden_sie_nodeport_oder_loadbalancer"></a>Option 1: Verwenden Sie <code>NodePort</code> oder <code>LoadBalancer</code></h3>
+<div class="paragraph">
+<p>Um einen Dienst wie eine Webanwendung außerhalb des Host-Clusters zu exponieren:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong><code>NodePort</code></strong>: Exponiert den Dienst an einem statischen Port auf der IP jedes Knotens. Greifen Sie auf den Dienst unter <code><a href="http://&lt;NodeIP&gt;:&lt;NodePort&gt" class="bare">http://&lt;NodeIP&gt;:&lt;NodePort&gt</a>;</code> zu.</p>
+</li>
+<li>
+<p><strong><code>LoadBalancer</code></strong>: Stellt einen externen Lastenausgleich zur Verfügung (sofern von der Umgebung unterstützt) und exponiert den Dienst über die IP des Lastenausgleichs.</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Anmerkung"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Die <code>LoadBalancer</code> IP wird derzeit nicht an den Dienst des virtuellen Clusters zurückgegeben.<br>
+https://github.com/rancher/k3k/issues/365[k3k issue #365]</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_option_2_verwenden_sie_clusterip_für_die_interne_kommunikation"><a class="anchor" href="#_option_2_verwenden_sie_clusterip_für_die_interne_kommunikation"></a>Option 2: Verwenden Sie <code>ClusterIP</code> für die interne Kommunikation</h3>
+<div class="paragraph">
+<p>Wenn die Arbeitslast nur für andere Dienste oder Pods <em>innerhalb</em> des Host-Clusters zugänglich sein soll:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Verwenden Sie den <code>ClusterIP</code> Diensttyp. Dies macht den Dienst über eine interne IP verfügbar, die nur innerhalb des Host-Clusters erreichbar ist.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_option_3_verwenden_sie_ingress_für_httphttps_routing"><a class="anchor" href="#_option_3_verwenden_sie_ingress_für_httphttps_routing"></a>Option 3: Verwenden Sie Ingress für HTTP/HTTPS-Routing</h3>
+<div class="paragraph">
+<p>Für fortgeschrittenes Routing, wie hostname- oder pfadbasiertes Routing, stellen Sie einen <strong>Ingress-Controller</strong> im virtuellen Cluster bereit und exponieren ihn über <code>NodePort</code> oder <code>LoadBalancer</code>.</p>
+</div>
+<div class="paragraph">
+<p>Dies ermöglicht Ihnen Folgendes:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Definieren Sie Ingress-Ressourcen im virtuellen Cluster.</p>
+</li>
+<li>
+<p>Leiten Sie externen Verkehr zu Diensten innerhalb des virtuellen Clusters.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_option_4_verwenden_sie_host_ingress"><a class="anchor" href="#_option_4_verwenden_sie_host_ingress"></a>Option 4: Verwenden Sie Host-Ingress</h3>
+<div class="paragraph">
+<p>Um den Host-Ingress-Controller zu verwenden, aktivieren Sie <code>sync.ingresses</code>. Da Ingress mit dem Host-Cluster synchronisiert wird, müssen Benutzer des virtuellen Clusters keinen Ingress-Controller bereitstellen.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-shared-mode
+spec:
+  mode: shared
+  ...
+  sync:
+    ingresses:
+      enabled: true</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Mit dieser aktivierten Synchronisierung kann das Zertifikat auch vom Host-Cluster ausgestellt werden. Zum Beispiel kann ein Zertifikat ausgestellt werden, wenn Sie <code>Cert-Manager</code> verwenden.</p>
+</div>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+<script src="../../../../_/js/vendor/lunr.js"></script>
+<script src="../../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../../.." data-snippet-length="100" data-stylesheet="../../../../_/css/search.css"></script>
+<script async src="../../../../search-index.js"></script>
+<script src="../../../../_/js/vendor/langSelection.js"></script>
+<script async src="../../../../_/js/vendor/tabs.js"></script>
+
+
+  </body>
+</html>

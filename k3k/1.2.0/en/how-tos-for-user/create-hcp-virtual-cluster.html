@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>How to: Create an HCP (Hosted Control Plane) Virtual Cluster :: K3k</title>
+    <link rel="prev" href="create-virtual-clusters.html">
+    <link rel="next" href="expose-workloads.html">
+    <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+<link rel="stylesheet" href="../../../../_/css/search.css">
+<link rel="icon" href="../../../../_/img/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="../../../../_/css/font-styles.css">
+<link rel="stylesheet" href="../../../../_/fonts/css/all.css">
+<link rel="stylesheet" href="../../../../_/css/site-extra.css">
+<link rel="stylesheet" href="../../../../_/css/vendor/tabs.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=SUSE:wght@100..800&display=swap&family=SUSE+Mono:ital,wght@0,100..800;1,100..800" rel="stylesheet">
+<link href="https://documentation.suse.com/docserv/res/fonts/poppins/poppins.css" rel="stylesheet">
+<!-- <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto&display=swap" rel="stylesheet"> -->
+<link rel="stylesheet" href="../../../../_/css/vendor/light.css">
+    <script>var uiRootPath = '../../../../_'</script>
+  </head>
+  <body class="article">
+<script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs'; mermaid.initialize({"startOnLoad":true});</script><header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-item">
+        <a class=" navbar-logo" href="https://docs.k3k.io/" aria-label="K3k Documentation Home"><img class="logo"
+            src="../../../../_/img/logo-horizontal-positive-k3k.svg" alt="K3k logo"/></a>
+      </div>
+      <div class="navbar-item search hide-for-print">
+        <div id="search-field" class="field">
+          <label class="visual-search-label" for="search-input">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+          <input label="Search" aria-label="Search" id="search-input" type="text" placeholder="Search the docs" >
+          <label class="filter checkbox" style="display: none">
+            <input type="checkbox" data-facet-filter="component:k3k" checked> Only this project
+          </label>
+        </div>
+      </div>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link">
+            <img src="../../../../_/img/resources.png" class="langIcon Resources" alt="Resources" title="Resources">
+          </div>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs"><i class="fab fa-github"></i>&nbsp;K3k</a>
+            <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs/issues"><i class="fab fa-github"></i>&nbsp;GitHub Issue</a>
+            <!-- <div class="has-submenu">
+              <a class="navbar-item" href="#" ><i class="fas fa-file-alt"></i>&nbsp;Report Issue &nbsp;<i class="fas fa-chevron-right"></i></a>
+              <div class="submenu">
+                <a class="navbar-item" href="https://scc.suse.com">SCC (Recommended)</a>
+                <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs/issues">GitHub Issue</a>
+              </div>
+            </div> -->
+            <a class="navbar-item" href="https://github.com/rancher/k3k/blob/main/docs/development.md"><i class="fas fa-user-edit"></i>&nbsp;Contribute</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link"><img src="../../../../_/img/language.png" class="langIcon Language" alt="Language"
+              title="Language"></div>
+          <div class="navbar-dropdown">
+            <!--  </div><div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div> -->
+              <a role="button" class="navbar-item" id="en" onclick="selectLanguage(this.id)">
+                <!--<img src="../../../../_/img/engFlag.svg" class="langIcon english">-->
+                &nbsp;English
+              </a>
+            <!-- LANGUAGESELECTOR -->
+          </div>
+        </div>
+        <!--
+        <div class="navbar-item">
+          <a href="https://twitter.com/SUSE">
+            <img alt="X-logo" class="x-logo" src="../../../../_/img/x-logo-white.png">
+          </a>
+        </div>
+        -->
+      </div>
+    </div>
+
+    <!--   <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+      </div> -->
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="k3k" data-version="1.2.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../introduction.html">K3k</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../introduction.html">Introduction</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../quickstart.html">Quick Start</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../architecture.html">Architecture</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../resource-sync.html">Resource Sync</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../advanced-usage.html">Advanced Usage</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../virtualclusterpolicy.html">VirtualClusterPolicy: Concepts</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle" aria-label="Toggle expand/collapse"></button>
+    <span class="nav-text">How-tos for User</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="create-virtual-clusters.html">Creating a Virtual Cluster</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="create-hcp-virtual-cluster.html">Creating an HCP Virtual Cluster</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="expose-workloads.html">Exposing workloads outside a Virtual Cluster</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="addons.html">Addons</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle" aria-label="Toggle expand/collapse"></button>
+    <span class="nav-text">How-tos for Admin</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../how-tos-for-admin/choose-mode.html">Choosing between Shared and Virtual Mode</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../how-tos-for-admin/adding-custom-cert.html">Adding custom certificates for K3s from K3k cluster</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../how-tos-for-admin/restrict-gpu-usage.html">Restrict GPU usage</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../how-tos-for-admin/secure-shared-mode.html">Secure shared mode</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../how-tos-for-admin/virtual-cluster-isolation.html">Virtual cluster isolation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../how-tos-for-admin/custom-runtime-class.html">Using a custom container runtime</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle" aria-label="Toggle expand/collapse"></button>
+    <span class="nav-text">References</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../references/crds.html">Customer Resource Definitions (CRDs)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../references/k3kcli.html">k3kcli</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="troubleshooting.html">Troubleshooting</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">K3k</span>
+    <span class="version">v1.2.0 (Dev)</span>
+  </div>
+  <ul class="components">
+        <li class="component is-current">
+          <div class="title"><a href="../../../1.1.0/en/introduction.html">K3k</a></div>
+          <ul class="versions">
+            <li class="version is-current">
+              <a href="../introduction.html">v1.2.0 (Dev)</a>
+            </li>
+            <li class="version is-latest">
+              <a href="../../../1.1.0/en/introduction.html">v1.1.0-latest</a>
+            </li>
+            <li class="version">
+              <a href="../../../1.0.2/en/introduction.html">v1.0.2</a>
+            </li>
+            <li class="version">
+              <a href="../../../v1.0.1/en/introduction.html">v1.0.1</a>
+            </li>
+            <li class="version">
+              <a href="../../../v1.0.0/en/introduction.html">v1.0.0</a>
+            </li>
+          </ul>
+        </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../v1.0.1/en/introduction.html" aria-label="Home" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../introduction.html">K3k</a></li>
+    <li>How-tos for User</li>
+    <li><a href="create-hcp-virtual-cluster.html">Creating an HCP Virtual Cluster</a></li>
+  </ul>
+</nav>
+<div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">v1.2.0 (Dev)</button>
+  <div class="version-menu">
+    <a class="version is-current" href="create-hcp-virtual-cluster.html">v1.2.0 (Dev)</a>
+    <a class="version is-missing" href="../../../1.1.0/en/introduction.html">v1.1.0-latest</a>
+    <a class="version is-missing" href="../../../1.0.2/en/introduction.html">v1.0.2</a>
+    <a class="version is-missing" href="../../../v1.0.1/en/introduction.html">v1.0.1</a>
+    <a class="version is-missing" href="../../../v1.0.0/en/introduction.html">v1.0.0</a>
+  </div>
+</div>
+  <div class="edit-this-page"><a href="https://github.com/rancher/k3k-product-docs/edit/main/versions/v1.2.0/modules/en/pages/how-tos-for-user/create-hcp-virtual-cluster.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<aside class="toc sidebar" data-title="On this page" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>This is unreleased documentation for K3k v1.2.0 (Dev).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<h1 class="page">How to: Create an HCP (Hosted Control Plane) Virtual Cluster</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>In <strong>HCP</strong> (Hosted Control Plane) mode, K3k runs an agentless K3s control plane inside the host cluster, while you provide your own external worker nodes that join the cluster using the standard K3s installer script.</p>
+</div>
+<div class="paragraph">
+<p>This is different from <code>shared</code> and <code>virtual</code> modes:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>In <strong>shared</strong> mode, workloads run on the host cluster through the Virtual Kubelet.</p>
+</li>
+<li>
+<p>In <strong>virtual</strong> mode, both the control plane and worker nodes run as pods inside the host cluster.</p>
+</li>
+<li>
+<p>In <strong>hcp</strong> mode, only the control plane runs inside the host cluster&#8201;&#8212;&#8201;worker nodes live outside it, on machines that you manage.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>See <a href="../architecture.html#_hcp_mode" class="xref page">Architecture: HCP Mode</a> for a deeper explanation, and <a href="../how-tos-for-admin/choose-mode.html" class="xref page">Choosing a Mode</a> for guidance on when to pick HCP.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>HCP mode is <strong>experimental</strong> in K3k v1.2.0. The <code>k3kcli</code> prints a warning when this mode is used. The API and behavior may change before HCP is declared stable.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_prerequisites"><a class="anchor" href="#_prerequisites"></a>Prerequisites</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>A K3k controller installed on the host cluster (see <a href="../quickstart.html" class="xref page">Quick Start</a>).</p>
+</li>
+<li>
+<p>An <strong>externally reachable endpoint</strong> for the virtual cluster&#8217;s apiserver, exposed via <code>nodePort</code>, <code>loadBalancer</code>, or <code>ingress</code>. Without one, the apiserver is only reachable from inside the host cluster and external workers won&#8217;t be able to join.</p>
+</li>
+<li>
+<p>One or more external Linux machines that can reach that endpoint over the network. They need <code>curl</code> and <code>systemd</code>, the same as a standard K3s installation.</p>
+</li>
+<li>
+<p>Each external worker must have a unique hostname and a unique routable IP. Workers behind NAT that share the same address will register as a single node.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_step_1_create_the_hcp_cluster"><a class="anchor" href="#_step_1_create_the_hcp_cluster"></a>Step 1: Create the HCP cluster</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_crd_method"><a class="anchor" href="#_crd_method"></a>CRD Method</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: hcp-server
+spec:
+  mode: hcp
+  tlsSANs:
+    - "&lt;externally-reachable-node-ip-or-dns&gt;"
+  servers: 1
+  version: v1.33.1-k3s1
+  expose:
+    nodePort: {}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>tlsSANs</code> field MUST include at least one non-loopback host (IP or DNS) that your external workers can reach. This entry is added to the apiserver certificate so workers can establish a TLS connection.</p>
+</div>
+<div class="paragraph">
+<p>One of <code>expose.nodePort</code>, <code>expose.loadBalancer</code>, or <code>expose.ingress</code> is required so the apiserver is reachable from outside the host cluster.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p><code>agents</code> is not used in HCP mode&#8201;&#8212;&#8201;worker nodes are external and join via the K3s installer.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_cli_method"><a class="anchor" href="#_cli_method"></a>CLI Method</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">k3kcli cluster create \
+  --mode hcp \
+  --tls-sans &lt;externally-reachable-node-ip-or-dns&gt; \
+  hcp-server</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The CLI prints an experimental-mode warning, waits for the cluster to become ready, writes a kubeconfig file, and then prints the instructions you&#8217;ll need for Steps 2 and 3.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_step_2_fetch_the_join_token"><a class="anchor" href="#_step_2_fetch_the_join_token"></a>Step 2: Fetch the join token</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The join token is stored in a Secret in the cluster&#8217;s namespace and is intentionally not embedded in CLI output. Retrieve it with:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">kubectl get secret -n &lt;namespace&gt; &lt;cluster-name&gt;-token -o jsonpath='{.data.token}' | base64 -d</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The token secret is named <code>&lt;cluster-name&gt;-token</code>. For the example above it would be <code>hcp-server-token</code>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p><code>k3kcli cluster create</code> and <code>k3kcli kubeconfig generate</code> print the exact command (with the correct namespace and secret name) for your cluster after the kubeconfig is written.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_step_3_join_an_external_worker"><a class="anchor" href="#_step_3_join_an_external_worker"></a>Step 3: Join an external worker</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>On each external worker machine, run:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">curl -sfL https://get.k3s.io | K3S_URL=&lt;serverURL&gt; K3S_TOKEN=&lt;TOKEN&gt; sh -</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Substitute:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>&lt;serverURL&gt;</code>&#8201;&#8212;&#8201;the externally reachable apiserver URL. This is the <code>server:</code> value in the generated kubeconfig, and <code>k3kcli</code> prints the exact <code>K3S_URL=&#8230;&#8203;</code> to use. The port depends on how you exposed the apiserver: the assigned NodePort for <code>nodePort</code> (for example <code><a href="https://203.0.113.10:30001" class="bare">https://203.0.113.10:30001</a></code>), or the host on <code>443</code> for <code>loadBalancer</code>/<code>ingress</code>.</p>
+</li>
+<li>
+<p><code>&lt;TOKEN&gt;</code>&#8201;&#8212;&#8201;the value retrieved in Step 2.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Repeat on each worker you want to join. Make sure each one has a unique hostname; cloud-init&#8217;s <code>set-hostname</code> or the <code>--node-name</code> flag to the K3s installer both work.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_verify"><a class="anchor" href="#_verify"></a>Verify</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Generate a kubeconfig for the virtual cluster (or use the one written by <code>k3kcli cluster create</code>):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">k3kcli kubeconfig generate --namespace &lt;namespace&gt; --name hcp-server
+export KUBECONFIG=$PWD/hcp-server-kubeconfig.yaml
+kubectl get nodes</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Each external worker should appear in the output with status <code>Ready</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_troubleshooting"><a class="anchor" href="#_troubleshooting"></a>Troubleshooting</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>No external endpoint configured</strong><br>
+If the <code>Cluster</code> spec has no <code>expose.nodePort</code>, <code>expose.loadBalancer</code>, or <code>expose.ingress</code>, the apiserver is only reachable from inside the host cluster and external workers can&#8217;t join. Add one of those <code>expose</code> options, and make sure <code>tlsSANs</code> includes the external host the workers use.</p>
+</div>
+<div class="paragraph">
+<p><strong>Workers can&#8217;t connect to the apiserver</strong><br>
+Confirm that <code>tlsSANs</code> contains the exact host the workers use to reach the apiserver, and that the host:port is reachable from the worker network. A TLS handshake error or <code>x509: certificate is valid for &#8230;&#8203;, not &#8230;&#8203;</code> message in <code>journalctl -u k3s-agent</code> indicates a missing SAN.</p>
+</div>
+<div class="paragraph">
+<p><strong>Multiple workers register as a single node</strong><br>
+The workers are sharing an IP (typically NAT). Give each worker a unique routable IP on a network segment the apiserver can reach back to, and a unique hostname.</p>
+</div>
+<div class="paragraph">
+<p><strong>Need a fresh kubeconfig or to re-print the join instructions</strong><br>
+Run <code>k3kcli kubeconfig generate --namespace &lt;namespace&gt; --name &lt;cluster&gt;</code> again&#8201;&#8212;&#8201;the join instructions are re-printed each time.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="create-virtual-clusters.html">Creating a Virtual Cluster</a></span>
+  <span class="next"><a href="expose-workloads.html">Exposing workloads outside a Virtual Cluster</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+<script src="../../../../_/js/vendor/lunr.js"></script>
+<script src="../../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../../.." data-snippet-length="100" data-stylesheet="../../../../_/css/search.css"></script>
+<script async src="../../../../search-index.js"></script>
+<script src="../../../../_/js/vendor/langSelection.js"></script>
+<script async src="../../../../_/js/vendor/tabs.js"></script>
+
+
+  </body>
+</html>

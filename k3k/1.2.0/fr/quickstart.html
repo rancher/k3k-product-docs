@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Démarrage rapide :: K3k</title>
+    <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="stylesheet" href="../../../_/css/search.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="../../../_/css/font-styles.css">
+<link rel="stylesheet" href="../../../_/fonts/css/all.css">
+<link rel="stylesheet" href="../../../_/css/site-extra.css">
+<link rel="stylesheet" href="../../../_/css/vendor/tabs.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=SUSE:wght@100..800&display=swap&family=SUSE+Mono:ital,wght@0,100..800;1,100..800" rel="stylesheet">
+<link href="https://documentation.suse.com/docserv/res/fonts/poppins/poppins.css" rel="stylesheet">
+<!-- <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto&display=swap" rel="stylesheet"> -->
+<link rel="stylesheet" href="../../../_/css/vendor/light.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs'; mermaid.initialize({"startOnLoad":true});</script><header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-item">
+        <a class=" navbar-logo" href="https://docs.k3k.io/" aria-label="K3k Documentation Home"><img class="logo"
+            src="../../../_/img/logo-horizontal-positive-k3k.svg" alt="K3k logo"/></a>
+      </div>
+      <div class="navbar-item search hide-for-print">
+        <div id="search-field" class="field">
+          <label class="visual-search-label" for="search-input">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+          <input label="Search" aria-label="Search" id="search-input" type="text" placeholder="Search the docs" >
+          <label class="filter checkbox" style="display: none">
+            <input type="checkbox" data-facet-filter="component:k3k" checked> Only this project
+          </label>
+        </div>
+      </div>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link">
+            <img src="../../../_/img/resources.png" class="langIcon Resources" alt="Resources" title="Resources">
+          </div>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs"><i class="fab fa-github"></i>&nbsp;K3k</a>
+            <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs/issues"><i class="fab fa-github"></i>&nbsp;GitHub Issue</a>
+            <!-- <div class="has-submenu">
+              <a class="navbar-item" href="#" ><i class="fas fa-file-alt"></i>&nbsp;Report Issue &nbsp;<i class="fas fa-chevron-right"></i></a>
+              <div class="submenu">
+                <a class="navbar-item" href="https://scc.suse.com">SCC (Recommended)</a>
+                <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs/issues">GitHub Issue</a>
+              </div>
+            </div> -->
+            <a class="navbar-item" href="https://github.com/rancher/k3k/blob/main/docs/development.md"><i class="fas fa-user-edit"></i>&nbsp;Contribute</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link"><img src="../../../_/img/language.png" class="langIcon Language" alt="Language"
+              title="Language"></div>
+          <div class="navbar-dropdown">
+            <!--  </div><div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div> -->
+              <a role="button" class="navbar-item" id="en" onclick="selectLanguage(this.id)">
+                <!--<img src="../../../_/img/engFlag.svg" class="langIcon english">-->
+                &nbsp;English
+              </a>
+            <!-- LANGUAGESELECTOR -->
+          </div>
+        </div>
+        <!--
+        <div class="navbar-item">
+          <a href="https://twitter.com/SUSE">
+            <img alt="X-logo" class="x-logo" src="../../../_/img/x-logo-white.png">
+          </a>
+        </div>
+        -->
+      </div>
+    </div>
+
+    <!--   <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+      </div> -->
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="k3k" data-version="1.2.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../en/introduction.html">K3k</a></h3>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">K3k</span>
+    <span class="version">v1.2.0 (Dev)</span>
+  </div>
+  <ul class="components">
+        <li class="component is-current">
+          <div class="title"><a href="../../1.1.0/en/introduction.html">K3k</a></div>
+          <ul class="versions">
+            <li class="version is-current">
+              <a href="../en/introduction.html">v1.2.0 (Dev)</a>
+            </li>
+            <li class="version is-latest">
+              <a href="../../1.1.0/en/introduction.html">v1.1.0-latest</a>
+            </li>
+            <li class="version">
+              <a href="../../1.0.2/en/introduction.html">v1.0.2</a>
+            </li>
+            <li class="version">
+              <a href="../../v1.0.1/en/introduction.html">v1.0.1</a>
+            </li>
+            <li class="version">
+              <a href="../../v1.0.0/en/introduction.html">v1.0.0</a>
+            </li>
+          </ul>
+        </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../v1.0.1/en/introduction.html" aria-label="Home" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../en/introduction.html">K3k</a></li>
+    <li><a href="quickstart.html">Démarrage rapide</a></li>
+  </ul>
+</nav>
+<div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">v1.2.0 (Dev)</button>
+  <div class="version-menu">
+    <a class="version is-current" href="quickstart.html">v1.2.0 (Dev)</a>
+    <a class="version is-missing" href="../../1.1.0/en/introduction.html">v1.1.0-latest</a>
+    <a class="version is-missing" href="../../1.0.2/en/introduction.html">v1.0.2</a>
+    <a class="version is-missing" href="../../v1.0.1/en/introduction.html">v1.0.1</a>
+    <a class="version is-missing" href="../../v1.0.0/en/introduction.html">v1.0.0</a>
+  </div>
+</div>
+  <div class="edit-this-page"><a href="https://github.com/rancher/k3k-product-docs/edit/main/versions/v1.2.0/modules/fr/pages/quickstart.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<aside class="toc sidebar" data-title="On this page" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>This is unreleased documentation for K3k v1.2.0 (Dev).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<h1 class="page">Démarrage rapide</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>K3k, Kubernetes dans Kubernetes, est un outil qui vous permet de créer et de gérer des clusters K3s isolés au sein de votre environnement Kubernetes existant. Il permet la multi-tenance, l&#8217;expérimentation et l&#8217;isolation des ressources, réduisant les coûts d&#8217;infrastructure en vous permettant d&#8217;exécuter plusieurs clusters Kubernetes légers sur le même hôte physique. K3k offre à la fois un mode "partagé", optimisant l&#8217;utilisation des ressources, et un mode "virtuel", fournissant une isolation complète avec des pods de serveur K3s dédiés. Cela vous permet d&#8217;accéder à une expérience Kubernetes complète sans la surcharge de gestion de ressources physiques séparées.</p>
+</div>
+<div class="paragraph">
+<p>K3k s&#8217;intègre à Rancher pour une gestion simplifiée de vos clusters intégrés.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_installation"><a class="anchor" href="#_installation"></a>Installation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Cette section fournit des instructions sur la façon d&#8217;installer K3k et le k3kcli.</p>
+</div>
+<div class="sect2">
+<h3 id="_conditions_préalables"><a class="anchor" href="#_conditions_préalables"></a>Conditions préalables</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://helm.sh/">Helm</a> doit être installé pour utiliser les charts. Veuillez vous référer à <a href="https://helm.sh/docs/">la documentation de Helm</a> pour commencer.</p>
+</li>
+<li>
+<p>Un cluster Kubernetes <a href="https://documentation.suse.com/cloudnative/rke2/latest/en/install/quickstart.html">RKE2</a> existant (recommandé).</p>
+</li>
+<li>
+<p>Un fournisseur de stockage configuré avec une classe de stockage par défaut.</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Si vous n&#8217;avez pas de fournisseur de stockage, vous pouvez configurer le cluster pour utiliser un stockage éphémère ou statique. Veuillez consulter le <a href="advanced-usage.html#_using_the_cli" class="xref page">k3kcli Utilisation Avancée</a> pour des instructions sur l&#8217;utilisation de ces options.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_installez_le_contrôleur_k3k"><a class="anchor" href="#_installez_le_contrôleur_k3k"></a>Installez le contrôleur K3k</h3>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Clients de Rancher Prime, veuillez consulter <a href="https://scc.suse.com/rancher-docs/rancherprime/latest/en/suse-virtual-cluster/installation-and-upgrades/quickstart.html">démarrage rapide</a>.
+</td>
+</tr>
+</table>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Ajoutez le dépôt Helm K3k&#160;:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">helm repo add k3k https://rancher.github.io/k3k
+helm repo update</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Installez le contrôleur K3k&#160;:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">helm install --namespace k3k-system --create-namespace k3k k3k/k3k</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_installez_le_k3kcli"><a class="anchor" href="#_installez_le_k3kcli"></a>Installez le <code>k3kcli</code></h3>
+<div class="paragraph">
+<p>Le <code>k3kcli</code> fournit un moyen rapide et facile de créer des clusters K3k et les expose automatiquement via un kubeconfig.</p>
+</div>
+<div class="paragraph">
+<p>Pour l&#8217;installer, téléchargez simplement la dernière version disponible pour votre architecture depuis la page des Releases GitHub.</p>
+</div>
+<div class="paragraph">
+<p>Par exemple, vous pouvez télécharger la version Linux amd64 avec&#160;:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">wget -qO k3kcli https://github.com/rancher/k3k/releases/download/v1.2.0/k3kcli-linux-amd64 &amp;&amp; \
+  chmod +x k3kcli &amp;&amp; \
+  sudo mv k3kcli /usr/local/bin</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Exécutez maintenant&#160;:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">k3kcli --version
+k3kcli version v1.0.0</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_syntaxe"><a class="anchor" href="#_syntaxe"></a>Syntaxe</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Cette section fournit des exemples sur la façon d&#8217;utiliser le <code>k3kcli</code> pour gérer vos clusters K3k.</p>
+</div>
+<div class="paragraph">
+<p><code>K3k</code> fonctionne dans le kubectl actuellement configuré. Cela signifie que K3k respecte les mécanismes standard de Kubernetes pour la configuration des contextes, y compris le drapeau <code>--kubeconfig</code>, la variable d&#8217;environnement $KUBECONFIG et le fichier par défaut $HOME/.kube/config. Tous les clusters K3k que vous créez résideront dans le cluster Kubernetes auquel votre kubectl pointe actuellement.</p>
+</div>
+<div class="sect2">
+<h3 id="_création_dun_cluster_k3k"><a class="anchor" href="#_création_dun_cluster_k3k"></a>Création d&#8217;un cluster K3k</h3>
+<div class="paragraph">
+<p>Pour créer un nouveau cluster K3k, utilisez la commande suivante&#160;:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">k3kcli cluster create mycluster</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p><strong>Création d&#8217;un cluster K3k sur un cluster hôte géré par Rancher</strong></p>
+</div>
+<div class="paragraph">
+<p>Si votre cluster Kubernetes hôte est géré par Rancher (par exemple, l&#8217;adresse du serveur de votre kubeconfig inclut une URL Rancher), utilisez le drapeau <code>--kubeconfig-server</code> lors de la création de votre cluster K3k&#160;:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">k3kcli cluster create --kubeconfig-server &lt;host_node_IP_or_load_balancer_IP&gt; mycluster</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Cela garantit que le kubeconfig généré se connecte au bon point de terminaison.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Lorsque le serveur K3s est prêt, <code>k3kcli</code> générera le fichier kubeconfig nécessaire et imprimera des instructions sur la façon de l&#8217;utiliser.</p>
+</div>
+<div class="paragraph">
+<p>Voici un exemple de la sortie&#160;:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">INFO[0000] Creating a new cluster [mycluster]
+INFO[0000] Extracting Kubeconfig for [mycluster] cluster
+INFO[0000] waiting for cluster to be available..
+INFO[0073] certificate CN=system:admin,O=system:masters signed by CN=k3s-client-ca@1738746570: notBefore=2025-02-05 09:09:30 +0000 UTC notAfter=2026-02-05 09:10:42 +0000 UTC
+INFO[0073] You can start using the cluster with:
+
+        export KUBECONFIG=/my/current/directory/mycluster-kubeconfig.yaml
+        kubectl cluster-info</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Après avoir exporté le kubeconfig généré, vous pouvez accéder à votre cluster Kubernetes&#160;:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export KUBECONFIG=/my/current/directory/mycluster-kubeconfig.yaml
+kubectl get nodes
+kubectl get pods -A</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Vous pouvez également créer directement une ressource Cluster dans un espace de noms, pour créer un cluster K3k :</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl apply -f - &lt;&lt;EOF
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: mycluster
+  namespace: k3k-mycluster
+EOF</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>et utiliser le <code>k3kcli</code> pour récupérer le kubeconfig&#160;:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">k3kcli kubeconfig generate --namespace k3k-mycluster --name mycluster</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_suppression_dun_cluster_k3k"><a class="anchor" href="#_suppression_dun_cluster_k3k"></a>Suppression d&#8217;un cluster K3k</h3>
+<div class="paragraph">
+<p>Pour supprimer un cluster K3k, utilisez la commande suivante&#160;:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">k3kcli cluster delete mycluster</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<script src="../../../_/js/site.js"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+<script src="../../../_/js/vendor/langSelection.js"></script>
+<script async src="../../../_/js/vendor/tabs.js"></script>
+
+
+  </body>
+</html>
