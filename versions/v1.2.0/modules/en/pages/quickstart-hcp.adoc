@@ -1,0 +1,121 @@
+= HCP Mode Quick Start
+
+This guide helps you create your first K3k cluster using *HCP mode*.
+
+== What is HCP mode?
+
+HCP mode runs K3s control planes on Harvester Cloud Provider (HCP) infrastructure with tighter integration for lifecycle and networking in Harvester environments.
+
+== Prerequisites
+
+Before you begin, ensure you have:
+
+* Access to a Kubernetes cluster where K3k is installed
+* Install K3k by following the official installation guide: xref:quickstart.adoc[Install K3k]
+* `kubectl` configured to that cluster
+* `k3kcli` installed (latest version recommended)
+* HCP-related configuration available for your environment (networking, credentials, and any required Harvester settings)
+* Permissions to create K3k resources (CRDs) in your target namespace
+
+== 1. Confirm K3k and CRDs are installed
+
+[source,bash]
+----
+kubectl get crd | grep k3k
+----
+
+You should see K3k CRDs available.
+
+== 2. Create a namespace for your cluster
+
+[source,bash]
+----
+kubectl create namespace hcp-demo
+----
+
+== 3. Create a cluster in HCP mode
+
+Create a manifest like the following (adjust values to your environment):
+
+[source,yaml]
+----
+apiVersion: k3k.io/v1alpha1
+kind: Cluster
+metadata:
+  name: hcp-cluster
+  namespace: hcp-demo
+spec:
+  mode: hcp
+  servers: 1
+  agents: 1
+  # Add your HCP-specific configuration here
+  # (network, cloud config/secret refs, and any required infra settings)
+----
+
+Apply it:
+
+[source,bash]
+----
+kubectl apply -f hcp-cluster.yaml
+----
+
+== 4. Watch cluster provisioning
+
+[source,bash]
+----
+kubectl -n hcp-demo get cluster hcp-cluster -w
+----
+
+Also inspect related resources:
+
+[source,bash]
+----
+kubectl -n hcp-demo get pods
+kubectl -n hcp-demo get events --sort-by=.lastTimestamp
+----
+
+== 5. Retrieve kubeconfig for the new cluster
+
+Using `k3kcli` (recommended):
+
+[source,bash]
+----
+k3kcli kubeconfig get hcp-cluster -n hcp-demo > hcp-cluster.kubeconfig
+----
+
+Then test access:
+
+[source,bash]
+----
+KUBECONFIG=./hcp-cluster.kubeconfig kubectl get nodes
+----
+
+== 6. Validate basic workload deployment
+
+[source,bash]
+----
+KUBECONFIG=./hcp-cluster.kubeconfig kubectl create deployment nginx --image=nginx
+KUBECONFIG=./hcp-cluster.kubeconfig kubectl get pods -w
+----
+
+If pods become `Running`, your HCP-mode cluster is working.
+
+== Troubleshooting tips
+
+* Check cluster status:
+
+[source,bash]
+----
+kubectl -n hcp-demo describe cluster hcp-cluster
+----
+
+* Check controller/operator logs in the management cluster.
+* Verify all required HCP-related secrets/config refs exist and are in the correct namespace.
+* Ensure networking and permissions are set correctly for your Harvester/HCP setup.
+
+== Next steps
+
+* Scale servers/agents according to workload needs
+* Configure ingress/load balancing
+* Add storage classes and backup policies
+* Review the full HCP mode reference doc for all supported fields and advanced configuration
