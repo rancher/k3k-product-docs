@@ -1,5 +1,5 @@
 = Advanced Usage
-:revdate: 2025-09-16
+:revdate: 2026-08-18
 :page-revdate: {revdate}
 
 This document provides advanced usage information for k3k, including detailed use cases and explanations of the `Cluster` resource fields for customization.
@@ -40,7 +40,7 @@ spec:
       ingressClassName: nginx
       annotations:
         nginx.ingress.kubernetes.io/ssl-passthrough: "true"
-        nginx.ingress.kubernetes.io/backend-protocol: "true"
+        nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
         nginx.ingress.kubernetes.io/ssl-redirect: "HTTPS"
   clusterCIDR: 10.42.0.0/16
   serviceCIDR: 10.43.0.0/16
@@ -83,7 +83,56 @@ The `expose` field contains options for exposing the API server of the virtual c
 
 You can use the `expose` field to enable exposure via `NodePort`, `LoadBalancer`, or `Ingress`.
 
-In this example we are exposing the Cluster with a Nginx ingress-controller, that has to be configured with the `--enable-ssl-passthrough` flag.
+==== TLS passthrough is required
+
+The K3s API server authenticates clients with mTLS certificates, so *the TLS connection must reach the API server untouched*. An ingress controller that terminates TLS will break both `kubectl` and agent authentication. Any controller used with `expose.ingress` must therefore support TLS passthrough.
+
+`expose.ingress` also requires at least one *DNS name* in `spec.tlsSANs`: the SANs are used as the Ingress hosts, and the Ingress API does not accept IP addresses there. If `tlsSANs` is empty or contains only IPs, the generated Ingress is rejected by the API server and the cluster fails to provision.
+
+==== Nginx
+
+Supported directly through `expose.ingress`. The ingress controller has to be started with the `--enable-ssl-passthrough` flag, and the annotations enabling passthrough must be set on the Ingress:
+
+[,yaml]
+----
+spec:
+  tlsSANs:
+    - my-cluster.example.com
+  expose:
+    ingress:
+      ingressClassName: nginx
+      annotations:
+        nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+        nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+        nginx.ingress.kubernetes.io/ssl-redirect: "HTTPS"
+----
+
+==== Traefik
+
+Traefik *cannot* perform layer 4 TLS passthrough with a standard `Ingress`, so `expose.ingress` does not work with it.
+
+Use `expose.loadBalancer` or `expose.nodePort` instead, or leave `expose` unset and create a Traefik `IngressRouteTCP` pointing at the cluster's `ClusterIP` service:
+
+[,yaml]
+----
+apiVersion: traefik.io/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name: my-virtual-cluster
+  namespace: my-namespace
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: HostSNI(`my-cluster.example.com`)
+      services:
+        - name: k3k-my-virtual-cluster-service # k3k-<cluster-name>-service
+          port: 443
+  tls:
+    passthrough: true
+----
+
+See xref:how-tos-for-admin/expose-kubernetesapi.adoc[How-to: Expose Virtual Cluster Kubernetes API] for more ways to expose the API server.
 
 === `clusterCIDR`
 
