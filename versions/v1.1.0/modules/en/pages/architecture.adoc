@@ -20,6 +20,43 @@ Because of this shared infrastructure, the CNI is the same as the one configured
 
 To provide the needed isolation, K3k leverages Network Policies.
 
+=== Resource Synchronization
+
+In shared mode, specific resources must be synchronized between the virtual cluster (child) and the host cluster (parent) to allow workloads to execute correctly. This synchronization is handled under the hood by the K3k Virtual Kubelet.
+
+*Synchronized Resources*
+
+By default, the following resources created in the virtual cluster are automatically synced to the host cluster:
+
+* ConfigMaps
+* Secrets
+* Services
+* PersistentVolumeClaims (PVCs)
+
+Additionally, synchronization for the following resources is supported but disabled by default:
+
+* Ingresses
+* PriorityClasses
+
+*Configuration*
+
+You can configure resource synchronization within your virtual cluster's Cluster Custom Resource (CR) under the `spec.sync` field. Each supported resource type includes a selector field to filter which resources get synced by label.
+
+*Storage and Persistent Volume Claims (PVCs)*
+
+When a user creates a PVC inside the virtual cluster, the PVC is automatically synced to the host cluster. The process works as follows:
+
+*StorageClass Dependency*: If the PVC in the virtual cluster references a StorageClass, that StorageClass must already exist on the host cluster. If it does not exist on the host side, the PVC fails to bind to a dynamically created PV. 
+
+[NOTE]
+====
+Currently, K3k does not sync StorageClasses between the host and virtual cluster, though this behavior is planned for a future release.
+====
+
+*Pseudo-Volume Creation*: When the PVC successfully syncs to the host cluster, the k3k-kubelet automatically generates a "pseudo" PersistentVolume (PV) inside the virtual cluster.
+
+*Pod Scheduling*: The pseudo PersistentVolume is bound to the virtual cluster's PVC, enabling the volume to be ready for the consumer pods to be scheduled immediately. However, the physical volume provisioning happens entirely on the host cluster.
+
 === Resource Sharing and Limits
 
 In *shared* mode, K3k leverages Kubernetes 'ResourceQuotas' and 'LimitRanges' to manage resource sharing and enforce limits. Since all virtual cluster workloads run within the same namespace on the host cluster, ResourceQuotas are applied to this namespace to limit the total resources consumed by a virtual cluster. LimitRanges are used to set default resource requests and limits for pods, ensuring that workloads have reasonable resource allocations even if they do not explicitly specify them.
