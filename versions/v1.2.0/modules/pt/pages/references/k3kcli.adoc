@@ -1,6 +1,6 @@
 = Comandos CLI do K3k 
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: "2026-08-26"
+:revdate: 2026-08-26
 :page-revdate: {revdate}
 
 == k3kcli
