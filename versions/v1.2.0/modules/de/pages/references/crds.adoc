@@ -1,7 +1,7 @@
 [id="k3k-api-reference"]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 = Literatur zu APIs
-:revdate: "2026-01-28"
+:revdate: 2026-08-26
 :page-revdate: {revdate}
 :anchor_prefix: k8s-api
 
@@ -42,6 +42,44 @@ _Erscheint in:_
 |===
 
 
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-appliedpolicy"]
+=== AppliedPolicy
+
+
+
+AppliedPolicy definiert den beobachteten Zustand einer angewendeten Richtlinie.
+
+
+
+_Erscheint in:_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clusterstatus[$$ClusterStatus$$]
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| Feld | Beschreibung | Standard | Validation
+| *`name`* __Zeichenfolge__ | name ist der Name der VirtualClusterPolicy, die derzeit auf diesen Cluster angewendet wird. + |  | MinLength: 1 +
+
+| *`priorityClass`* __Zeichenfolge__ | priorityClass ist die Prioritätsklasse, die von der aktiven VirtualClusterPolicy durchgesetzt wird. + |  | 
+| *`nodeSelector`* __object (keys:string, values:string)__ | nodeSelector ist ein Knotenauswahlmechanismus, der von der aktiven VirtualClusterPolicy durchgesetzt wird. + |  | 
+| *`serverAffinity`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#affinity-v1-core[$$Affinity$$]__ | serverAffinity sind die Affinitätsregeln für Server-Pods, die von der aktiven VirtualClusterPolicy durchgesetzt werden. +
+Dies umfasst sowohl Knotenaffinitäts- als auch Pod-Affinitäts-/Anti-Affinitätsregeln. + |  | 
+| *`agentAffinity`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#affinity-v1-core[$$Affinity$$]__ | agentAffinity sind die Affinitätsregeln für Agent-Pods, die von der aktiven VirtualClusterPolicy durchgesetzt werden. +
+Dies umfasst sowohl Knotenaffinitäts- als auch Pod-Affinitäts-/Anti-Affinitätsregeln. + |  | 
+| *`sync`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-syncconfig[$$SyncConfig$$]__ | sync ist die SyncConfig, die von der aktiven VirtualClusterPolicy durchgesetzt wird. + |  | 
+| *`runtimeClassName`* __Zeichenfolge__ | RuntimeClassName gibt eine alternative Runtime-Klasse für die +
+Agent- und Server-Pods des Clusters im virtual- oder shared-Modus an. + |  | 
+| *`podSecurityContext`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#podsecuritycontext-v1-core[$$PodSecurityContext$$]__ | PodSecurityContext gibt einen benutzerdefinierten SecurityContext an, der den +
+Agent- und Server-Pods des Clusters im virtual- oder shared-Modus hinzugefügt wird. + |  | 
+| *`securityContext`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#securitycontext-v1-core[$$SecurityContext$$]__ | SecurityContext gibt einen benutzerdefinierten Container-SecurityContext an, der den +
+Agent- und Server-Containern des Clusters im virtual- oder shared-Modus hinzugefügt wird. + |  | 
+| *`hostUsers`* __boolescher Datentyp__ | HostUsers legt den Benutzer-Namespace für Server- und Agent-Pods fest. +
+Wenn true gesetzt oder nicht vorhanden, wird der Pod im Benutzer-Namespace des Hosts ausgeführt. +
+Wenn false gesetzt ist, wird ein neuer userns für den Pod erstellt. +
+Dieses Feld befindet sich auf Alpha-Niveau und wird nur von Servern berücksichtigt, die das Feature UserNamespacesSupport aktivieren. + |  | 
+|===
+
+
 [id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-cluster"]
 === Cluster
 
@@ -59,11 +97,11 @@ _Erscheint in:_
 [cols="25a,55a,10a,10a", options="header"]
 |===
 | Feld | Beschreibung | Standard | Validation
-| *`apiVersion`* __Zeichenfolge__ | `k3k.io/v1beta1` | |
-| *`kind`* __Zeichenfolge__ | `Cluster` | |
-| *`metadata`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#objectmeta-v1-meta[$$ObjectMeta$$]__ | Siehe die Kubernetes-API-Dokumentation für die Felder von `metadata`.
- |  | 
+| *`apiVersion`* __Zeichenfolge__ | `k3k.io/v1beta1` |  | 
+| *`kind`* __Zeichenfolge__ | `Cluster` |  | 
+| *`metadata`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#objectmeta-v1-meta[$$ObjectMeta$$]__ | Siehe die Kubernetes-API-Dokumentation für die Felder von `metadata`. |  | 
 | *`spec`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clusterspec[$$ClusterSpec$$]__ | Spec definiert den gewünschten Zustand des Clusters. + | {  } | 
+| *`status`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clusterstatus[$$ClusterStatus$$]__ | Status spiegelt den beobachteten Zustand des Clusters wider. + | {  } | 
 |===
 
 
@@ -81,11 +119,10 @@ ClusterList ist eine Liste von Cluster-Ressourcen.
 [cols="25a,55a,10a,10a", options="header"]
 |===
 | Feld | Beschreibung | Standard | Validation
-| *`apiVersion`* __Zeichenfolge__ | `k3k.io/v1beta1` | |
-| *`kind`* __Zeichenfolge__ | `ClusterList` | |
-| *`metadata`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#listmeta-v1-meta[$$ListMeta$$]__ | Siehe die Kubernetes-API-Dokumentation für die Felder von `metadata`.
- |  | 
-| *`items`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-cluster[$$Cluster$$] Array__ |  |  | 
+| *`apiVersion`* __Zeichenfolge__ | `k3k.io/v1beta1` |  | 
+| *`kind`* __Zeichenfolge__ | `ClusterList` |  | 
+| *`metadata`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#listmeta-v1-meta[$$ListMeta$$]__ | Siehe die Kubernetes-API-Dokumentation für die Felder von `metadata`. |  | 
+| *`items`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-cluster[$$Cluster$$] array__ |  |  | 
 |===
 
 
@@ -96,8 +133,9 @@ _Unterliegender Typ:_ _Zeichenfolge_
 
 ClusterMode ist der mögliche Bereitstellungsmodus eines Clusters.
 
-_Validierung:_
-- Enum: [shared virtual]
+Unterstützte Werte: `shared`, `virtual`, `hcp`.
+
+
 
 _Erscheint in:_
 
@@ -140,8 +178,7 @@ _Erscheint in:_
 | *`version`* __Zeichenfolge__ | Version ist die K3s-Version, die für die virtuellen Knoten verwendet werden soll. +
 Sie sollte der K3s-Versionierungskonvention folgen (z. B. v1.28.2-k3s1). +
 Wenn nicht angegeben, wird die Kubernetes-Version des Hostknotens verwendet. + |  | 
-| *`mode`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clustermode[$$ClusterMode$$]__ | Modus gibt den Bereitstellungsmodus des Clusters an: "shared" oder "virtuell". +
-Der Standardwert ist "shared". Dieses Feld ist unveränderlich. + | freigegeben | Enum: [shared virtuell] +
+| *`mode`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clustermode[$$ClusterMode$$]__ | Der Modus gibt den Bereitstellungsmodus des Clusters an. Dieses Feld ist unveränderlich. + | shared | Enum: [shared virtual hcp] +
 
 | *`servers`* __Ganzzahl__ | Server gibt die Anzahl der K3s-Pods an, die im Server- (Steuerungsebene) Modus ausgeführt werden sollen. +
 Muss mindestens 1 sein. Der Standardwert ist 1. + | 1 | 
@@ -149,10 +186,10 @@ Muss mindestens 1 sein. Der Standardwert ist 1. + | 1 |
 Muss 0 oder größer sein. Der Standardwert ist 0. +
 Dieses Feld wird im "shared"-Modus ignoriert. + | 0 | 
 | *`clusterCIDR`* __Zeichenfolge__ | ClusterCIDR ist der CIDR-Bereich für Pod-IPs. +
-Der Standardwert ist 10.42.0.0/16 im shared-Modus und 10.52.0.0/16 im virtuellen Modus. +
+Der Standardwert ist 10.42.0.0/16 im shared-Modus und 10.52.0.0/16 im virtual-Modus. +
 Dieses Feld ist unveränderlich. + |  | 
 | *`serviceCIDR`* __Zeichenfolge__ | ServiceCIDR ist der CIDR-Bereich für Service-IPs. +
-Der Standardwert ist 10.43.0.0/16 im shared-Modus und 10.53.0.0/16 im virtuellen Modus. +
+Der Standardwert ist 10.43.0.0/16 im shared-Modus und 10.53.0.0/16 im virtual-Modus. +
 Dieses Feld ist unveränderlich. + |  | 
 | *`clusterDNS`* __Zeichenfolge__ | ClusterDNS ist die IP-Adresse für den CoreDNS-Dienst. +
 Muss im Bereich von ServiceCIDR liegen. Der Standardwert ist 10.43.0.10. +
@@ -178,15 +215,61 @@ Example: ["--node-name=my-agent-node"] + |  |
 | *`addons`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-addon[$$Addon$$] array__ | Addons geben Secrets an, die rohes YAML enthalten, um beim Start des Clusters bereitgestellt zu werden. + |  | 
 | *`serverLimit`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#resourcelist-v1-core[$$ResourceList$$]__ | ServerLimit gibt die Ressourcenlimits für Serverknoten an. + |  | 
 | *`workerLimit`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#resourcelist-v1-core[$$ResourceList$$]__ | WorkerLimit gibt die Ressourcenlimits für Agentenknoten an. + |  | 
+| *`serverResources`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#resourcerequirements-v1-core[$$ResourceRequirements$$]__ | ServerResources gibt die Ressourcenlimits und -anforderungen für Serverknoten an. + |  | 
+| *`workerResources`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#resourcerequirements-v1-core[$$ResourceRequirements$$]__ | WorkerResources gibt die Ressourcenlimits und -anforderungen für Workerknoten an. + |  | 
+| *`serverAffinity`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#affinity-v1-core[$$Affinity$$]__ | ServerAffinity gibt die Affinitätsregeln für Server-Pods an. +
+Dies umfasst sowohl Knotenaffinitäts- als auch Pod-Affinitäts-/Anti-Affinitätsregeln. + |  | 
+| *`agentAffinity`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#affinity-v1-core[$$Affinity$$]__ | AgentAffinity gibt die Affinitätsregeln für Agent-Pods an. +
+Dies umfasst sowohl Knotenaffinitäts- als auch Pod-Affinitäts-/Anti-Affinitätsregeln. + |  | 
 | *`mirrorHostNodes`* __boolescher Datentyp__ | MirrorHostNodes steuert, ob Knotenobjekte aus dem Host-Cluster +
 in den virtuellen Cluster gespiegelt werden. + |  | 
 | *`customCAs`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-customcas[$$CustomCAs$$]__ | CustomCAs gibt die Zertifikat/Schlüssel-Paare für benutzerdefinierte CA-Zertifikate an. + |  | 
 | *`sync`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-syncconfig[$$SyncConfig$$]__ | Sync gibt die Ressourcentypen an, die vom virtuellen Cluster in den Host-Cluster synchronisiert werden. + | {  } | 
 | *`secretMounts`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-secretmount[$$SecretMount$$] array__ | SecretMounts gibt eine Liste von Geheimnissen an, die in Server- und Agent-Pods eingebunden werden sollen. +
 Jeder Eintrag definiert ein Geheimnis und seinen Einhängepfad innerhalb der Pods. + |  | 
+| *`podSecurityContext`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#podsecuritycontext-v1-core[$$PodSecurityContext$$]__ | PodSecurityContext gibt einen benutzerdefinierten PodSecurityContext an, der den +
+Agent- und Server-Pods des Clusters im virtual- oder shared-Modus hinzugefügt wird. + |  | 
+| *`securityContext`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#securitycontext-v1-core[$$SecurityContext$$]__ | SecurityContext gibt einen benutzerdefinierten Container-SecurityContext an, der den +
+Agent- und Server-Containern des Clusters im virtual- oder shared-Modus hinzugefügt wird. +
+Diese Option überschreibt den SecurityContext, der standardmäßig für den virtual-Modus festgelegt ist. + |  | 
+| *`runtimeClassName`* __Zeichenfolge__ | RuntimeClassName gibt eine alternative Runtime-Klasse für die +
+Agent- und Server-Pods des Clusters im virtual- oder shared-Modus an. + |  | 
+| *`hostUsers`* __boolescher Datentyp__ | HostUsers legt den Benutzer-Namespace für Server- und Agent-Pods fest. +
+Wenn true gesetzt oder nicht vorhanden, wird der Pod im Benutzer-Namespace des Hosts ausgeführt. +
+Wenn false gesetzt ist, wird ein neuer userns für den Pod erstellt. +
+Dieses Feld befindet sich auf Alpha-Niveau und wird nur von Servern berücksichtigt, die das Feature UserNamespacesSupport aktivieren. + |  | 
 |===
 
 
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clusterstatus"]
+=== ClusterStatus
+
+
+
+ClusterStatus spiegelt den beobachteten Zustand eines Clusters wider.
+
+
+
+_Erscheint in:_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-cluster[$$Cluster$$]
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| Feld | Beschreibung | Standard | Validation
+| *`hostVersion`* __Zeichenfolge__ | HostVersion ist die Kubernetes-Version des Hostknotens. + |  | 
+| *`clusterCIDR`* __Zeichenfolge__ | ClusterCIDR ist der CIDR-Bereich für Pod-IPs. + |  | 
+| *`serviceCIDR`* __Zeichenfolge__ | ServiceCIDR ist der CIDR-Bereich für Service-IPs. + |  | 
+| *`clusterDNS`* __Zeichenfolge__ | ClusterDNS ist die IP-Adresse für den CoreDNS-Dienst. + |  | 
+| *`tlsSANs`* __Zeichenkettenarray__ | TLSSANs gibt alternative Namen für das K3s-Serverzertifikat an. + |  | 
+| *`policyName`* __Zeichenfolge__ | PolicyName gibt den Namen der virtuellen Clusterrichtlinie an, die an den virtuellen Cluster gebunden ist. + |  | 
+| *`policy`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-appliedpolicy[$$AppliedPolicy$$]__ | policy stellt den Status der auf diesen Cluster angewendeten Richtlinie dar. +
+Dieses Feld wird vom VirtualClusterPolicy-Controller gesetzt. + |  | 
+| *`kubeletPort`* __Ganzzahl__ | KubeletPort gibt den Port an, der von k3k-kubelet im shared-Modus verwendet wird. + |  | 
+| *`conditions`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#condition-v1-meta[$$Condition$$] array__ | Conditions sind die einzelnen Bedingungen für den Cluster-Satz. + |  | 
+| *`phase`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clusterphase[$$ClusterPhase$$]__ | Phase ist eine übergeordnete Zusammenfassung des aktuellen Lebenszyklusstatus des Clusters. + | Unknown | Enum: [Pending Provisioning Ready Failed Terminating Unknown] +
+
+|===
 
 
 [id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-configmapsyncconfig"]
@@ -194,7 +277,7 @@ Jeder Eintrag definiert ein Geheimnis und seinen Einhängepfad innerhalb der Pod
 
 
 
-ConfigMapSyncConfig gibt die Synchronisationsoptionen für Dienste an.
+ConfigMapSyncConfig gibt die Synchronisationsoptionen für ConfigMaps an.
 
 
 
@@ -205,7 +288,7 @@ _Erscheint in:_
 [cols="25a,55a,10a,10a", options="header"]
 |===
 | Feld | Beschreibung | Standard | Validation
-| *`enabled`* __boolean__ | Enabled ist ein Ein/Aus-Schalter für die Synchronisation von Ressourcen. + | true | 
+| *`enabled`* __boolescher Datentyp__ | Enabled ist ein Ein/Aus-Schalter für die Synchronisation von Ressourcen. + | true | 
 | *`selector`* __object (keys:string, values:string)__ | Selector gibt eine Menge von Labels der Ressourcen an, die synchronisiert werden sollen; wenn leer, +
 werden alle Ressourcen des angegebenen Typs synchronisiert. + |  | 
 |===
@@ -299,6 +382,7 @@ _Erscheint in:_
 | *`ingress`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-ingressconfig[$$IngressConfig$$]__ | Ingress gibt Optionen zum Bereitstellen des API-Servers über ein Ingress an. + |  | 
 | *`loadBalancer`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-loadbalancerconfig[$$LoadBalancerConfig$$]__ | LoadBalancer gibt Optionen zum Bereitstellen des API-Servers über einen LoadBalancer-Dienst an. + |  | 
 | *`nodePort`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-nodeportconfig[$$NodePortConfig$$]__ | NodePort gibt Optionen zum Bereitstellen des API-Servers über NodePort an. + |  | 
+| *`annotations`* __object (keys:string, values:string)__ | Annotations gibt die Annotationen an, die dem generierten Service hinzugefügt werden. + |  | 
 |===
 
 
@@ -328,7 +412,7 @@ _Erscheint in:_
 
 
 
-IngressSyncConfig legt die Synchronisationsoptionen für Dienste fest.
+IngressSyncConfig legt die Synchronisationsoptionen für Ingresses fest.
 
 
 
@@ -342,6 +426,8 @@ _Erscheint in:_
 | *`enabled`* __boolescher Datentyp__ | Enabled ist ein Ein/Aus-Schalter für die Synchronisation von Ressourcen. + | false | 
 | *`selector`* __object (keys:string, values:string)__ | Selector gibt eine Menge von Labels der Ressourcen an, die synchronisiert werden sollen; wenn leer, +
 werden alle Ressourcen des angegebenen Typs synchronisiert. + |  | 
+| *`disableTLSSecretTranslation`* __boolescher Datentyp__ | DisableTLSSecretTranslation ist ein Ein/Aus-Schalter für die Übersetzung von TLS-Secrets +
+vom virtuellen Cluster in den Host-Cluster + | false | 
 |===
 
 
@@ -361,10 +447,10 @@ _Erscheint in:_
 [cols="25a,55a,10a,10a", options="header"]
 |===
 | Feld | Beschreibung | Standard | Validation
-| *`serverPort`* __Integer__ | ServerPort ist der Port, über den der K3s-Server bereitgestellt wird, wenn der Typ LoadBalancer ist. +
+| *`serverPort`* __Ganzzahl__ | ServerPort ist der Port, über den der K3s-Server bereitgestellt wird, wenn der Typ LoadBalancer ist. +
 Wenn nicht angegeben, wird der Standardport https 443 zugewiesen. +
 Wenn 0 oder negativ, wird der Port nicht bereitgestellt. + |  | 
-| *`etcdPort`* __Integer__ | ETCDPort ist der Port, über den der ETCD-Dienst bereitgestellt wird, wenn der Typ LoadBalancer ist. +
+| *`etcdPort`* __Ganzzahl__ | ETCDPort ist der Port, über den der ETCD-Dienst bereitgestellt wird, wenn der Typ LoadBalancer ist. +
 Wenn nicht angegeben, wird der Standardport etcd 2379 zugewiesen. +
 Wenn 0 oder negativ, wird der Port nicht bereitgestellt. + |  | 
 |===
@@ -386,10 +472,10 @@ _Erscheint in:_
 [cols="25a,55a,10a,10a", options="header"]
 |===
 | Feld | Beschreibung | Standard | Validation
-| *`serverPort`* __Integer__ | ServerPort ist der Port auf jedem Knoten, über den der K3s-Server bereitgestellt wird, wenn der Typ NodePort ist. +
+| *`serverPort`* __Ganzzahl__ | ServerPort ist der Port auf jedem Knoten, über den der K3s-Server bereitgestellt wird, wenn der Typ NodePort ist. +
 Wenn nicht angegeben, wird ein zufälliger Port zwischen 30000-32767 zugewiesen. +
 Wenn außerhalb des Bereichs, wird der Port nicht bereitgestellt. + |  | 
-| *`etcdPort`* __Integer__ | ETCDPort ist der Port auf jedem Knoten, über den der ETCD-Dienst bereitgestellt wird, wenn der Typ NodePort ist. +
+| *`etcdPort`* __Ganzzahl__ | ETCDPort ist der Port auf jedem Knoten, über den der ETCD-Dienst bereitgestellt wird, wenn der Typ NodePort ist. +
 Wenn nicht angegeben, wird ein zufälliger Port zwischen 30000-32767 zugewiesen. +
 Wenn außerhalb des Bereichs, wird der Port nicht bereitgestellt. + |  | 
 |===
@@ -411,11 +497,11 @@ _Erscheint in:_
 [cols="25a,55a,10a,10a", options="header"]
 |===
 | Feld | Beschreibung | Standard | Validation
-| *`type`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-persistencemode[$$PersistenceMode$$]__ | Der Typ gibt den Persistenzmodus an. + | dynamisch | 
+| *`type`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-persistencemode[$$PersistenceMode$$]__ | Der Typ gibt den Persistenzmodus an. + | dynamic | 
 | *`storageClassName`* __Zeichenfolge__ | StorageClassName ist der Name der StorageClass, die für das PVC verwendet werden soll. +
 Dieses Feld ist nur im "dynamischen" Modus relevant. + |  | 
 | *`storageRequestSize`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#quantity-resource-api[$$Quantity$$]__ | StorageRequestSize ist die angeforderte Größe für das PVC. +
-Dieses Feld ist nur im "dynamischen" Modus relevant. + | 2 G | 
+Dieses Feld ist nur im "dynamischen" Modus relevant. + | 2G | 
 |===
 
 
@@ -439,7 +525,7 @@ _Erscheint in:_
 
 
 
-PersistentVolumeClaimSyncConfig legt die Synchronisationsoptionen für Dienste fest.
+PersistentVolumeClaimSyncConfig legt die Synchronisationsoptionen für PersistentVolumeClaims fest.
 
 
 
@@ -463,8 +549,9 @@ _Unterliegender Typ:_ _Zeichenfolge_
 
 PodSecurityAdmissionLevel ist das Richtlinienniveau, das auf die Pods im Namespace angewendet wird.
 
-_Validierung:_
-- Enum: [privileged, baseline, restricted]
+Unterstützte Werte: `privileged`, `baseline`, `restricted`.
+
+
 
 _Erscheint in:_
 
@@ -477,7 +564,7 @@ _Erscheint in:_
 
 
 
-PriorityClassSyncConfig legt die Synchronisationsoptionen für Dienste fest.
+PriorityClassSyncConfig legt die Synchronisationsoptionen für PriorityClasses fest.
 
 
 
@@ -527,13 +614,18 @@ Verzeichnisse innerhalb des Pfades sind von dieser Einstellung nicht betroffen. 
 Dies könnte in Konflikt mit anderen Optionen stehen, die die Datei +
 Modus, wie fsGroup, und das Ergebnis kann andere Modusbits gesetzt werden. + |  | 
 | *`optional`* __boolescher Datentyp__ | Optionales Feld gibt an, ob das Secret oder seine Schlüssel definiert sein müssen + |  | 
+| *`name`* __Zeichenfolge__ | Name ist der Name des Secret-Mount-Volumes, das als Name des Volumes +
+und des Volume-Mounts für den Server- oder Agent-Pod verwendet wird. +
+Wenn leer, wird stattdessen der Name des Secrets verwendet. + |  | MaxLength: 63 +
+MinLength: 1 +
+Pattern: `^[a-z0-9]([-a-z0-9]*[a-z0-9])?$` +
+
 | *`mountPath`* __Zeichenfolge__ | MountPath ist der Pfad innerhalb des Servers und der Agent-Pods, wo die +
 Inhalte des Secrets gemountet werden. + |  | 
 | *`subPath`* __Zeichenfolge__ | SubPath ist ein optionaler Pfad innerhalb des Secrets, der anstelle des Wurzelverzeichnisses gemountet werden kann. +
 Wenn angegeben, wird nur der angegebene Schlüssel aus dem Secret als Datei +
 am MountPath gemountet, wobei das übergeordnete Verzeichnis beschreibbar bleibt. + |  | 
-| *`role`* __Zeichenfolge__ | Role ist der Typ des k3k-Pods, der verwendet wird, um das Secret zu mounten. +
-Dies kann 'server', 'agent' oder 'all' (für beide) sein. + |  | Enum: [server agent all] +
+| *`role`* __Zeichenfolge__ | Role ist der Typ des k3k-Pods, der verwendet wird, um das Secret zu mounten. + |  | Enum: [server agent all] +
 
 |===
 
@@ -543,7 +635,7 @@ Dies kann 'server', 'agent' oder 'all' (für beide) sein. + |  | Enum: [server a
 
 
 
-SecretSyncConfig spezifiziert die Synchronisationsoptionen für Dienste.
+SecretSyncConfig spezifiziert die Synchronisationsoptionen für Secrets.
 
 
 
@@ -565,7 +657,7 @@ werden alle Ressourcen des angegebenen Typs synchronisiert. + |  |
 
 
 
-ServiceSyncConfig spezifiziert die Synchronisationsoptionen für Dienste.
+ServiceSyncConfig spezifiziert die Synchronisationsoptionen für Services.
 
 
 
@@ -582,6 +674,28 @@ werden alle Ressourcen des angegebenen Typs synchronisiert. + |  |
 |===
 
 
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-storageclasssyncconfig"]
+=== StorageClassSyncConfig
+
+
+
+StorageClassSyncConfig legt die Synchronisationsoptionen für StorageClasses fest.
+
+
+
+_Erscheint in:_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-syncconfig[$$SyncConfig$$]
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| Feld | Beschreibung | Standard | Validation
+| *`enabled`* __boolescher Datentyp__ | Enabled ist ein Ein/Aus-Schalter für die Synchronisation von Ressourcen. + | false | 
+| *`selector`* __object (keys:string, values:string)__ | Selector gibt eine Menge von Labels der Ressourcen an, die synchronisiert werden sollen; wenn leer, +
+werden alle Ressourcen des angegebenen Typs synchronisiert. + |  | 
+|===
+
+
 [id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-syncconfig"]
 === SyncConfig
 
@@ -593,6 +707,7 @@ SyncConfig enthält die Ressourcen, die vom virtuellen Cluster in den Host-Clust
 
 _Erscheint in:_
 
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-appliedpolicy[$$AppliedPolicy$$]
 * xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clusterspec[$$ClusterSpec$$]
 * xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-virtualclusterpolicyspec[$$VirtualClusterPolicySpec$$]
 
@@ -605,6 +720,7 @@ _Erscheint in:_
 | *`ingresses`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-ingresssyncconfig[$$IngressSyncConfig$$]__ | Konfiguration der Synchronisation von Ingress-Ressourcen. + | { enabled:false } | 
 | *`persistentVolumeClaims`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-persistentvolumeclaimsyncconfig[$$PersistentVolumeClaimSyncConfig$$]__ | Konfiguration der Synchronisation von PersistentVolumeClaims-Ressourcen. + | { enabled:true } | 
 | *`priorityClasses`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-priorityclasssyncconfig[$$PriorityClassSyncConfig$$]__ | Konfiguration der Synchronisation von PriorityClasses-Ressourcen. + | { enabled:false } | 
+| *`storageClasses`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-storageclasssyncconfig[$$StorageClassSyncConfig$$]__ | Synchronisationskonfiguration für StorageClasses-Ressourcen. + | { enabled:false } | 
 |===
 
 
@@ -624,11 +740,11 @@ _Erscheint in:_
 [cols="25a,55a,10a,10a", options="header"]
 |===
 | Feld | Beschreibung | Standard | Validation
-| *`apiVersion`* __Zeichenfolge__ | `k3k.io/v1beta1` | |
-| *`kind`* __Zeichenfolge__ | `VirtualClusterPolicy` | |
-| *`metadata`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#objectmeta-v1-meta[$$ObjectMeta$$]__ | Siehe die Kubernetes-API-Dokumentation für die Felder von `metadata`.
- |  | 
+| *`apiVersion`* __Zeichenfolge__ | `k3k.io/v1beta1` |  | 
+| *`kind`* __Zeichenfolge__ | `VirtualClusterPolicy` |  | 
+| *`metadata`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#objectmeta-v1-meta[$$ObjectMeta$$]__ | Siehe die Kubernetes-API-Dokumentation für die Felder von `metadata`. |  | 
 | *`spec`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-virtualclusterpolicyspec[$$VirtualClusterPolicySpec$$]__ | Spec definiert den gewünschten Zustand der VirtualClusterPolicy. + | {  } | 
+| *`status`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-virtualclusterpolicystatus[$$VirtualClusterPolicyStatus$$]__ | Status spiegelt den beobachteten Zustand der VirtualClusterPolicy wider. + |  | 
 |===
 
 
@@ -646,10 +762,9 @@ Die VirtualClusterPolicyList ist eine Liste von VirtualClusterPolicy-Ressourcen.
 [cols="25a,55a,10a,10a", options="header"]
 |===
 | Feld | Beschreibung | Standard | Validation
-| *`apiVersion`* __Zeichenfolge__ | `k3k.io/v1beta1` | |
-| *`kind`* __Zeichenfolge__ | `VirtualClusterPolicyList` | |
-| *`metadata`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#listmeta-v1-meta[$$ListMeta$$]__ | Siehe die Kubernetes-API-Dokumentation für die Felder von `metadata`.
- |  | 
+| *`apiVersion`* __Zeichenfolge__ | `k3k.io/v1beta1` |  | 
+| *`kind`* __Zeichenfolge__ | `VirtualClusterPolicyList` |  | 
+| *`metadata`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#listmeta-v1-meta[$$ListMeta$$]__ | Siehe die Kubernetes-API-Dokumentation für die Felder von `metadata`. |  | 
 | *`items`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-virtualclusterpolicy[$$VirtualClusterPolicy$$] array__ |  |  | 
 |===
 
@@ -675,14 +790,47 @@ _Erscheint in:_
 um Standardwerte und Einschränkungen (min/max) festzulegen. + |  | 
 | *`defaultNodeSelector`* __object (keys:string, values:string)__ | Der DefaultNodeSelector gibt den Knotenauswahlmechanismus an, der auf alle Cluster (Server + Agent) im Ziel-Namespace angewendet wird. + |  | 
 | *`defaultPriorityClass`* __Zeichenfolge__ | Die DefaultPriorityClass gibt den priorityClassName an, der auf alle Pods aller Cluster im Ziel-Namespace angewendet wird. + |  | 
-| *`allowedMode`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clustermode[$$ClusterMode$$]__ | Der AllowedMode gibt den erlaubten Cluster-Bereitstellungsmodus an. Der Standardwert ist "shared". + | freigegeben | Enum: [shared virtual] +
+| *`defaultServerAffinity`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#affinity-v1-core[$$Affinity$$]__ | DefaultServerAffinity gibt die Affinitätsregeln an, die auf die Server-Pods aller Cluster im Ziel-Namespace angewendet werden. +
+Dies umfasst sowohl Knotenaffinitäts- als auch Pod-Affinitäts-/Anti-Affinitätsregeln. + |  | 
+| *`defaultAgentAffinity`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#affinity-v1-core[$$Affinity$$]__ | DefaultAgentAffinity gibt die Affinitätsregeln an, die auf die Agent-Pods aller Cluster im Ziel-Namespace angewendet werden. +
+Dies umfasst sowohl Knotenaffinitäts- als auch Pod-Affinitäts-/Anti-Affinitätsregeln. + |  | 
+| *`allowedMode`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clustermode[$$ClusterMode$$]__ | Der AllowedMode gibt den erlaubten Cluster-Bereitstellungsmodus an. + | shared | Enum: [shared virtual hcp] +
 
 | *`disableNetworkPolicy`* __boolescher Datentyp__ | DisableNetworkPolicy gibt an, ob die Erstellung einer standardmäßigen Netzzwerkrichtlinie zur Cluster-Isolierung deaktiviert werden soll. + |  | 
 | *`podSecurityAdmissionLevel`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-podsecurityadmissionlevel[$$PodSecurityAdmissionLevel$$]__ | Das PodSecurityAdmissionLevel gibt das Pod-Sicherheitszulassungsniveau an, das auf die Pods im Namespace angewendet wird. + |  | Enum: [privileged baseline restricted] +
 
 | *`sync`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-syncconfig[$$SyncConfig$$]__ | Sync gibt die Ressourcentypen an, die vom virtuellen Cluster in den Host-Cluster synchronisiert werden. + | {  } | 
+| *`runtimeClassName`* __Zeichenfolge__ | SecurityContext gibt einen benutzerdefinierten SecurityContext an, der den +
+Agent- und Server-Pods des Clusters im virtual- oder shared-Modus hinzugefügt wird. + |  | 
+| *`securityContext`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#securitycontext-v1-core[$$SecurityContext$$]__ | RuntimeClassName gibt eine alternative Runtime-Klasse für die +
+Agent- und Server-Pods des Clusters im virtual- oder shared-Modus an. + |  | 
+| *`hostUsers`* __boolescher Datentyp__ | HostUsers legt den Benutzer-Namespace für Server- und Agent-Pods fest. +
+Wenn true gesetzt oder nicht vorhanden, wird der Pod im Benutzer-Namespace des Hosts ausgeführt. +
+Wenn false gesetzt ist, wird ein neuer userns für den Pod erstellt. +
+Dieses Feld befindet sich auf Alpha-Niveau und wird nur von Servern berücksichtigt, die das Feature UserNamespacesSupport aktivieren. + |  | 
 |===
 
 
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-virtualclusterpolicystatus"]
+=== VirtualClusterPolicyStatus
+
+
+
+VirtualClusterPolicyStatus spiegelt den beobachteten Zustand einer VirtualClusterPolicy wider.
+
+
+
+_Erscheint in:_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-virtualclusterpolicy[$$VirtualClusterPolicy$$]
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| Feld | Beschreibung | Standard | Validation
+| *`observedGeneration`* __Ganzzahl__ | ObservedGeneration war die Generation zum Zeitpunkt der Statusaktualisierung. + |  | 
+| *`lastUpdateTime`* __Zeichenfolge__ | LastUpdate ist der Zeitstempel der letzten Statusaktualisierung. + |  | 
+| *`summary`* __Zeichenfolge__ | Summary ist eine Zusammenfassung des Status. + |  | 
+| *`conditions`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#condition-v1-meta[$$Condition$$] array__ | Conditions sind die einzelnen Bedingungen für den Cluster-Satz. + |  | 
+|===
 
 
