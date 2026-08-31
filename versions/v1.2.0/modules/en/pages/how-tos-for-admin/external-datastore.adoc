@@ -1,0 +1,92 @@
+= Configuring an External Datastore
+:revdate: 2026-08-31
+:page-revdate: {revdate}
+
+By default, {k3k-product-name} runs each virtual cluster's K3s server against its own embedded datastore (SQLite for a single server, or embedded etcd when `spec.servers` is greater than 1). For high-availability or centralized-storage scenarios, you can instead point a virtual cluster at an external https://kine.io/[Kine]-compatible datastore, such as PostgreSQL, MySQL, or an external etcd cluster.
+
+[NOTE]
+====
+External datastore support has no dedicated `Cluster` spec field. It is configured by mounting a K3s config drop-in file into the server pod using `spec.secretMounts`, the same mechanism used to inject custom K3s configuration or certificates.
+====
+
+== Prerequisites
+
+* A running PostgreSQL, MySQL, or etcd instance reachable from the host cluster.
+* The connection string (DSN) for that datastore, in the same format accepted by K3s' `--datastore-endpoint` flag. See the https://docs.k3s.io/datastore[K3s external datastore documentation] for supported DSN formats.
+
+== Create the datastore configuration secret
+
+Create a `Secret` containing a K3s config file with the `datastore-endpoint` set to your external datastore's connection string. Set `cluster-init: false` and `server: ""` so the K3s server does not attempt embedded-etcd cluster bootstrap:
+
+[source,yaml]
+----
+apiVersion: v1
+kind: Secret
+metadata:
+  name: datastore-config
+  namespace: test-k3k
+type: Opaque
+stringData:
+  config.yaml: |
+    datastore-endpoint: postgres://postgres:password@postgres.test-k3k.svc.cluster.local:5432/k3k
+    cluster-init: false
+    server: ""
+----
+
+== Reference the secret from the Cluster resource
+
+Mount the secret into both the init and server K3s config-drop-in directories using `spec.secretMounts`:
+
+[source,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: test
+  namespace: test-k3k
+spec:
+  mode: shared
+  servers: 1
+  secretMounts:
+    - name: externaldb-init-config
+      secretName: datastore-config
+      mountPath: /opt/rancher/k3s/init/config.yaml.d/
+      role: server
+    - name: externaldb-server-config
+      secretName: datastore-config
+      mountPath: /opt/rancher/k3s/server/config.yaml.d/
+      role: server
+----
+
+This works for both `shared` and `virtual` mode, and with any number of `servers`.
+
+Once the server pod is `Running`, the K3s server connects to the external datastore and populates the `kine` schema there instead of using the embedded datastore. You can confirm this by inspecting the target database directly, or by checking that the server pod does not carry the `etcdpod.k3k.io/finalizer` finalizer that {k3k-product-name} adds for embedded-etcd clusters.
+
+== Using serverArgs instead
+
+The datastore endpoint can alternatively be passed directly as a K3s server flag via `spec.serverArgs`. If you use this approach, you must also pass `--cluster-init=false`, otherwise the controller treats the cluster as an embedded-etcd cluster and provisioning fails:
+
+[source,yaml]
+----
+apiVersion: k3k.io/v1alpha1
+kind: Cluster
+metadata:
+  name: test
+  namespace: test-k3k
+spec:
+  mode: shared
+  servers: 1
+  serverArgs:
+    - "--datastore-endpoint=postgres://postgres:password@postgres.test-k3k.svc.cluster.local:5432/k3k"
+    - "--cluster-init=false"
+----
+
+[NOTE]
+====
+The `secretMounts` approach is recommended: it keeps datastore credentials out of the `Cluster` resource, which is otherwise readable by anyone with access to the `Cluster` object.
+====
+
+== Related fields
+
+* xref:references/crds.adoc[CRD reference] -- see `SecretMount` for the full field list (`secretName`, `mountPath`, `subPath`, `role`).
+* xref:how-tos-for-admin/adding-custom-cert.adoc[Adding custom certificates for K3s from K3k cluster] -- another example of using `secretMounts` to inject configuration into the server pod.
