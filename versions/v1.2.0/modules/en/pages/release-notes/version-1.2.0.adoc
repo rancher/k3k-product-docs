@@ -8,6 +8,7 @@
 
 == Core Improvements
 
+* *Custom annotations on the exposed Service* -- `expose.annotations` lets you set custom annotations on the Service generated for `expose.loadBalancer` or `expose.nodePort`, useful for cloud-provider-specific load balancer configuration. See xref:advanced-usage.adoc#_expose[Advanced Usage: expose].
 
 == Bug Fixes & Security
 

@@ -72,6 +72,8 @@ spec:
 
 The services created at creation time of the virtual cluster cannot be modified. It is necessary to create a new service of the desired type (LoadBalancer or NodePort).
 
+NOTE: To have K3k manage the exposed Service directly instead (including custom annotations, e.g. for cloud load balancer configuration), use `spec.expose.loadBalancer` / `spec.expose.nodePort` with `spec.expose.annotations`. See xref:/advanced-usage.adoc#_expose[Advanced Usage: expose].
+
 === LoadBalancer
 If a load balancer is available to the host cluster, either from a cloud service provider or from an add-on such as MetalLB, it is possible to expose the virtual cluster's API over its own unique IP address.
 
