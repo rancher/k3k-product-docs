@@ -152,3 +152,98 @@ k3k-test-registry-server-0        0/1     ImagePullBackOff   0          54s
 ----
 
 To fix this make sure the failing image is available. You can describe the failing pod to get more details.
+
+
+== Inspecting and Troubleshooting Embedded etcd
+
+K3k runs K3s control plane instances inside containers managed by the host Kubernetes cluster. Because K3s uses embedded etcd, standard RKE/Rancher file paths (such as `/etc/kubernetes/ssl/etcd/`) do not exist on the host, and K3s server pod images omit debugging tools like `etcdctl`.
+
+This section outlines how to locate etcd credentials, interact with etcd locally or via debug containers, and safely manage node membership in High Availability (HA) clusters.
+
+=== etcd Certificate Locations
+
+Inside the K3k control plane container, all TLS credentials for embedded etcd are located at:
+
+`/var/lib/rancher/k3s/server/tls/etcd/`
+
+The primary certificates and keys required for authentication are:
+
+* **CA Certificate:** `server-ca.crt`
+* **Client Certificate:** `client.crt` (or `server-client.crt`)
+* **Client Key:** `client.key` (or `server-client.key`)
+
+=== Option 1: Running `etcdctl` from a Local Machine (Exposed Clusters)
+
+When a K3k virtual cluster is created using the CLI, its control plane services (including the etcd port `2379`) are often exposed via a NodePort or LoadBalancer service on the host cluster.
+
+You can download the TLS certificates to your local machine and query etcd directly without executing commands inside the cluster pods.
+
+==== 1. Extract Certificates to a Local Directory
+
+[,sh]
+----
+mkdir -p ./k3k-etcd-certs
+kubectl cp <cluster_namespace>/<k3k_server_pod_name>:/var/lib/rancher/k3s/server/tls/etcd ./k3k-etcd-certs
+----
+
+==== 2. Identify the Exposed etcd Endpoint
+
+Check the host services in your virtual cluster namespace to find the exposed NodePort or external IP mapping to port `2379`:
+
+[,sh]
+----
+kubectl get svc -n <cluster_namespace>
+----
+
+NOTE: If the cluster service is not externally reachable from your machine, port-forward the pod's `2379` port locally in a separate terminal: `kubectl port-forward -n <cluster_namespace> pod/<k3k_server_pod_name> 2379:2379`.
+
+==== 3. Execute `etcdctl` Locally
+
+Run `etcdctl` from your workstation pointing to the exposed host endpoint (or `127.0.0.1:2379` if port-forwarding):
+
+[,sh]
+----
+etcdctl \
+  --endpoints=https://<node_ip>:<node_port> \
+  --cacert=./k3k-etcd-certs/server-ca.crt \
+  --cert=./k3k-etcd-certs/client.crt \
+  --key=./k3k-etcd-certs/client.key \
+  member list
+----
+
+=== Option 2: Running `etcdctl` via Ephemeral Debug Containers (Internal / Private Clusters)
+
+If the K3k control plane is unexposed or completely private, use `kubectl debug` to attach an ephemeral container running an official etcd image directly to the running server pod.
+
+NOTE: `kubectl debug` shares the process (PID) and network namespaces with the targeted container, but not its mount namespace. To access the TLS certificates inside the target container's filesystem, prefix all certificate paths with `/proc/1/root/`.
+
+==== List etcd Cluster Members
+
+[,sh]
+----
+kubectl debug -it -n <cluster_namespace> <k3k_server_pod_name> \
+  --target=<k3k_server_container_name> \
+  --image=quay.io/coreos/etcd:v3.5.9 \
+  -- etcdctl \
+    --endpoints=https://127.0.0.1:2379 \
+    --cacert=/proc/1/root/var/lib/rancher/k3s/server/tls/etcd/server-ca.crt \
+    --cert=/proc/1/root/var/lib/rancher/k3s/server/tls/etcd/client.crt \
+    --key=/proc/1/root/var/lib/rancher/k3s/server/tls/etcd/client.key \
+    member list
+----
+
+==== Check Endpoint Health
+
+[,sh]
+----
+kubectl debug -it -n <cluster_namespace> <k3k_server_pod_name> \
+  --target=<k3k_server_container_name> \
+  --image=quay.io/coreos/etcd:v3.5.9 \
+  -- etcdctl \
+    --endpoints=https://127.0.0.1:2379 \
+    --cacert=/proc/1/root/var/lib/rancher/k3s/server/tls/etcd/server-ca.crt \
+    --cert=/proc/1/root/var/lib/rancher/k3s/server/tls/etcd/client.crt \
+    --key=/proc/1/root/var/lib/rancher/k3s/server/tls/etcd/client.key \
+    endpoint health --write-out=table
+----
+
