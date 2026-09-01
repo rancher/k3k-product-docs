@@ -139,7 +139,10 @@ See xref:how-tos-for-admin/expose-kubernetesapi.adoc[How-to: Expose Virtual Clus
 
 `expose.annotations` adds annotations directly to the Service generated for `expose.loadBalancer` or `expose.nodePort`. This is useful to configure cloud-provider-specific load balancer behavior, such as requesting an internal (private) load balancer or a static IP.
 
-NOTE: This is different from `expose.ingress.annotations`, which annotates the `Ingress` resource instead (for example, to enable TLS passthrough).
+[NOTE]
+====
+This is different from `expose.ingress.annotations`, which annotates the `Ingress` resource instead (for example, to enable TLS passthrough).
+====
 
 [,yaml]
 ----
