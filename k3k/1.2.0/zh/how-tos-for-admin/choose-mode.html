@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>如何选择共享模式和虚拟模式 :: K3k</title>
+    <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+<link rel="stylesheet" href="../../../../_/css/search.css">
+<link rel="icon" href="../../../../_/img/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="../../../../_/css/font-styles.css">
+<link rel="stylesheet" href="../../../../_/fonts/css/all.css">
+<link rel="stylesheet" href="../../../../_/css/site-extra.css">
+<link rel="stylesheet" href="../../../../_/css/vendor/tabs.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=SUSE:wght@100..800&display=swap&family=SUSE+Mono:ital,wght@0,100..800;1,100..800" rel="stylesheet">
+<link href="https://documentation.suse.com/docserv/res/fonts/poppins/poppins.css" rel="stylesheet">
+<!-- <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto&display=swap" rel="stylesheet"> -->
+<link rel="stylesheet" href="../../../../_/css/vendor/light.css">
+    <script>var uiRootPath = '../../../../_'</script>
+  </head>
+  <body class="article">
+<script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs'; mermaid.initialize({"startOnLoad":true});</script><header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-item">
+        <a class=" navbar-logo" href="https://docs.k3k.io/" aria-label="K3k Documentation Home"><img class="logo"
+            src="../../../../_/img/logo-horizontal-positive-k3k.svg" alt="K3k logo"/></a>
+      </div>
+      <div class="navbar-item search hide-for-print">
+        <div id="search-field" class="field">
+          <label class="visual-search-label" for="search-input">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+          <input label="Search" aria-label="Search" id="search-input" type="text" placeholder="Search the docs" >
+          <label class="filter checkbox" style="display: none">
+            <input type="checkbox" data-facet-filter="component:k3k" checked> Only this project
+          </label>
+        </div>
+      </div>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link">
+            <img src="../../../../_/img/resources.png" class="langIcon Resources" alt="Resources" title="Resources">
+          </div>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs"><i class="fab fa-github"></i>&nbsp;K3k</a>
+            <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs/issues"><i class="fab fa-github"></i>&nbsp;GitHub Issue</a>
+            <!-- <div class="has-submenu">
+              <a class="navbar-item" href="#" ><i class="fas fa-file-alt"></i>&nbsp;Report Issue &nbsp;<i class="fas fa-chevron-right"></i></a>
+              <div class="submenu">
+                <a class="navbar-item" href="https://scc.suse.com">SCC (Recommended)</a>
+                <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs/issues">GitHub Issue</a>
+              </div>
+            </div> -->
+            <a class="navbar-item" href="https://github.com/rancher/k3k/blob/main/docs/development.md"><i class="fas fa-user-edit"></i>&nbsp;Contribute</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link"><img src="../../../../_/img/language.png" class="langIcon Language" alt="Language"
+              title="Language"></div>
+          <div class="navbar-dropdown">
+            <!--  </div><div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div> -->
+              <a role="button" class="navbar-item" id="en" onclick="selectLanguage(this.id)">
+                <!--<img src="../../../../_/img/engFlag.svg" class="langIcon english">-->
+                &nbsp;English
+              </a>
+            <!-- LANGUAGESELECTOR -->
+          </div>
+        </div>
+        <!--
+        <div class="navbar-item">
+          <a href="https://twitter.com/SUSE">
+            <img alt="X-logo" class="x-logo" src="../../../../_/img/x-logo-white.png">
+          </a>
+        </div>
+        -->
+      </div>
+    </div>
+
+    <!--   <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+      </div> -->
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="k3k" data-version="1.2.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../../en/introduction.html">K3k</a></h3>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">K3k</span>
+    <span class="version">v1.2.0 (Dev)</span>
+  </div>
+  <ul class="components">
+        <li class="component is-current">
+          <div class="title"><a href="../../../1.1.0/en/introduction.html">K3k</a></div>
+          <ul class="versions">
+            <li class="version is-current">
+              <a href="../../en/introduction.html">v1.2.0 (Dev)</a>
+            </li>
+            <li class="version is-latest">
+              <a href="../../../1.1.0/en/introduction.html">v1.1.0-latest</a>
+            </li>
+            <li class="version">
+              <a href="../../../1.0.2/en/introduction.html">v1.0.2</a>
+            </li>
+            <li class="version">
+              <a href="../../../v1.0.1/en/introduction.html">v1.0.1</a>
+            </li>
+            <li class="version">
+              <a href="../../../v1.0.0/en/introduction.html">v1.0.0</a>
+            </li>
+          </ul>
+        </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../v1.0.1/en/introduction.html" aria-label="Home" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../en/introduction.html">K3k</a></li>
+    <li><a href="choose-mode.html">如何选择共享模式和虚拟模式</a></li>
+  </ul>
+</nav>
+<div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">v1.2.0 (Dev)</button>
+  <div class="version-menu">
+    <a class="version is-current" href="choose-mode.html">v1.2.0 (Dev)</a>
+    <a class="version is-missing" href="../../../1.1.0/en/introduction.html">v1.1.0-latest</a>
+    <a class="version is-missing" href="../../../1.0.2/en/introduction.html">v1.0.2</a>
+    <a class="version is-missing" href="../../../v1.0.1/en/introduction.html">v1.0.1</a>
+    <a class="version is-missing" href="../../../v1.0.0/en/introduction.html">v1.0.0</a>
+  </div>
+</div>
+  <div class="edit-this-page"><a href="https://github.com/rancher/k3k-product-docs/edit/main/versions/v1.2.0/modules/zh/pages/how-tos-for-admin/choose-mode.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<aside class="toc sidebar" data-title="On this page" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>This is unreleased documentation for K3k v1.2.0 (Dev).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<h1 class="page">如何选择共享模式和虚拟模式</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>本指南帮助您为虚拟集群选择合适的模式：<strong>共享</strong> 或 <strong>虚拟</strong>。</p>
+</div>
+<div class="paragraph">
+<p>如果您不确定，请从 <strong>共享模式</strong> 开始 - 这是默认设置，适合大多数常见场景。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_共享模式默认"><a class="anchor" href="#_共享模式默认"></a>共享模式（默认）</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>最佳适用对象：</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>希望快速运行工作负载而无需管理Kubernetes内部的开发人员</p>
+</li>
+<li>
+<p>需要对所有工作负载具备可见性与控制能力的平台团队</p>
+</li>
+<li>
+<p>需要访问主机级资源的用户（例如，GPU）</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>在 <strong>共享模式</strong> 下，虚拟集群运行自己的K3s服务器，但依赖主机来执行工作负载。虚拟 kubelet 同步资源，实现轻量级、快速部署，并支持集群资源隔离。有关<a href="./../architecture.adoc#shared-mode">架构</a>的更多详细信息。</p>
+</div>
+<div class="sect2">
+<h3 id="_按角色划分的用例"><a class="anchor" href="#_按角色划分的用例"></a>按角色划分的用例</h3>
+<div class="sect3">
+<h4 id="_开发人员"><a class="anchor" href="#_开发人员"></a>开发人员</h4>
+<div class="paragraph">
+<p><em>"我正在构建一个应该在虚拟集群外部暴露的Web应用程序。"</em><br>
+→ 使用 <strong>共享模式</strong>。它允许您 <a href="../how-tos-for-user/expose-workloads.html" class="xref page">暴露</a> 您的应用程序。</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_数据科学家"><a class="anchor" href="#_数据科学家"></a>数据科学家：</h4>
+<div class="paragraph">
+<p><em>"`I need to run Jupyter notebooks that leverage the cluster&#8217;s GPU.`"</em><br>
+→ 使用 <strong>共享模式</strong>。它在保持低开销的同时提供对物理设备的访问。</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_平台管理员"><a class="anchor" href="#_平台管理员"></a>平台管理员</h4>
+<div class="paragraph">
+<p><em>"我想从一个中心位置监控和保护所有租户的工作负载。"</em><br>
+→ 使用 <strong>共享模式</strong>。主机级代理（例如，可观测性、策略执行）在所有虚拟集群中工作。</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_安全工程师"><a class="anchor" href="#_安全工程师"></a>安全工程师</h4>
+<div class="paragraph">
+<p><em>"我需要在所有工作负载中执行安全策略，例如网络策略或运行时扫描。"</em><br>
+→ 使用 <strong>共享模式</strong>。该平台可以在不绕过租户的情况下全局执行策略。</p>
+</div>
+<div class="paragraph">
+<p><em>"我需要测试一个新的准入控制器或策略引擎。"</em><br>
+→ 如果它的范围限于您的虚拟集群，请使用 <strong>共享模式</strong>。您可以运行像 Kubewarden 这样的工具，而不会影响主机。</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_cicd_工程师"><a class="anchor" href="#_cicd_工程师"></a>CI/CD 工程师</h4>
+<div class="paragraph">
+<p><em>"我想在每次管道运行时快速启动一次性虚拟集群，并且资源成本低。"</em><br>
+→ 使用 <strong>共享模式</strong>。它部署迅速，非常适合短期且受名称空间约束的环境。</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_虚拟模式"><a class="anchor" href="#_虚拟模式"></a>虚拟模式</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>最佳适用对象：</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>需要完全 Kubernetes 隔离的高级用户</p>
+</li>
+<li>
+<p>测试实验性或集群范围功能的开发人员</p>
+</li>
+<li>
+<p>需要控制整个 Kubernetes 控制平面的用例</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>在 <strong>虚拟模式</strong> 中，虚拟集群运行其自己的隔离 Kubernetes 控制平面。它支持不同的 CNI 和 API 配置 --，非常适合深入实验或高级工作负载。有关 <a href="./../architecture.adoc#virtual-mode">架构</a> 的更多详细信息。</p>
+</div>
+<div class="sect2">
+<h3 id="_按角色划分的用例_2"><a class="anchor" href="#_按角色划分的用例_2"></a>按角色划分的用例</h3>
+<div class="sect3">
+<h4 id="_开发人员_2"><a class="anchor" href="#_开发人员_2"></a>开发人员</h4>
+<div class="paragraph">
+<p><em>"我需要测试一个在主机集群中禁用的新 Kubernetes 功能开关。"</em><br>
+→ 使用 <strong>虚拟模式</strong>。您可以配置自己的控制平面标志和 API 功能。</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_平台管理员_2"><a class="anchor" href="#_平台管理员_2"></a>平台管理员</h4>
+<div class="paragraph">
+<p><em>"我们正在测试不同 Kubernetes 版本的升级，包括新的 API 行为。"</em>→ 使用虚拟模式。您可以运行不同的 Kubernetes 版本，并安全地验证升级路径。</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_网络工程师"><a class="anchor" href="#_网络工程师"></a>网络工程师</h4>
+<div class="paragraph">
+<p><em>"我正在评估一个新的 CNI，它需要对集群的网络进行全面控制。"</em><br>
+→ 使用 <strong>虚拟模式</strong>。您可以运行一个独立的 CNI 堆栈，而不会影响主机或其他租户。</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_安全工程师_2"><a class="anchor" href="#_安全工程师_2"></a>安全工程师</h4>
+<div class="paragraph">
+<p><em>"我正在测试一个新的准入控制器和策略引擎，然后再在整个集群中推广。"</em><br>
+→ 如果您需要测试集群范围的策略、自定义准入流程或具有全面控制的高级扩展，请使用 <strong>虚拟模式</strong>。</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_附加信息"><a class="anchor" href="#_附加信息"></a>附加信息</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>如果您正在评估更高级的用例或想要更深入的比较，请查看 <a href="../architecture.html" class="xref page">架构文档</a> 中的完整权衡分析。</p>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+<script src="../../../../_/js/vendor/lunr.js"></script>
+<script src="../../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../../.." data-snippet-length="100" data-stylesheet="../../../../_/css/search.css"></script>
+<script async src="../../../../search-index.js"></script>
+<script src="../../../../_/js/vendor/langSelection.js"></script>
+<script async src="../../../../_/js/vendor/tabs.js"></script>
+
+
+  </body>
+</html>

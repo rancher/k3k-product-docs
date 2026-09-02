@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Utilisation avancée :: K3k</title>
+    <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="stylesheet" href="../../../_/css/search.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="../../../_/css/font-styles.css">
+<link rel="stylesheet" href="../../../_/fonts/css/all.css">
+<link rel="stylesheet" href="../../../_/css/site-extra.css">
+<link rel="stylesheet" href="../../../_/css/vendor/tabs.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=SUSE:wght@100..800&display=swap&family=SUSE+Mono:ital,wght@0,100..800;1,100..800" rel="stylesheet">
+<link href="https://documentation.suse.com/docserv/res/fonts/poppins/poppins.css" rel="stylesheet">
+<!-- <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto&display=swap" rel="stylesheet"> -->
+<link rel="stylesheet" href="../../../_/css/vendor/light.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs'; mermaid.initialize({"startOnLoad":true});</script><header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-item">
+        <a class=" navbar-logo" href="https://docs.k3k.io/" aria-label="K3k Documentation Home"><img class="logo"
+            src="../../../_/img/logo-horizontal-positive-k3k.svg" alt="K3k logo"/></a>
+      </div>
+      <div class="navbar-item search hide-for-print">
+        <div id="search-field" class="field">
+          <label class="visual-search-label" for="search-input">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+          <input label="Search" aria-label="Search" id="search-input" type="text" placeholder="Search the docs" >
+          <label class="filter checkbox" style="display: none">
+            <input type="checkbox" data-facet-filter="component:k3k" checked> Only this project
+          </label>
+        </div>
+      </div>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link">
+            <img src="../../../_/img/resources.png" class="langIcon Resources" alt="Resources" title="Resources">
+          </div>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs"><i class="fab fa-github"></i>&nbsp;K3k</a>
+            <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs/issues"><i class="fab fa-github"></i>&nbsp;GitHub Issue</a>
+            <!-- <div class="has-submenu">
+              <a class="navbar-item" href="#" ><i class="fas fa-file-alt"></i>&nbsp;Report Issue &nbsp;<i class="fas fa-chevron-right"></i></a>
+              <div class="submenu">
+                <a class="navbar-item" href="https://scc.suse.com">SCC (Recommended)</a>
+                <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs/issues">GitHub Issue</a>
+              </div>
+            </div> -->
+            <a class="navbar-item" href="https://github.com/rancher/k3k/blob/main/docs/development.md"><i class="fas fa-user-edit"></i>&nbsp;Contribute</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link"><img src="../../../_/img/language.png" class="langIcon Language" alt="Language"
+              title="Language"></div>
+          <div class="navbar-dropdown">
+            <!--  </div><div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div> -->
+              <a role="button" class="navbar-item" id="en" onclick="selectLanguage(this.id)">
+                <!--<img src="../../../_/img/engFlag.svg" class="langIcon english">-->
+                &nbsp;English
+              </a>
+            <!-- LANGUAGESELECTOR -->
+          </div>
+        </div>
+        <!--
+        <div class="navbar-item">
+          <a href="https://twitter.com/SUSE">
+            <img alt="X-logo" class="x-logo" src="../../../_/img/x-logo-white.png">
+          </a>
+        </div>
+        -->
+      </div>
+    </div>
+
+    <!--   <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+      </div> -->
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="k3k" data-version="1.2.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../en/introduction.html">K3k</a></h3>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">K3k</span>
+    <span class="version">v1.2.0 (Dev)</span>
+  </div>
+  <ul class="components">
+        <li class="component is-current">
+          <div class="title"><a href="../../1.1.0/en/introduction.html">K3k</a></div>
+          <ul class="versions">
+            <li class="version is-current">
+              <a href="../en/introduction.html">v1.2.0 (Dev)</a>
+            </li>
+            <li class="version is-latest">
+              <a href="../../1.1.0/en/introduction.html">v1.1.0-latest</a>
+            </li>
+            <li class="version">
+              <a href="../../1.0.2/en/introduction.html">v1.0.2</a>
+            </li>
+            <li class="version">
+              <a href="../../v1.0.1/en/introduction.html">v1.0.1</a>
+            </li>
+            <li class="version">
+              <a href="../../v1.0.0/en/introduction.html">v1.0.0</a>
+            </li>
+          </ul>
+        </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../v1.0.1/en/introduction.html" aria-label="Home" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../en/introduction.html">K3k</a></li>
+    <li><a href="advanced-usage.html">Utilisation avancée</a></li>
+  </ul>
+</nav>
+<div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">v1.2.0 (Dev)</button>
+  <div class="version-menu">
+    <a class="version is-current" href="advanced-usage.html">v1.2.0 (Dev)</a>
+    <a class="version is-missing" href="../../1.1.0/en/introduction.html">v1.1.0-latest</a>
+    <a class="version is-missing" href="../../1.0.2/en/introduction.html">v1.0.2</a>
+    <a class="version is-missing" href="../../v1.0.1/en/introduction.html">v1.0.1</a>
+    <a class="version is-missing" href="../../v1.0.0/en/introduction.html">v1.0.0</a>
+  </div>
+</div>
+  <div class="edit-this-page"><a href="https://github.com/rancher/k3k-product-docs/edit/main/versions/v1.2.0/modules/fr/pages/advanced-usage.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<aside class="toc sidebar" data-title="On this page" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>This is unreleased documentation for K3k v1.2.0 (Dev).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<h1 class="page">Utilisation avancée</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Ce document fournit des informations sur l&#8217;utilisation avancée de k3k, y compris des cas d&#8217;utilisation détaillés et des explications sur les champs de ressources <code>Cluster</code> pour la personnalisation.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_personnalisation_de_la_ressource_du_cluster"><a class="anchor" href="#_personnalisation_de_la_ressource_du_cluster"></a>Personnalisation de la ressource du cluster</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>La ressource <code>Cluster</code> offre une variété de champs pour personnaliser le comportement de vos clusters virtuels. Voir la <a href="references/crds.html" class="xref page">documentation CRD</a> pour les spécifications complètes.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+La plupart de ces options de personnalisation peuvent également être configurées à l&#8217;aide de l&#8217;outil <code>k3kcli</code>. Référez-vous à la <a href="references/k3kcli.html" class="xref page">documentation k3kcli</a> pour plus de détails.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Cet exemple crée un cluster K3k en mode "partagé" avec&#160;:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>3 serveurs</p>
+</li>
+<li>
+<p>Version K3s v1.31.3-k3s1</p>
+</li>
+<li>
+<p>Configuration réseau personnalisée</p>
+</li>
+<li>
+<p>Déploiement sur des nœuds spécifiques avec le <code>nodeSelector</code></p>
+</li>
+<li>
+<p><code>kube-api</code> exposé à l&#8217;aide d&#8217;un ingress</p>
+</li>
+<li>
+<p>K3s personnalisé <code>serverArgs</code></p>
+</li>
+<li>
+<p>Données ETCD persistées à l&#8217;aide d&#8217;un <code>PVC</code></p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: my-virtual-cluster
+  namespace: my-namespace
+spec:
+  mode: shared
+  version: v1.31.3-k3s1
+  servers: 3
+  tlsSANs:
+    - my-cluster.example.com
+  nodeSelector:
+    disktype: ssd
+  expose:
+    ingress:
+      ingressClassName: nginx
+      annotations:
+        nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+        nginx.ingress.kubernetes.io/backend-protocol: "true"
+        nginx.ingress.kubernetes.io/ssl-redirect: "HTTPS"
+  clusterCIDR: 10.42.0.0/16
+  serviceCIDR: 10.43.0.0/16
+  clusterDNS: 10.43.0.10
+  serverArgs:
+  - --tls-san=my-cluster.example.com
+  persistence:
+    type: dynamic
+    storageClassName: local-path</code></pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_mode"><a class="anchor" href="#_mode"></a><code>mode</code></h3>
+<div class="paragraph">
+<p>Le champ <code>mode</code> spécifie le mode de provisionnement du cluster, qui peut être soit <code>shared</code> soit <code>virtual</code>. Le mode par défaut est <code>shared</code>.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong><code>shared</code> mode :</strong> Dans ce mode, le cluster virtuel partage les ressources et le réseau du cluster hôte. Ce mode est adapté aux charges de travail légères et aux environnements de développement où l&#8217;isolation n&#8217;est pas une préoccupation principale.</p>
+</li>
+<li>
+<p><strong><code>virtual</code> mode :</strong> Dans ce mode, le cluster virtuel fonctionne comme un cluster K3s séparé au sein du cluster hôte. Ce mode offre une isolation plus forte et est adapté aux charges de travail de production ou lorsque des ressources dédiées sont requises.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_version"><a class="anchor" href="#_version"></a><code>version</code></h3>
+<div class="paragraph">
+<p>Le champ <code>version</code> spécifie la version de Kubernetes à utiliser par les nœuds virtuels. Si non spécifié, K3k utilisera la même version de K3s que le cluster hôte. Par exemple, si le cluster hôte exécute Kubernetes v1.31.3, K3k utilisera la version correspondante de K3s (par exemple, <code>v1.31.3-k3s1</code>).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_servers"><a class="anchor" href="#_servers"></a><code>servers</code></h3>
+<div class="paragraph">
+<p>Le champ <code>servers</code> spécifie le nombre de nœuds serveur K3s à déployer pour le cluster virtuel. La valeur par défaut est 1.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_agents"><a class="anchor" href="#_agents"></a><code>agents</code></h3>
+<div class="paragraph">
+<p>Le champ <code>agents</code> spécifie le nombre de nœuds agents K3s à déployer pour le cluster virtuel. La valeur par défaut est 0.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+En mode <code>shared</code>, ce champ est ignoré, car le Virtual Kubelet agit en tant qu&#8217;agent, et il n&#8217;y a pas de nœuds de travail K3s.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_nodeselector"><a class="anchor" href="#_nodeselector"></a><code>nodeSelector</code></h3>
+<div class="paragraph">
+<p>Le champ <code>nodeSelector</code> vous permet de spécifier un sélecteur de nœuds qui sera appliqué à tous les pods serveur/agent. En mode <code>shared</code>, le sélecteur de nœuds sera également appliqué aux charges de travail.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_expose"><a class="anchor" href="#_expose"></a><code>expose</code></h3>
+<div class="paragraph">
+<p>Le champ <code>expose</code> contient des options pour exposer le serveur API du cluster virtuel. Par défaut, le serveur API est uniquement exposé en tant que <code>ClusterIP</code>, ce qui est relativement sécurisé mais difficile d&#8217;accès depuis l&#8217;extérieur du cluster.</p>
+</div>
+<div class="paragraph">
+<p>Vous pouvez utiliser le champ <code>expose</code> pour activer l&#8217;exposition via <code>NodePort</code>, <code>LoadBalancer</code> ou <code>Ingress</code>.</p>
+</div>
+<div class="paragraph">
+<p>Dans cet exemple, nous exposons le cluster avec un contrôleur d&#8217;entrée Nginx, qui doit être configuré avec l&#8217;option <code>--enable-ssl-passthrough</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_clustercidr"><a class="anchor" href="#_clustercidr"></a><code>clusterCIDR</code></h3>
+<div class="paragraph">
+<p>Le champ <code>clusterCIDR</code> spécifie la plage CIDR pour les pods du cluster. La valeur par défaut est <code>10.42.0.0/16</code> en mode partagé, et <code>10.52.0.0/16</code> en mode virtuel.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_servicecidr"><a class="anchor" href="#_servicecidr"></a><code>serviceCIDR</code></h3>
+<div class="paragraph">
+<p>Le champ <code>serviceCIDR</code> spécifie la plage CIDR pour les services dans le cluster. La valeur par défaut est <code>10.43.0.0/16</code> en mode partagé, et <code>10.53.0.0/16</code> en mode virtuel.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+En mode <code>shared</code>, le <code>serviceCIDR</code> doit correspondre au <code>serviceCIDR</code> du cluster hôte pour éviter les conflits et en mode <code>virtual</code>, <code>serviceCIDR</code> et <code>clusterCIDR</code> doivent être différents de ceux du cluster hôte.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_clusterdns"><a class="anchor" href="#_clusterdns"></a><code>clusterDNS</code></h3>
+<div class="paragraph">
+<p>Le champ <code>clusterDNS</code> spécifie l&#8217;adresse IP pour le service CoreDNS. Elle doit être dans la plage fournie par <code>serviceCIDR</code>. La valeur par défaut est <code>10.43.0.10</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_serverargs"><a class="anchor" href="#_serverargs"></a><code>serverArgs</code></h3>
+<div class="paragraph">
+<p>Le champ <code>serverArgs</code> vous permet de spécifier des arguments supplémentaires à passer aux pods du serveur K3s.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_utiliser_la_cli"><a class="anchor" href="#_utiliser_la_cli"></a>Utiliser la CLI</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Vous pouvez consulter la <a href="references/k3kcli.html" class="xref page">documentation de k3kcli</a> pour les spécifications complètes.</p>
+</div>
+<div class="sect2">
+<h3 id="_aucun_fournisseur_de_stockage"><a class="anchor" href="#_aucun_fournisseur_de_stockage"></a>Aucun fournisseur de stockage&#160;:</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Stockage éphémère&#160;:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">  k3kcli cluster create --persistence-type ephemeral my-cluster</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>Utiliser <code>--persistence-type ephemeral</code> entraînera une perte de données si les nœuds sont redémarrés.</p>
+</li>
+<li>
+<p>Il est fortement recommandé d&#8217;utiliser <code>--persistence-type dynamic</code> avec une classe de stockage configurée.</p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<script src="../../../_/js/site.js"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+<script src="../../../_/js/vendor/langSelection.js"></script>
+<script async src="../../../_/js/vendor/tabs.js"></script>
+
+
+  </body>
+</html>

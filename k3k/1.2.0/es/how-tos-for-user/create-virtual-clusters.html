@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Instrucciones: Crear un Clúster Virtual :: K3k</title>
+    <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+<link rel="stylesheet" href="../../../../_/css/search.css">
+<link rel="icon" href="../../../../_/img/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="../../../../_/css/font-styles.css">
+<link rel="stylesheet" href="../../../../_/fonts/css/all.css">
+<link rel="stylesheet" href="../../../../_/css/site-extra.css">
+<link rel="stylesheet" href="../../../../_/css/vendor/tabs.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=SUSE:wght@100..800&display=swap&family=SUSE+Mono:ital,wght@0,100..800;1,100..800" rel="stylesheet">
+<link href="https://documentation.suse.com/docserv/res/fonts/poppins/poppins.css" rel="stylesheet">
+<!-- <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto&display=swap" rel="stylesheet"> -->
+<link rel="stylesheet" href="../../../../_/css/vendor/light.css">
+    <script>var uiRootPath = '../../../../_'</script>
+  </head>
+  <body class="article">
+<script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs'; mermaid.initialize({"startOnLoad":true});</script><header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-item">
+        <a class=" navbar-logo" href="https://docs.k3k.io/" aria-label="K3k Documentation Home"><img class="logo"
+            src="../../../../_/img/logo-horizontal-positive-k3k.svg" alt="K3k logo"/></a>
+      </div>
+      <div class="navbar-item search hide-for-print">
+        <div id="search-field" class="field">
+          <label class="visual-search-label" for="search-input">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+          <input label="Search" aria-label="Search" id="search-input" type="text" placeholder="Search the docs" >
+          <label class="filter checkbox" style="display: none">
+            <input type="checkbox" data-facet-filter="component:k3k" checked> Only this project
+          </label>
+        </div>
+      </div>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link">
+            <img src="../../../../_/img/resources.png" class="langIcon Resources" alt="Resources" title="Resources">
+          </div>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs"><i class="fab fa-github"></i>&nbsp;K3k</a>
+            <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs/issues"><i class="fab fa-github"></i>&nbsp;GitHub Issue</a>
+            <!-- <div class="has-submenu">
+              <a class="navbar-item" href="#" ><i class="fas fa-file-alt"></i>&nbsp;Report Issue &nbsp;<i class="fas fa-chevron-right"></i></a>
+              <div class="submenu">
+                <a class="navbar-item" href="https://scc.suse.com">SCC (Recommended)</a>
+                <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs/issues">GitHub Issue</a>
+              </div>
+            </div> -->
+            <a class="navbar-item" href="https://github.com/rancher/k3k/blob/main/docs/development.md"><i class="fas fa-user-edit"></i>&nbsp;Contribute</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link"><img src="../../../../_/img/language.png" class="langIcon Language" alt="Language"
+              title="Language"></div>
+          <div class="navbar-dropdown">
+            <!--  </div><div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div> -->
+              <a role="button" class="navbar-item" id="en" onclick="selectLanguage(this.id)">
+                <!--<img src="../../../../_/img/engFlag.svg" class="langIcon english">-->
+                &nbsp;English
+              </a>
+            <!-- LANGUAGESELECTOR -->
+          </div>
+        </div>
+        <!--
+        <div class="navbar-item">
+          <a href="https://twitter.com/SUSE">
+            <img alt="X-logo" class="x-logo" src="../../../../_/img/x-logo-white.png">
+          </a>
+        </div>
+        -->
+      </div>
+    </div>
+
+    <!--   <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+      </div> -->
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="k3k" data-version="1.2.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../../en/introduction.html">K3k</a></h3>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">K3k</span>
+    <span class="version">v1.2.0 (Dev)</span>
+  </div>
+  <ul class="components">
+        <li class="component is-current">
+          <div class="title"><a href="../../../1.1.0/en/introduction.html">K3k</a></div>
+          <ul class="versions">
+            <li class="version is-current">
+              <a href="../../en/introduction.html">v1.2.0 (Dev)</a>
+            </li>
+            <li class="version is-latest">
+              <a href="../../../1.1.0/en/introduction.html">v1.1.0-latest</a>
+            </li>
+            <li class="version">
+              <a href="../../../1.0.2/en/introduction.html">v1.0.2</a>
+            </li>
+            <li class="version">
+              <a href="../../../v1.0.1/en/introduction.html">v1.0.1</a>
+            </li>
+            <li class="version">
+              <a href="../../../v1.0.0/en/introduction.html">v1.0.0</a>
+            </li>
+          </ul>
+        </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../v1.0.1/en/introduction.html" aria-label="Home" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../en/introduction.html">K3k</a></li>
+    <li><a href="create-virtual-clusters.html">Instrucciones: Crear un Clúster Virtual</a></li>
+  </ul>
+</nav>
+<div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">v1.2.0 (Dev)</button>
+  <div class="version-menu">
+    <a class="version is-current" href="create-virtual-clusters.html">v1.2.0 (Dev)</a>
+    <a class="version is-missing" href="../../../1.1.0/en/introduction.html">v1.1.0-latest</a>
+    <a class="version is-missing" href="../../../1.0.2/en/introduction.html">v1.0.2</a>
+    <a class="version is-missing" href="../../../v1.0.1/en/introduction.html">v1.0.1</a>
+    <a class="version is-missing" href="../../../v1.0.0/en/introduction.html">v1.0.0</a>
+  </div>
+</div>
+  <div class="edit-this-page"><a href="https://github.com/rancher/k3k-product-docs/edit/main/versions/v1.2.0/modules/es/pages/how-tos-for-user/create-virtual-clusters.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<aside class="toc sidebar" data-title="On this page" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>This is unreleased documentation for K3k v1.2.0 (Dev).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<h1 class="page">Instrucciones: Crear un Clúster Virtual</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Esta guía proporciona instrucciones sobre cómo crear y gestionar clústeres virtuales en K3k y cubre casos de uso comunes utilizando tanto las <strong>Definiciones de Recursos Personalizados (CRDs)</strong> como el <strong>CLI de K3K</strong> para que puedas elegir el método que se ajuste a tu flujo de trabajo.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>For full reference:
+
+* xref:/references/crds.adoc[CRD Reference Documentation]
+* xref:/references/k3kcli.adoc[CLI Reference Documentation]
+* xref:/advanced-usage.adoc[Full example]</pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Nota"></i>
+</td>
+<td class="content">
+Algunas características están disponibles solo a través de la interfaz CRD.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_caso_práctico_crear_y_exponer_un_clúster_virtual_básico"><a class="anchor" href="#_caso_práctico_crear_y_exponer_un_clúster_virtual_básico"></a>Caso práctico: Crear y Exponer un Clúster Virtual Básico</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_método_crd"><a class="anchor" href="#_método_crd"></a>Método CRD</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-ingress
+spec:
+  tlsSANs:
+    - my-cluster.example.com
+  expose:
+    ingress:
+      ingressClassName: nginx
+      annotations:
+        nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+        nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+        nginx.ingress.kubernetes.io/ssl-redirect: "HTTPS"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Esto crea un clúster virtual en modo <code>shared</code> y lo expone a través de un ingress con el nombre de host especificado.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_caso_práctico_crear_un_clúster_virtual_con_almacenamiento_persistente_predeterminado"><a class="anchor" href="#_caso_práctico_crear_un_clúster_virtual_con_almacenamiento_persistente_predeterminado"></a>Caso práctico: Crear un Clúster Virtual con Almacenamiento Persistente (<strong>Predeterminado</strong>)</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_método_crd_2"><a class="anchor" href="#_método_crd_2"></a>Método CRD</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-persistent
+spec:
+  persistence:
+    type: dynamic
+    storageClassName: local-path
+    storageRequestSize: 30Gi</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Esto asegura que el clúster virtual almacene su estado de forma persistente con un volumen de 30Gi.<br>
+Si <code>storageClassName</code> no está configurado, se utilizará la clase de almacenamiento predeterminada.<br>
+Si <code>storageRequestSize</code> no está configurado, solicitará un volumen de 1Gi por defecto.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_método_cli"><a class="anchor" href="#_método_cli"></a>Método CLI</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">k3kcli cluster create \
+  --persistence-type dynamic \
+  --storage-class-name local-path \
+  --storage-request-size 30Gi \
+  k3kcluster-persistent</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_caso_práctico_crear_un_clúster_virtual_altamente_disponible_en_modo_shared"><a class="anchor" href="#_caso_práctico_crear_un_clúster_virtual_altamente_disponible_en_modo_shared"></a>Caso práctico: Crear un Clúster Virtual Altamente Disponible en modo <code>shared</code></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_método_crd_3"><a class="anchor" href="#_método_crd_3"></a>Método CRD</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-ha
+spec:
+  servers: 3</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Esto creará un clúster virtual con 3 servidores y un volumen de 1Gi por defecto para persistencia.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_método_cli_2"><a class="anchor" href="#_método_cli_2"></a>Método CLI</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">k3kcli cluster create \
+  --servers 3 \
+  k3kcluster-ha</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_caso_práctico_crear_un_clúster_virtual_altamente_disponible_en_modo_virtual"><a class="anchor" href="#_caso_práctico_crear_un_clúster_virtual_altamente_disponible_en_modo_virtual"></a>Caso práctico: Crear un Clúster Virtual Altamente Disponible en modo <code>virtual</code></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_método_crd_4"><a class="anchor" href="#_método_crd_4"></a>Método CRD</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-virtual
+spec:
+  mode: virtual
+  servers: 3
+  agents: 3</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Esto creará un clúster virtual con 3 servidores y 3 agentes y un volumen de 1Gi por defecto para persistencia.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Nota"></i>
+</td>
+<td class="content">
+Los agentes existen SOLO para el modo <code>virtual</code>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_método_cli_3"><a class="anchor" href="#_método_cli_3"></a>Método CLI</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">k3kcli cluster create \
+  --agents 3 \
+  --servers 3 \
+  --mode virtual \
+  k3kcluster-virtual</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_caso_práctico_crear_un_clúster_virtual_efímero"><a class="anchor" href="#_caso_práctico_crear_un_clúster_virtual_efímero"></a>Caso práctico: Crear un Clúster Virtual Efímero</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_método_crd_5"><a class="anchor" href="#_método_crd_5"></a>Método CRD</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-ephemeral
+spec:
+  persistence:
+    type: ephemeral</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Esto creará un clúster virtual efímero sin persistencia y con un solo servidor.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_método_cli_4"><a class="anchor" href="#_método_cli_4"></a>Método CLI</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">k3kcli cluster create \
+  --persistence-type ephemeral \
+  k3kcluster-ephemeral</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_caso_práctico_crear_un_clúster_virtual_con_una_versión_personalizada_de_kubernetes"><a class="anchor" href="#_caso_práctico_crear_un_clúster_virtual_con_una_versión_personalizada_de_kubernetes"></a>Caso práctico: Crear un Clúster Virtual con una Versión Personalizada de Kubernetes</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_método_crd_6"><a class="anchor" href="#_método_crd_6"></a>Método CRD</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-custom-k8s
+spec:
+  version: "v1.33.1-k3s1"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Esto establece explícitamente la versión de Kubernetes del clúster virtual.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Nota"></i>
+</td>
+<td class="content">
+Solo se admiten distribuciones <a href="https://k3s.io">K3s</a>. Puedes encontrar versiones compatibles en la página de <a href="https://github.com/k3s-io/k3s/releases">lanzamientos</a> de K3s.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_método_cli_5"><a class="anchor" href="#_método_cli_5"></a>Método CLI</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">k3kcli cluster create \
+  --version v1.33.1-k3s1 \
+  k3kcluster-custom-k8s</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_caso_práctico_crear_un_clúster_virtual_con_límites_de_recursos_personalizados"><a class="anchor" href="#_caso_práctico_crear_un_clúster_virtual_con_límites_de_recursos_personalizados"></a>Caso práctico: Crear un Clúster Virtual con Límites de Recursos Personalizados</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_método_crd_7"><a class="anchor" href="#_método_crd_7"></a>Método CRD</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-resourced
+spec:
+  mode: virtual
+  serverLimit:
+    cpu: "1"
+    memory: "2Gi"
+  workerLimit:
+    cpu: "1"
+    memory: "2Gi"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Esto configura el límite de CPU y memoria para el clúster virtual.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_método_cli_6"><a class="anchor" href="#_método_cli_6"></a>Método CLI</h3>
+<div class="paragraph">
+<p><em>No hay método CLI disponible aún</em></p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_caso_práctico_crear_un_clúster_virtual_en_nodos_host_específicos"><a class="anchor" href="#_caso_práctico_crear_un_clúster_virtual_en_nodos_host_específicos"></a>Caso práctico: Crear un Clúster Virtual en nodos host específicos</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_método_crd_8"><a class="anchor" href="#_método_crd_8"></a>Método CRD</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-node-placed
+spec:
+  nodeSelector:
+    disktype: ssd</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Esto coloca el clúster virtual en nodos con la etiqueta <code>disktype: ssd</code>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Nota"></i>
+</td>
+<td class="content">
+En modo <code>shared</code>, las cargas de trabajo también se programan en los nodos seleccionados.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_método_cli_7"><a class="anchor" href="#_método_cli_7"></a>Método CLI</h3>
+<div class="paragraph">
+<p><em>No hay método CLI disponible aún</em></p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_caso_práctico_crear_un_clúster_virtual_con_un_kubeconfig_de_clúster_host_de_rancher"><a class="anchor" href="#_caso_práctico_crear_un_clúster_virtual_con_un_kubeconfig_de_clúster_host_de_rancher"></a>Caso práctico: Crear un Clúster Virtual con un Kubeconfig de Clúster Host de Rancher</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Al usar un <code>kubeconfig</code> generado con Rancher, necesitas especificar con la CLI el host deseado para el clúster virtual <code>kubeconfig</code>.<br>
+Por defecto, <code>k3kcli</code> utiliza el host actual <code>kubeconfig</code> para determinar el clúster objetivo.</p>
+</div>
+<div class="sect2">
+<h3 id="_método_crd_9"><a class="anchor" href="#_método_crd_9"></a>Método CRD</h3>
+<div class="paragraph">
+<p><em>No aplicable</em></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_método_cli_8"><a class="anchor" href="#_método_cli_8"></a>Método CLI</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">k3kcli cluster create \
+  --kubeconfig-server https://abc.xyz \
+  k3kcluster-host-rancher</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_caso_práctico_crear_un_clúster_virtual_detrás_de_un_proxy_http"><a class="anchor" href="#_caso_práctico_crear_un_clúster_virtual_detrás_de_un_proxy_http"></a>Caso práctico: Crear un Clúster Virtual Detrás de un Proxy HTTP</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_método_crd_10"><a class="anchor" href="#_método_crd_10"></a>Método CRD</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: k3kcluster-http-proxy
+spec:
+  serverEnvs:
+    - name: HTTP_PROXY
+      value: "http://abc.xyz"
+  agentEnvs:
+    - name: HTTP_PROXY
+      value: "http://abc.xyz"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Esto configura un proxy HTTP tanto para los servidores como para los agentes en el clúster virtual.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Nota"></i>
+</td>
+<td class="content">
+Esto se puede aprovechar para pasar <strong>variables de entorno personalizadas</strong> a los servidores y agentes, no solo configuraciones de proxy.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_método_cli_9"><a class="anchor" href="#_método_cli_9"></a>Método CLI</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">k3kcli cluster create  \
+  --server-envs HTTP_PROXY=http://abc.xyz \
+  --agent-envs HTTP_PROXY=http://abc.xyz \
+  k3kcluster-http-proxy</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_cómo_conectar_a_un_clúster_virtual"><a class="anchor" href="#_cómo_conectar_a_un_clúster_virtual"></a>Cómo: Conectar a un clúster virtual</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Una vez que el clúster virtual esté en funcionamiento, puedes conectarte a él usando la CLI:</p>
+</div>
+<div class="sect2">
+<h3 id="_método_cli_10"><a class="anchor" href="#_método_cli_10"></a>Método CLI</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">k3kcli kubeconfig generate --namespace k3k-mycluster --name mycluster
+export KUBECONFIG=$PWD/mycluster-kubeconfig.yaml
+kubectl get nodes</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Este comando genera un archivo <code>kubeconfig</code>, que puedes usar para acceder a tu clúster virtual a través de <code>kubectl</code>.</p>
+</div>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+<script src="../../../../_/js/vendor/lunr.js"></script>
+<script src="../../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../../.." data-snippet-length="100" data-stylesheet="../../../../_/css/search.css"></script>
+<script async src="../../../../search-index.js"></script>
+<script src="../../../../_/js/vendor/langSelection.js"></script>
+<script async src="../../../../_/js/vendor/tabs.js"></script>
+
+
+  </body>
+</html>

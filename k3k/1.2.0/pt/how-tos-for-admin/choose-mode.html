@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Como Escolher Entre Modo Compartilhado e Modo Virtual :: K3k</title>
+    <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+<link rel="stylesheet" href="../../../../_/css/search.css">
+<link rel="icon" href="../../../../_/img/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="../../../../_/css/font-styles.css">
+<link rel="stylesheet" href="../../../../_/fonts/css/all.css">
+<link rel="stylesheet" href="../../../../_/css/site-extra.css">
+<link rel="stylesheet" href="../../../../_/css/vendor/tabs.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=SUSE:wght@100..800&display=swap&family=SUSE+Mono:ital,wght@0,100..800;1,100..800" rel="stylesheet">
+<link href="https://documentation.suse.com/docserv/res/fonts/poppins/poppins.css" rel="stylesheet">
+<!-- <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto&display=swap" rel="stylesheet"> -->
+<link rel="stylesheet" href="../../../../_/css/vendor/light.css">
+    <script>var uiRootPath = '../../../../_'</script>
+  </head>
+  <body class="article">
+<script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs'; mermaid.initialize({"startOnLoad":true});</script><header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-item">
+        <a class=" navbar-logo" href="https://docs.k3k.io/" aria-label="K3k Documentation Home"><img class="logo"
+            src="../../../../_/img/logo-horizontal-positive-k3k.svg" alt="K3k logo"/></a>
+      </div>
+      <div class="navbar-item search hide-for-print">
+        <div id="search-field" class="field">
+          <label class="visual-search-label" for="search-input">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+          <input label="Search" aria-label="Search" id="search-input" type="text" placeholder="Search the docs" >
+          <label class="filter checkbox" style="display: none">
+            <input type="checkbox" data-facet-filter="component:k3k" checked> Only this project
+          </label>
+        </div>
+      </div>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link">
+            <img src="../../../../_/img/resources.png" class="langIcon Resources" alt="Resources" title="Resources">
+          </div>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs"><i class="fab fa-github"></i>&nbsp;K3k</a>
+            <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs/issues"><i class="fab fa-github"></i>&nbsp;GitHub Issue</a>
+            <!-- <div class="has-submenu">
+              <a class="navbar-item" href="#" ><i class="fas fa-file-alt"></i>&nbsp;Report Issue &nbsp;<i class="fas fa-chevron-right"></i></a>
+              <div class="submenu">
+                <a class="navbar-item" href="https://scc.suse.com">SCC (Recommended)</a>
+                <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs/issues">GitHub Issue</a>
+              </div>
+            </div> -->
+            <a class="navbar-item" href="https://github.com/rancher/k3k/blob/main/docs/development.md"><i class="fas fa-user-edit"></i>&nbsp;Contribute</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link"><img src="../../../../_/img/language.png" class="langIcon Language" alt="Language"
+              title="Language"></div>
+          <div class="navbar-dropdown">
+            <!--  </div><div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div> -->
+              <a role="button" class="navbar-item" id="en" onclick="selectLanguage(this.id)">
+                <!--<img src="../../../../_/img/engFlag.svg" class="langIcon english">-->
+                &nbsp;English
+              </a>
+            <!-- LANGUAGESELECTOR -->
+          </div>
+        </div>
+        <!--
+        <div class="navbar-item">
+          <a href="https://twitter.com/SUSE">
+            <img alt="X-logo" class="x-logo" src="../../../../_/img/x-logo-white.png">
+          </a>
+        </div>
+        -->
+      </div>
+    </div>
+
+    <!--   <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+      </div> -->
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="k3k" data-version="1.2.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../../en/introduction.html">K3k</a></h3>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">K3k</span>
+    <span class="version">v1.2.0 (Dev)</span>
+  </div>
+  <ul class="components">
+        <li class="component is-current">
+          <div class="title"><a href="../../../1.1.0/en/introduction.html">K3k</a></div>
+          <ul class="versions">
+            <li class="version is-current">
+              <a href="../../en/introduction.html">v1.2.0 (Dev)</a>
+            </li>
+            <li class="version is-latest">
+              <a href="../../../1.1.0/en/introduction.html">v1.1.0-latest</a>
+            </li>
+            <li class="version">
+              <a href="../../../1.0.2/en/introduction.html">v1.0.2</a>
+            </li>
+            <li class="version">
+              <a href="../../../v1.0.1/en/introduction.html">v1.0.1</a>
+            </li>
+            <li class="version">
+              <a href="../../../v1.0.0/en/introduction.html">v1.0.0</a>
+            </li>
+          </ul>
+        </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../v1.0.1/en/introduction.html" aria-label="Home" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../en/introduction.html">K3k</a></li>
+    <li><a href="choose-mode.html">Como Escolher Entre Modo Compartilhado e Modo Virtual</a></li>
+  </ul>
+</nav>
+<div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">v1.2.0 (Dev)</button>
+  <div class="version-menu">
+    <a class="version is-current" href="choose-mode.html">v1.2.0 (Dev)</a>
+    <a class="version is-missing" href="../../../1.1.0/en/introduction.html">v1.1.0-latest</a>
+    <a class="version is-missing" href="../../../1.0.2/en/introduction.html">v1.0.2</a>
+    <a class="version is-missing" href="../../../v1.0.1/en/introduction.html">v1.0.1</a>
+    <a class="version is-missing" href="../../../v1.0.0/en/introduction.html">v1.0.0</a>
+  </div>
+</div>
+  <div class="edit-this-page"><a href="https://github.com/rancher/k3k-product-docs/edit/main/versions/v1.2.0/modules/pt/pages/how-tos-for-admin/choose-mode.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<aside class="toc sidebar" data-title="On this page" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>This is unreleased documentation for K3k v1.2.0 (Dev).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<h1 class="page">Como Escolher Entre Modo Compartilhado e Modo Virtual</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Este guia ajuda você a escolher o modo certo para seu cluster virtual: <strong>Compartilhado</strong> ou <strong>Virtual</strong>.</p>
+</div>
+<div class="paragraph">
+<p>Se você estiver em dúvida, comece com <strong>Modo Compartilhado</strong> - é o padrão e se encaixa na maioria dos cenários comuns.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_modo_compartilhado_padrão"><a class="anchor" href="#_modo_compartilhado_padrão"></a>Modo Compartilhado (padrão)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Melhor para:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Desenvolvedores que desejam executar cargas de trabalho rapidamente sem gerenciar os detalhes internos do Kubernetes</p>
+</li>
+<li>
+<p>Equipes de plataforma que precisam de visibilidade e controle sobre todas as cargas de trabalho</p>
+</li>
+<li>
+<p>Usuários que precisam de acesso a recursos em nível de host (por exemplo, GPUs)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>No <strong>Modo Compartilhado</strong>, o cluster virtual executa seu próprio servidor K3s, mas depende do host para executar as cargas de trabalho. O kubelet virtual sincroniza recursos, permitindo provisionamento leve e rápido com suporte para isolamento de recursos do cluster. Mais detalhes sobre a <a href="./../architecture.adoc#shared-mode">arquitetura</a>.</p>
+</div>
+<div class="sect2">
+<h3 id="_casos_de_uso_por_persona"><a class="anchor" href="#_casos_de_uso_por_persona"></a>Casos de Uso por Persona</h3>
+<div class="sect3">
+<h4 id="_ações_do"><a class="anchor" href="#_ações_do"></a>Ações do</h4>
+<div class="paragraph">
+<p><em>"Estou construindo um aplicativo web que deve ser exposto fora do cluster virtual."</em><br>
+→ Use <strong>Modo Compartilhado</strong>. Isso permite que você <a href="../how-tos-for-user/expose-workloads.html" class="xref page">exponha</a> seu aplicativo.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_cientista_de_dados"><a class="anchor" href="#_cientista_de_dados"></a>Cientista de Dados:</h4>
+<div class="paragraph">
+<p><em>"`I need to run Jupyter notebooks that leverage the cluster&#8217;s GPU.`"</em><br>
+→ Use <strong>Modo Compartilhado</strong>. Isso dá acesso a dispositivos físicos enquanto mantém a sobrecarga baixa.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_administrador_de_plataforma"><a class="anchor" href="#_administrador_de_plataforma"></a>Administrador de Plataforma</h4>
+<div class="paragraph">
+<p><em>"Eu quero monitorar e proteger todas as cargas de trabalho dos inquilinos a partir de um local central."</em><br>
+→ Use <strong>Modo Compartilhado</strong>. Agentes em nível de host (por exemplo, observabilidade, aplicação de políticas) funcionam em todos os clusters virtuais.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_engenheiro_de_segurança"><a class="anchor" href="#_engenheiro_de_segurança"></a>Engenheiro de Segurança</h4>
+<div class="paragraph">
+<p><em>"Eu preciso aplicar políticas de segurança como políticas de rede ou varredura em tempo de execução em todas as cargas de trabalho."</em><br>
+→ Use <strong>Modo Compartilhado</strong>. A plataforma pode aplicar políticas globalmente sem contornar os inquilinos.</p>
+</div>
+<div class="paragraph">
+<p><em>"Eu preciso testar um novo controlador de admissão ou mecanismo de política."</em><br>
+→ Use <strong>Modo Compartilhado</strong>, se estiver restrito ao seu cluster virtual. Você pode executar ferramentas como Kubewarden sem afetar o host.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_engenheiro_de_cicd"><a class="anchor" href="#_engenheiro_de_cicd"></a>Engenheiro de CI/CD</h4>
+<div class="paragraph">
+<p><em>Eu quero criar clusters virtuais descartáveis para cada execução de pipeline, de forma rápida e com baixo custo de recursos.</em><br>
+→ Use <strong>Modo Compartilhado</strong>. É rápido para provisionar e ideal para ambientes de curta duração, com escopo de namespace.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_modo_virtual"><a class="anchor" href="#_modo_virtual"></a>Modo Virtual</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Melhor para:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Usuários avançados que precisam de isolamento completo do Kubernetes</p>
+</li>
+<li>
+<p>Desenvolvedores testando recursos experimentais ou em todo o cluster</p>
+</li>
+<li>
+<p>Casos de uso que requerem controle sobre todo o plano de controle do Kubernetes</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>No <strong>Modo Virtual</strong>, o cluster virtual executa seu próprio plano de controle do Kubernetes isolado. Suporta diferentes CNIs e configurações de API&#8201;&#8212;&#8201;ideais para experimentação profunda ou cargas de trabalho avançadas. Mais detalhes sobre a <a href="./../architecture.adoc#virtual-mode">arquitetura</a>.</p>
+</div>
+<div class="sect2">
+<h3 id="_casos_de_uso_por_persona_2"><a class="anchor" href="#_casos_de_uso_por_persona_2"></a>Casos de Uso por Persona</h3>
+<div class="sect3">
+<h4 id="_ações_do_2"><a class="anchor" href="#_ações_do_2"></a>Ações do</h4>
+<div class="paragraph">
+<p><em>"Eu preciso testar um novo feature gate do Kubernetes que está desativado no cluster host."</em><br>
+→ Use <strong>Modo Virtual</strong>. Você pode configurar suas próprias flags do plano de controle e recursos da API.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_administrador_de_plataforma_2"><a class="anchor" href="#_administrador_de_plataforma_2"></a>Administrador de Plataforma</h4>
+<div class="paragraph">
+<p><em>"Estamos testando fazer upgrade entre versões do Kubernetes, incluindo novos comportamentos da API."</em> → Use Modo Virtual. Você pode executar diferentes versões do Kubernetes e validar caminhos de upgrade com segurança.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_engenheiro_de_rede"><a class="anchor" href="#_engenheiro_de_rede"></a>Engenheiro de Rede</h4>
+<div class="paragraph">
+<p><em>"Estou avaliando um novo CNI que precisa de controle total da rede do cluster."</em><br>
+→ Use <strong>Modo Virtual</strong>. Você pode executar uma pilha CNI separada sem afetar o host ou outros inquilinos.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_engenheiro_de_segurança_2"><a class="anchor" href="#_engenheiro_de_segurança_2"></a>Engenheiro de Segurança</h4>
+<div class="paragraph">
+<p><em>"Estou testando um novo controlador de admissão e mecanismo de política antes de implementá-lo em todo o cluster."</em><br>
+→ Use <strong>Modo Virtual</strong>, se precisar testar políticas em todo o cluster, fluxo de admissão personalizado ou extensões avançadas com controle total.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_informações_adicionais"><a class="anchor" href="#_informações_adicionais"></a>Informações adicionais</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Se você estiver avaliando casos de uso mais avançados ou quiser uma comparação mais profunda, veja a análise completa de trade-offs na <a href="../architecture.html" class="xref page">documentação de Arquitetura</a>.</p>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+<script src="../../../../_/js/vendor/lunr.js"></script>
+<script src="../../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../../.." data-snippet-length="100" data-stylesheet="../../../../_/css/search.css"></script>
+<script async src="../../../../search-index.js"></script>
+<script src="../../../../_/js/vendor/langSelection.js"></script>
+<script async src="../../../../_/js/vendor/tabs.js"></script>
+
+
+  </body>
+</html>

@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>VirtualClusterPolicy:概念 :: K3k</title>
+    <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="stylesheet" href="../../../_/css/search.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="../../../_/css/font-styles.css">
+<link rel="stylesheet" href="../../../_/fonts/css/all.css">
+<link rel="stylesheet" href="../../../_/css/site-extra.css">
+<link rel="stylesheet" href="../../../_/css/vendor/tabs.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=SUSE:wght@100..800&display=swap&family=SUSE+Mono:ital,wght@0,100..800;1,100..800" rel="stylesheet">
+<link href="https://documentation.suse.com/docserv/res/fonts/poppins/poppins.css" rel="stylesheet">
+<!-- <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto&display=swap" rel="stylesheet"> -->
+<link rel="stylesheet" href="../../../_/css/vendor/light.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs'; mermaid.initialize({"startOnLoad":true});</script><header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-item">
+        <a class=" navbar-logo" href="https://docs.k3k.io/" aria-label="K3k Documentation Home"><img class="logo"
+            src="../../../_/img/logo-horizontal-positive-k3k.svg" alt="K3k logo"/></a>
+      </div>
+      <div class="navbar-item search hide-for-print">
+        <div id="search-field" class="field">
+          <label class="visual-search-label" for="search-input">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+          <input label="Search" aria-label="Search" id="search-input" type="text" placeholder="Search the docs" >
+          <label class="filter checkbox" style="display: none">
+            <input type="checkbox" data-facet-filter="component:k3k" checked> Only this project
+          </label>
+        </div>
+      </div>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link">
+            <img src="../../../_/img/resources.png" class="langIcon Resources" alt="Resources" title="Resources">
+          </div>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs"><i class="fab fa-github"></i>&nbsp;K3k</a>
+            <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs/issues"><i class="fab fa-github"></i>&nbsp;GitHub Issue</a>
+            <!-- <div class="has-submenu">
+              <a class="navbar-item" href="#" ><i class="fas fa-file-alt"></i>&nbsp;Report Issue &nbsp;<i class="fas fa-chevron-right"></i></a>
+              <div class="submenu">
+                <a class="navbar-item" href="https://scc.suse.com">SCC (Recommended)</a>
+                <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs/issues">GitHub Issue</a>
+              </div>
+            </div> -->
+            <a class="navbar-item" href="https://github.com/rancher/k3k/blob/main/docs/development.md"><i class="fas fa-user-edit"></i>&nbsp;Contribute</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link"><img src="../../../_/img/language.png" class="langIcon Language" alt="Language"
+              title="Language"></div>
+          <div class="navbar-dropdown">
+            <!--  </div><div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div> -->
+              <a role="button" class="navbar-item" id="en" onclick="selectLanguage(this.id)">
+                <!--<img src="../../../_/img/engFlag.svg" class="langIcon english">-->
+                &nbsp;English
+              </a>
+            <!-- LANGUAGESELECTOR -->
+          </div>
+        </div>
+        <!--
+        <div class="navbar-item">
+          <a href="https://twitter.com/SUSE">
+            <img alt="X-logo" class="x-logo" src="../../../_/img/x-logo-white.png">
+          </a>
+        </div>
+        -->
+      </div>
+    </div>
+
+    <!--   <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+      </div> -->
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="k3k" data-version="1.2.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../en/introduction.html">K3k</a></h3>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">K3k</span>
+    <span class="version">v1.2.0 (Dev)</span>
+  </div>
+  <ul class="components">
+        <li class="component is-current">
+          <div class="title"><a href="../../1.1.0/en/introduction.html">K3k</a></div>
+          <ul class="versions">
+            <li class="version is-current">
+              <a href="../en/introduction.html">v1.2.0 (Dev)</a>
+            </li>
+            <li class="version is-latest">
+              <a href="../../1.1.0/en/introduction.html">v1.1.0-latest</a>
+            </li>
+            <li class="version">
+              <a href="../../1.0.2/en/introduction.html">v1.0.2</a>
+            </li>
+            <li class="version">
+              <a href="../../v1.0.1/en/introduction.html">v1.0.1</a>
+            </li>
+            <li class="version">
+              <a href="../../v1.0.0/en/introduction.html">v1.0.0</a>
+            </li>
+          </ul>
+        </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../v1.0.1/en/introduction.html" aria-label="Home" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../en/introduction.html">K3k</a></li>
+    <li><a href="virtualclusterpolicy.html">VirtualClusterPolicy:概念</a></li>
+  </ul>
+</nav>
+<div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">v1.2.0 (Dev)</button>
+  <div class="version-menu">
+    <a class="version is-current" href="virtualclusterpolicy.html">v1.2.0 (Dev)</a>
+    <a class="version is-missing" href="../../1.1.0/en/introduction.html">v1.1.0-latest</a>
+    <a class="version is-missing" href="../../1.0.2/en/introduction.html">v1.0.2</a>
+    <a class="version is-missing" href="../../v1.0.1/en/introduction.html">v1.0.1</a>
+    <a class="version is-missing" href="../../v1.0.0/en/introduction.html">v1.0.0</a>
+  </div>
+</div>
+  <div class="edit-this-page"><a href="https://github.com/rancher/k3k-product-docs/edit/main/versions/v1.2.0/modules/ja/pages/virtualclusterpolicy.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<aside class="toc sidebar" data-title="On this page" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>This is unreleased documentation for K3k v1.2.0 (Dev).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<h1 class="page">VirtualClusterPolicy:概念</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>K3kの`VirtualClusterPolicy`カスタムリソースは、仮想クラスターとそれが操作するネームスペースのために、一貫した設定、セキュリティ設定、およびリソース管理ルールを定義し、強制する方法を提供します。</p>
+</div>
+<div class="paragraph">
+<p>VCPを使用することで、管理者はこれらの側面を中央で管理でき、手動設定を減らし、組織の基準に沿った整合性を確保し、K3k環境の全体的なセキュリティと運用の一貫性を向上させることができます。</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="警告"></i>
+</td>
+<td class="content">
+ホストクラスターで`RKE2`と`Cilium`の組み合わせを使用すると、ネットワークポリシーに問題が発生する可能性があります。推奨される解決策は、K3kとのネットワークポリシーセットアップを無効にするために`VirtualClusterPolicy`を使用することです。
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_コアコンセプト"><a class="anchor" href="#_コアコンセプト"></a>コアコンセプト</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_virtualclusterpolicyとは何ですか"><a class="anchor" href="#_virtualclusterpolicyとは何ですか"></a>VirtualClusterPolicyとは何ですか？</h3>
+<div class="paragraph">
+<p>`VirtualClusterPolicy`は、ルールと設定のセットを指定するクラスター範囲のKubernetesカスタムリソースです。これらのポリシーは、明示的にVCPにバインドされたKubernetesネームスペース内で動作するK3k仮想クラスター（`Cluster`リソース）に適用されます。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_ポリシーをネームスペースにバインドする"><a class="anchor" href="#_ポリシーをネームスペースにバインドする"></a>ポリシーをネームスペースにバインドする</h3>
+<div class="paragraph">
+<p>`VirtualClusterPolicy`を1つ以上のネームスペースに適用するには（したがって、これらのネームスペース内のすべてのK3k `Cluster`リソースに適用するには）、希望するネームスペースにラベルを付ける必要があります。</p>
+</div>
+<div class="paragraph">
+<p>次のラベルをネームスペースのメタデータに追加してください：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>`policy.k3k.io/policy-name: &lt;YOUR_POLICY_NAME&gt;`</pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>例:ネームスペースにラベルを付ける</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: v1
+kind: Namespace
+metadata:
+  name: my-app-namespace
+  labels:
+    policy.k3k.io/policy-name: "standard-dev-policy"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>この例では、`my-app-namespace`は`VirtualClusterPolicy`という名前の`standard-dev-policy`で定義されたルールに従います。複数のネームスペースを同じポリシーにバインドして一貫した設定を行うことも、異なるネームスペースを異なるポリシーにバインドすることもできます。</p>
+</div>
+<div class="paragraph">
+<p>ネームスペースのポリシーバインディングが変更された場合に何が起こるかも重要です。ネームスペースがVirtualClusterPolicyからバインド解除されると（policy.k3k.io/policy-nameラベルを削除することによって）、K3kはそのポリシーによって元々適用されたリソース（ResourceQuotas、LimitRanges、管理されたネームスペースラベルなど）をクリーンアップして削除します。同様に、ラベルが変更されてネームスペースを新しいVirtualClusterPolicyにバインドする場合、K3kは新しいポリシーの設定を適用する前に古いポリシーに関連するリソースを最初に削除し、クリーンな移行を確保します。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_デフォルトポリシー値"><a class="anchor" href="#_デフォルトポリシー値"></a>デフォルトポリシー値</h3>
+<div class="paragraph">
+<p>`VirtualClusterPolicy`を`spec`フィールドを指定せずに作成すると（例えば、`k3kcli policy create my-default-policy`を使用して）、デフォルト設定で作成されます。現在、これは`spec.allowedMode`が`shared`に設定されることを含みます。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml"># Example of a minimal VCP (after creation with defaults)
+apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: my-default-policy
+spec:
+  allowedMode: shared</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_主要な機能と例"><a class="anchor" href="#_主要な機能と例"></a>主要な機能と例</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>`VirtualClusterPolicy`は、バインドされているネームスペースとその中で動作する仮想クラスターのいくつかの側面を構成できます。</p>
+</div>
+<div class="sect2">
+<h3 id="_許可された仮想クラスターのモードを制限するallowedmode"><a class="anchor" href="#_許可された仮想クラスターのモードを制限するallowedmode"></a>許可された仮想クラスターのモードを制限する(<code>AllowedMode</code>)</h3>
+<div class="paragraph">
+<p>K3k <code>mode`リソースがバインドされたネームスペース内でプロビジョニングできる`Cluster</code>（例："共有"または"仮想"）を制限できます。バインドされたネームスペースで許可されていないモードで`Cluster`が作成された場合、その作成は進行する可能性がありますが、`allowedMode``Cluster`リソースのステータスにエラーが報告されるべきです。</p>
+</div>
+<div class="paragraph">
+<p><strong>例:</strong>"共有"モードのクラスターのみを許可します。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: shared-only-policy
+spec:
+  allowedModeTypes:
+  - shared</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>これをCLIを使用して指定することもできます：<code>k3kcli policy create --mode shared shared-only-policy</code>（または`--mode virtual`）。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_リソースクォータの定義quota"><a class="anchor" href="#_リソースクォータの定義quota"></a>リソースクォータの定義(<code>quota</code>)</h3>
+<div class="paragraph">
+<p>バインドされたネームスペースのためにリソース消費制限を定義するには、`ResourceQuota`を指定します。K3kは、提供された仕様に基づいて各バインドされたネームスペースに`ResourceQuota`オブジェクトを作成します。</p>
+</div>
+<div class="paragraph">
+<p>*例:*CPU、メモリ、およびポッドの制限を設定します。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: quota-policy
+spec:
+  quota:
+    hard:
+      cpu: "10"
+      memory: "20Gi"
+      pods: "10"</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_制限範囲の設定limit"><a class="anchor" href="#_制限範囲の設定limit"></a>制限範囲の設定(<code>limit</code>)</h3>
+<div class="paragraph">
+<p>バインドされたネームスペースで実行されるコンテナのために、デフォルトのリソースリクエスト/制限および最小/最大制約を定義するには、`LimitRange`を指定します。K3kは、各バインドされたネームスペースに`LimitRange`オブジェクトを作成します。</p>
+</div>
+<div class="paragraph">
+<p>*例:*デフォルトのCPUリクエスト/制限および最小/最大CPUを定義します。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: limit-policy
+spec:
+  limit:
+    limits:
+    - default:
+        cpu: "500m"
+      defaultRequest:
+        cpu: "500m"
+      max:
+        cpu: "1"
+      min:
+        cpu: "100m"
+      type: Container</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_ネットワーク隔離の管理disablenetworkpolicy"><a class="anchor" href="#_ネットワーク隔離の管理disablenetworkpolicy"></a>ネットワーク隔離の管理(<code>disableNetworkPolicy</code>)</h3>
+<div class="paragraph">
+<p>デフォルトでは、K3kはバインドされたネームスペースに`NetworkPolicy`を作成し、仮想クラスターのためのネットワーク隔離を提供します（特に共有モードで）。このデフォルトポリシーの作成を無効にすることができます。</p>
+</div>
+<div class="paragraph">
+<p>*例:*デフォルトのNetworkPolicyを無効にします。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: no-default-netpol-policy
+spec:
+  disableNetworkPolicy: true</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_podセキュリティアドミッションの強制podsecurityadmissionlevel"><a class="anchor" href="#_podセキュリティアドミッションの強制podsecurityadmissionlevel"></a>Podセキュリティアドミッションの強制（<code>podSecurityAdmissionLevel</code>）</h3>
+<div class="paragraph">
+<p>Podセキュリティスタンダード（PSS）をPodセキュリティアドミッション（PSA）レベルを指定することで強制できます。K3kは、各バインドされたネームスペースに対応するPSAラベルを適用します。許可される値は`privileged`、<code>baseline</code>、`restricted`であり、これによりバインドされたネームスペースに`pod-security.kubernetes.io/enforce: &lt;level&gt;`のようなラベルが追加されます。</p>
+</div>
+<div class="paragraph">
+<p><strong>例:</strong>「ベースライン」PSSレベルを強制します。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: baseline-psa-policy
+spec:
+  podSecurityAdmissionLevel: baseline</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_追加情報"><a class="anchor" href="#_追加情報"></a>追加情報</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>すべての`VirtualClusterPolicy`仕様フィールドの完全なリファレンスについては、<a href="references/crds.html#VirtualClusterPolicy" class="xref page">APIリファレンス for VirtualClusterPolicy</a>を参照してください。</p>
+</li>
+<li>
+<p>VCPが全体のK3kシステムにどのように適合するかを理解するには、<a href="architecture.html" class="xref page">アーキテクチャ</a>を参照してください。</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<script src="../../../_/js/site.js"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+<script src="../../../_/js/vendor/langSelection.js"></script>
+<script async src="../../../_/js/vendor/tabs.js"></script>
+
+
+  </body>
+</html>
