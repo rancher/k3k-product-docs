@@ -135,6 +135,27 @@ spec:
 
 See xref:how-tos-for-admin/expose-kubernetesapi.adoc[How-to: Expose Virtual Cluster Kubernetes API] for more ways to expose the API server.
 
+==== Custom Service annotations
+
+`expose.annotations` adds annotations directly to the Service generated for `expose.loadBalancer` or `expose.nodePort`. This is useful to configure cloud-provider-specific load balancer behavior, such as requesting an internal (private) load balancer or a static IP.
+
+[NOTE]
+====
+This is different from `expose.ingress.annotations`, which annotates the `Ingress` resource instead (for example, to enable TLS passthrough).
+====
+
+[,yaml]
+----
+spec:
+  expose:
+    loadBalancer: {}
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+      service.beta.kubernetes.io/aws-load-balancer-internal: "true"
+----
+
+Annotations are reconciled on every update to the `Cluster` resource: adding, changing, or removing a key in `expose.annotations` updates the generated Service accordingly, and any annotations set by other controllers are preserved.
+
 === `clusterCIDR`
 
 The `clusterCIDR` field specifies the CIDR range for the pods of the cluster. The default value is `10.42.0.0/16` in shared mode, and `10.52.0.0/16` in virtual mode.
