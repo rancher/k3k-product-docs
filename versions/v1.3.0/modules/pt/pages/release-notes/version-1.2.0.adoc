@@ -1,0 +1,13 @@
+= SUSE Virtual Cluster v1.2.0 Release Highlights
+:revdate: 2026-02-23
+:page-revdate: {revdate}
+
+== New Features
+
+
+== Core Improvements
+
+
+== Bug Fixes & Security
+
+Full Changelogs: link:https://github.com/rancher/k3k/releases/tag/v1.2.0[k3k v1.2.0] | link:https://github.com/rancher/virtual-clusters-ui/releases/tag/virtual-clusters-1.2.0[UI Extension v1.2.0]
