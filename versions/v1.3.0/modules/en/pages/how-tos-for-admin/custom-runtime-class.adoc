@@ -1,0 +1,144 @@
+= Using a Custom Container Runtime
+:revdate: 2026-04-28
+:page-revdate: {revdate}
+
+By default, {k3k-product-name} runs virtual cluster server and agent pods using the host cluster's default container runtime (typically `runc`). You can override this by setting the `runtimeClassName` field on the `Cluster` resource, which lets virtual clusters run on alternative runtimes, such as https://github.com/containers/crun[crun], https://katacontainers.io/[Kata Containers], or https://gvisor.dev/[gVisor].
+
+This guide walks you through configuring a host cluster with `crun` and creating a virtual cluster that uses it.
+
+== Prepare the host cluster
+
+Follow the below steps to install and register the runtime with `containerd` on the host cluster before referencing it from a virtual cluster:
+
+. Install K3s on the host, if it is not already running. For installation instructions, see https://docs.k3s.io/[K3s documentation].
+
+. Download the `crun` binary from the https://github.com/containers/crun/releases[crun releases page] and place it on the host:
++
+[source,sh]
+----
+mv crun.amd64 /usr/local/bin/crun
+chmod +x /usr/local/bin/crun
+----
+
+. Restart K3s so that `containerd` picks up the new runtime:
++
+[source,sh]
+----
+systemctl restart k3s
+----
+
+=== Verification
+
+. Confirm whether K3s auto-detected `crun`by verifying whether the following appears in `/var/lib/rancher/k3s/agent/etc/containerd/config.toml`:
+
+[source,toml]
+----
+[plugins."io.containerd.grpc.v1.cri".containerd.runtimes."crun"]
+  runtime_type = "io.containerd.runc.v2"
+[plugins."io.containerd.grpc.v1.cri".containerd.runtimes."crun".options]
+  BinaryName = "/usr/local/bin/crun"
+  SystemdCgroup = true
+----
++
+K3s also creates a matching `RuntimeClass` resource in the cluster, which is what the `runtimeClassName` field on the virtual cluster will reference.
+
+== Create a virtual cluster with the runtime class
+
+With the {k3k-product-name} controller installed (see xref:quickstart.adoc[Quick Start]), create a `Cluster` resource and set `spec.runtimeClassName` to the name of the runtime registered on the host:
+
+[source,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: cruncluster
+  namespace: test-x
+spec:
+  runtimeClassName: crun
+  mode: virtual
+  servers: 1
+  agents: 0
+  expose:
+    nodePort: {}
+  persistence:
+    type: dynamic
+    storageRequestSize: 2G
+  tlsSANs:
+    - <IP-of-host-server>
+----
+
+The server pod for the virtual cluster is scheduled on the host using the specified runtime class.
+
+[NOTE]
+====
+The runtime class name must match a `RuntimeClass` that exists on the host cluster. Referencing an unknown runtime class causes the server pod to fail to start.
+====
+
+== Verify the virtual cluster
+
+Once the server pod is ready, generate a kubeconfig with `k3kcli` and confirm the virtual cluster is reachable.
+
+[source,sh]
+----
+k3kcli kubeconfig generate --name cruncluster --namespace test-x
+----
+
+The command writes a kubeconfig file to the current directory and prints the path. Export it and query the control plane:
+
+[source,sh]
+----
+export KUBECONFIG=$(pwd)/test-x-cruncluster-kubeconfig.yaml
+kubectl cluster-info
+----
+
+A working virtual cluster returns output similar to:
+
+----
+Kubernetes control plane is running at https://<host-ip>:<nodeport>
+CoreDNS is running at https://<host-ip>:<nodeport>/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+Metrics-server is running at https://<host-ip>:<nodeport>/api/v1/namespaces/kube-system/services/https:metrics-server:https/proxy
+----
+
+== Related fields: securityContext and hostUsers
+
+Two additional `Cluster` spec fields control pod-level security for the server and agent pods of the virtual cluster. They can be combined with `runtimeClassName` or used independently.
+
+=== securityContext
+
+`spec.securityContext` sets a custom `SecurityContext` on the agent and server pods. In virtual mode, this overrides the default `SecurityContext` that {k3k-product-name} would otherwise apply.
+
+[source,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: cruncluster
+  namespace: test-x
+spec:
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    allowPrivilegeEscalation: false
+  # ...
+----
+
+=== hostUsers
+
+`spec.hostUsers` controls whether the server and agent pods run in the host's user namespace.
+
+* When `true` or unset, the pods run in the host user namespace (the default).
+* When `false`, a new user namespace is created for the pods, isolating their UIDs/GIDs from the host.
+
+[source,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: cruncluster
+  namespace: test-x
+spec:
+  hostUsers: false
+  # ...
+----
+
+User namespaces require kernel support and a compatible container runtime. See the https://kubernetes.io/docs/concepts/workloads/pods/user-namespaces/[Kubernetes user namespaces documentation] for prerequisites.

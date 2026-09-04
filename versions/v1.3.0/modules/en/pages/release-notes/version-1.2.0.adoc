@@ -1,0 +1,44 @@
+= SUSE Virtual Cluster v1.2.0 Release Highlights
+:revdate: 2026-02-23
+:page-revdate: {revdate}
+
+== New Features
+
+* *HCP (Hosted Control Plane) mode (experimental)* -- a new virtual cluster mode that provisions an agentless K3s control plane in the host cluster while letting you join your own external worker nodes via the standard K3s installer. See xref:how-tos-for-user/create-hcp-virtual-cluster.adoc[Creating an HCP Virtual Cluster].
+* *External datastore configuration* -- clusters can now be configured to use an external datastore (e.g. PostgreSQL) instead of the embedded SQLite/etcd, via `secretMounts` or `serverArgs`. See xref:how-tos-for-admin/external-datastore.adoc[Configuring an External Datastore].
+* *Custom annotations on the expose Service* -- set custom annotations on the Service created for `expose.loadBalancer`/`expose.nodePort` (e.g. to control cloud load balancer behavior). See xref:advanced-usage.adoc[Advanced Usage].
+* *k3kcli shell autocompletion* -- `k3kcli cluster delete` and `k3kcli policy delete` now support name autocompletion (including multi-name delete for policies), and common flags with predefined values gained value autocompletion.
+* *StorageClass sync from host to virtual clusters* -- shared-mode virtual clusters can now sync host StorageClasses so users see what storage is available, configurable via the CLI/CRD and the Rancher UI. See xref:resource-sync.adoc[Resource Sync].
+* *Pod and container SecurityContext for hardened clusters* -- new `podSecurityContext`/`securityContext` fields on `Cluster` and the Helm chart let servers and agents run under a `restricted` PodSecurity Admission level. See xref:how-tos-for-admin/secure-shared-mode.adoc[Secure Shared Mode].
+* *Namespace creation in the cluster creation form* -- when no policy is selected, users can now create a new namespace inline instead of only picking from existing ones.
+* *SecretMount and private registry support in the UI* -- the Rancher UI now exposes configuration for the SecretMount feature and private container registries.
+* *Explicit host cluster and namespace selection* -- provisioning a virtual cluster no longer pre-selects the host cluster and namespace, requiring an intentional choice and avoiding accidental placement.
+* *Cluster API provider promoted to Beta* -- the Cluster API provider for k3k is now Beta, supporting virtual cluster provisioning in both shared and virtual mode.
+
+== Core Improvements
+
+* *Helm 4 compatibility* -- the k3k Helm chart has been validated and updated to support Helm 4 installs.
+* *Removed legacy webhook remnants* -- completed removal of no-op pod-mutating webhook code left over from the v1.1.0 webhook removal, simplifying the controller.
+* *Simplified Cluster API provider installation* -- the provider no longer installs the k3k controller itself; it now assumes the k3k controller is managed externally.
+* *Cluster API provider settings aligned with k3k 1.1.0* -- virtual clusters provisioned via CAPI now support the same configuration settings available in native k3k 1.1.0 provisioning.
+
+== Bug Fixes & Security
+
+* *Fixed shared-mode connectivity on Cilium* -- corrected the default NetworkPolicy so the shared-mode kubelet can reach the host API server on Cilium-based clusters.
+* *Fixed inaccurate pod lifecycle reporting in shared mode.*
+* *Fixed kubelet startup on CIS-hardened host clusters.*
+* *Fixed cgroup process and orphan cleanup* -- resolved leaked processes attached to cgroups causing elevated CPU and disk I/O.
+* *Fixed unbounded growth of `/var/lib/rancher/k3s`* on frequent pod restarts.
+* *Fixed orphaned VirtualClusterPolicy re-association* -- deleting and recreating a policy with the same name no longer silently re-associates unrelated clusters.
+* *Fixed multiple `serverArgs` entries causing server start failure.*
+* *Fixed `--kubeconfig-server` flag being ignored by k3kcli* on cluster creation.
+* *Fixed upgrade path from v1.1.0 to v1.2.0* -- resolved a StatefulSet immutable-field error that broke existing clusters on upgrade.
+* *Fixed HCP mode crash on LoadBalancer expose* -- resolved a panic during HCP cluster provisioning with `expose: loadBalancer`.
+* *Fixed HCP mode ingress expose with Traefik* -- HCP clusters using `expose: ingress` now work correctly with Traefik-based ingress controllers.
+* *Clarified virtual-mode isolation security guidance* -- documentation now explicitly states that a privileged pod inside a virtual cluster retains full privileges on the host node. See xref:how-tos-for-admin/virtual-cluster-isolation.adoc[Virtual Cluster Isolation].
+* *Fixed empty host cluster field when editing a virtual cluster.*
+* *Fixed cluster import job ignoring private registries in air-gapped installs* -- the import job no longer hardcodes an image reference, honoring `system-default-registry` configuration.
+* *Fixed stale storage class filter when re-enabling storage class sync.*
+* *Fixed missing fields on the cluster creation form when no policy is selected.*
+
+Full Changelogs: link:https://github.com/rancher/k3k/releases/tag/v1.2.0[k3k v1.2.0] | link:https://github.com/rancher/virtual-clusters-ui/releases/tag/virtual-clusters-1.2.0[UI Extension v1.2.0]
