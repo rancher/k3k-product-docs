@@ -1,0 +1,143 @@
+= Virtual Cluster Isolation
+:revdate: 2026-07-09
+:page-revdate: {revdate}
+
+Virtual cluster workloads run as pods on the host cluster, inside the Namespace where the `Cluster` resource is created. To keep those workloads from reaching pods in other Namespaces, {k3k-product-name} creates a default `NetworkPolicy` for each virtual cluster.
+
+This default policy restricts traffic *leaving* the virtual cluster's Namespace. It does not add any protection to host Namespaces themselves. As a platform administrator, you should review which host pods and Services must not be reachable from virtual clusters and apply the appropriate isolation on the host side, as described below.
+
+== The default NetworkPolicy
+
+When a `Cluster` is created, K3k creates a `NetworkPolicy` named `k3k-<cluster-name>` in the cluster's Namespace. The policy selects all pods in that Namespace and enforces the following rules:
+
+* *Ingress:* all inbound traffic is allowed.
+* *Egress* is allowed only to:
+** Any IP address *outside* the cluster's Pod CIDR (the value recorded in the `Cluster` resource's `status.clusterCIDR`).
+** Pods in the virtual cluster's own Namespace.
+** The `kube-dns` pods in the `kube-system` Namespace.
+
+All other egress traffic is denied. In particular, virtual cluster workloads cannot reach pods on the Pod network in other Namespaces, which includes other virtual clusters and host workloads.
+
+The following diagram summarizes what the default policy allows and denies:
+
+[mermaid]
+....
+flowchart LR
+    subgraph host["Host cluster"]
+        subgraph vcns["Virtual cluster Namespace"]
+            vc["Virtual cluster pods"]
+        end
+        dns["kube-dns (kube-system)"]
+        other["Pods in other Namespaces (host workloads, other virtual clusters)"]
+        nodeip["Node IPs"]
+    end
+    ext["External endpoints"]
+
+    vc -- allowed --> dns
+    vc -. denied .-> other
+    vc -- allowed --> nodeip
+    vc -- allowed --> ext
+
+    linkStyle 0,2,3 stroke:#2e7d32,color:#2e7d32
+    linkStyle 1 stroke:#c62828,color:#c62828
+....
+
+This is the policy K3k generates:
+
+[,yaml]
+----
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: k3k-<cluster-name>
+  namespace: <cluster-namespace>
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - {}
+  egress:
+  - to:
+    - ipBlock:
+        cidr: 0.0.0.0/0
+        except:
+        - <cluster Pod CIDR>
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: <cluster-namespace>
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: kube-system
+      podSelector:
+        matchLabels:
+          k8s-app: kube-dns
+----
+
+=== NetworkPolicy managed by a VirtualClusterPolicy
+
+If the cluster's Namespace is bound to a xref:../virtualclusterpolicy.adoc[VirtualClusterPolicy], K3k deletes the per-cluster policy and instead manages one `NetworkPolicy` per bound Namespace, named `k3k-<policy-name>`. The rules are the same, except that the blocked CIDR range is the host cluster's Pod CIDRs: the value of the K3k controller's `--cluster-cidr` flag or, when the flag is unset, the `spec.podCIDR` of each node in the host cluster.
+
+Setting `spec.disableNetworkPolicy: true` on the `VirtualClusterPolicy` removes this policy from all bound Namespaces, leaving virtual cluster traffic unrestricted.
+
+== Limitations of the default policy
+
+The default `NetworkPolicy` on its own is not a complete isolation boundary:
+
+* *It requires a CNI that enforces NetworkPolicy.* NetworkPolicies are enforced by the host cluster's CNI plugin. If the CNI does not support or enforce them, the default policy has no effect.
+
+* *It only blocks the Pod network.* Egress to any address outside the Pod CIDR remains allowed. Node IP addresses fall outside the Pod CIDR, so virtual cluster workloads can still reach anything exposed on the nodes themselves, such as `NodePort` Services, host-exposed `LoadBalancer` Services, and pods running with `hostNetwork: true`.
+
+* *It does not restrict ingress.* Traffic into the virtual cluster's Namespace is fully allowed by the default policy.
+
+* *It only exists in virtual cluster Namespaces.* Host Namespaces get no NetworkPolicy from K3k; their protection relies entirely on the egress rules of each virtual cluster Namespace, which disappear if the policy is disabled or not enforced.
+
+== Isolating host workloads from virtual clusters
+
+Because of the limitations above, Admins can add their own policies to enforce more strict rules to the virtual cluster by create custom NetworkPolicies on the host Namespaces that run pods or Services that virtual clusters must not reach.
+
+A common approach is a `default-deny` ingress policy in the sensitive Namespace:
+
+[,yaml]
+----
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: <sensitive-namespace>
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+----
+
+Then explicitly allow only the traffic sources that need access. For example, to allow traffic only from Namespaces of your choice, label those Namespaces and use a `namespaceSelector`:
+
+[,yaml]
+----
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-trusted-namespaces
+  namespace: <sensitive-namespace>
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          network/trusted: "true"
+----
+
+For services exposed on node IPs (`NodePort`, host-exposed `LoadBalancer`, or `hostNetwork` pods), NetworkPolicies in the virtual cluster's Namespace do not block access, since node addresses are outside the Pod CIDR. Restrict access to those services through other means, such as host firewall rules or by not exposing them on node IPs in the first place.
+
+== Additional information
+
+* xref:../virtualclusterpolicy.adoc[VirtualClusterPolicy: Concepts] describes the `disableNetworkPolicy` field and how policies bind to Namespaces.
+* xref:./secure-shared-mode.adoc[Securing Shared Mode Virtual Clusters] covers enforcing Pod Security Standards on virtual cluster Namespaces.
+* See the Kubernetes documentation on https://kubernetes.io/docs/concepts/services-networking/network-policies/[Network Policies] for the full policy semantics.
