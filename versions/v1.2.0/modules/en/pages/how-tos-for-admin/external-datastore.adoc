@@ -1,4 +1,5 @@
 = Configuring an External Datastore
+:description: Configure an external datastore by creating a secret with the connection string and mounting it into the Cluster resource
 :revdate: 2026-08-31
 :page-revdate: {revdate}
 

@@ -1,4 +1,5 @@
 = Using a Custom Container Runtime
+:description: Configure a host cluster with crun and create a virtual cluster using it by setting the runtimeClassName field on the Cluster resource
 :revdate: 2026-04-28
 :page-revdate: {revdate}
 

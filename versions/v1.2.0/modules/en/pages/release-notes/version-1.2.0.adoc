@@ -1,4 +1,5 @@
 = SUSE Virtual Cluster v1.2.0 Release Highlights
+:description: Find out what's new in SUSE Virtual Cluster v1.2.0, including HCP mode, external datastore configuration, and security improvements
 :revdate: 2026-02-23
 :page-revdate: {revdate}
 

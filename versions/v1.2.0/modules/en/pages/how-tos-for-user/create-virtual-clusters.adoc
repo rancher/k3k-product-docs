@@ -1,4 +1,5 @@
 = How to: Create a Virtual Cluster
+:description: Create a virtual cluster in K3K using Custom Resource Definitions or the K3K CLI to configure storage, persistence, high availability, and specific modes like
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2025-11-17
 :page-revdate: {revdate}

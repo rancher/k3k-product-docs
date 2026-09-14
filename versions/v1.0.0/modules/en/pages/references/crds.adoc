@@ -1,5 +1,6 @@
 [id="k3k-api-reference"]
 = API Reference
+:description: Find definitions and specifications for API resources like Cluster, ClusterList, and VirtualClusterPolicy that manage virtual Kubernetes clusters and their
 :revdate: "2025-11-03"
 :page-revdate: {revdate}
 :anchor_prefix: k8s-api

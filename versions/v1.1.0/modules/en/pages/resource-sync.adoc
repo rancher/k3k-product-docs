@@ -1,4 +1,5 @@
 = Resource Sync
+:description: Learn which resources K3k syncs between virtual and host clusters, why, and how to control sync behavior
 :revdate: 2026-04-29
 :page-revdate: {revdate}
 

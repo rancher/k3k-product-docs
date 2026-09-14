@@ -1,4 +1,5 @@
 = Advanced Usage
+:description: Learn to customize the Cluster resource fields and configure advanced k3k settings like shared and virtual modes, nodeSelector, and expose options
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-08-18
 :page-revdate: {revdate}

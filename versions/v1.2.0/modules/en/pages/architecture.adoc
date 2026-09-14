@@ -1,4 +1,5 @@
 = Architecture
+:description: Learn about K3s virtual cluster architecture, including shared mode, Virtual HCP, and how K3s functions as the control plane
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-08-06
 :page-revdate: {revdate}
