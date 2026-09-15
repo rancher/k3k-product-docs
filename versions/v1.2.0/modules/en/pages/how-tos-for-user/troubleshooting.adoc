@@ -172,17 +172,18 @@ The primary certificates and keys required for authentication are:
 * **Client Certificate:** `client.crt` (or `server-client.crt`)
 * **Client Key:** `client.key` (or `server-client.key`)
 
+=== Running `etcdctl`
+
 [tabs]
 ====
-Local Machine::
+Local Machine (Exposed Clusters)::
 +
 --
-=== Option 1: Running `etcdctl` from a Local Machine (Exposed Clusters)
-
 When a K3k virtual cluster is created using the CLI, its control plane services (including the etcd port `2379`) are often exposed via a NodePort or LoadBalancer service on the host cluster.
 
 You can download the TLS certificates to your local machine and query etcd directly without executing commands inside the cluster pods.
 
+[discrete]
 ==== 1. Extract Certificates to a Local Directory
 
 [,sh]
@@ -191,6 +192,7 @@ mkdir -p ./k3k-etcd-certs
 kubectl cp <cluster_namespace>/<k3k_server_pod_name>:/var/lib/rancher/k3s/server/tls/etcd ./k3k-etcd-certs
 ----
 
+[discrete]
 ==== 2. Identify the Exposed etcd Endpoint
 
 Check the host services in your virtual cluster namespace to find the exposed NodePort or external IP mapping to port `2379`:
@@ -202,6 +204,7 @@ kubectl get svc -n <cluster_namespace>
 
 NOTE: If the cluster service is not externally reachable from your machine, port-forward the pod's `2379` port locally in a separate terminal: `kubectl port-forward -n <cluster_namespace> pod/<k3k_server_pod_name> 2379:2379`.
 
+[discrete]
 ==== 3. Execute `etcdctl` Locally
 
 Run `etcdctl` from your workstation pointing to the exposed host endpoint (or `127.0.0.1:2379` if port-forwarding):
@@ -218,16 +221,14 @@ etcdctl \
 
 --
 
-Ephemeral Debug Containers::
+Ephemeral Debug Container (Private Clusters)::
 +
 --
-
-=== Option 2: Running `etcdctl` via Ephemeral Debug Containers (Internal / Private Clusters)
-
 If the K3k control plane is unexposed or completely private, use `kubectl debug` to attach an ephemeral container running an official etcd image directly to the running server pod.
 
 NOTE: `kubectl debug` shares the process (PID) and network namespaces with the targeted container, but not its mount namespace. To access the TLS certificates inside the target container's filesystem, prefix all certificate paths with `/proc/1/root/`.
 
+[discrete]
 ==== List etcd Cluster Members
 
 [,sh]
@@ -243,6 +244,7 @@ kubectl debug -it -n <cluster_namespace> <k3k_server_pod_name> \
     member list
 ----
 
+[discrete]
 ==== Check Endpoint Health
 
 [,sh]
