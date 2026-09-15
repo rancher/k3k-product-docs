@@ -1,4 +1,5 @@
 = Adding custom certificates to k3s from k3k cluster
+:description: Add custom certificates to k3s from a k3s cluster by generating them with a script, copying to a local directory, and using the path
 :revdate: 2025-09-16
 :page-revdate: {revdate}
 

@@ -1,4 +1,5 @@
 = SUSE Virtual Cluster v1.0.2 Release Highlights
+:description: Discover new features, core improvements, and security updates in SUSE Virtual Cluster v1.0.2, including private repository support and cluster updates
 :revdate: 2026-02-23
 :page-revdate: {revdate}
 

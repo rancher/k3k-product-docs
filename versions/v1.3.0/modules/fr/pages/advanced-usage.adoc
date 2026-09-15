@@ -1,0 +1,124 @@
+= Utilisation avancée
+:page-languages: [en, de, es, fr, ja, pt, zh]
+:revdate: 2025-09-16
+:page-revdate: {revdate}
+
+Ce document fournit des informations sur l'utilisation avancée de k3k, y compris des cas d'utilisation détaillés et des explications sur les champs de ressources `Cluster` pour la personnalisation.
+
+== Personnalisation de la ressource du cluster
+
+La ressource `Cluster` offre une variété de champs pour personnaliser le comportement de vos clusters virtuels. Voir la xref:/references/crds.adoc[documentation CRD] pour les spécifications complètes.
+
+NOTE: La plupart de ces options de personnalisation peuvent également être configurées à l'aide de l'outil `k3kcli`. Référez-vous à la xref:/references/k3kcli.adoc[documentation k3kcli] pour plus de détails.
+
+Cet exemple crée un cluster K3k en mode "partagé" avec{nbsp}:
+
+* 3 serveurs
+* Version K3s v1.31.3-k3s1
+* Configuration réseau personnalisée
+* Déploiement sur des nœuds spécifiques avec le `nodeSelector`
+* `kube-api` exposé à l'aide d'un ingress
+* K3s personnalisé `serverArgs`
+* Données ETCD persistées à l'aide d'un `PVC`
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: my-virtual-cluster
+  namespace: my-namespace
+spec:
+  mode: shared
+  version: v1.31.3-k3s1
+  servers: 3
+  tlsSANs:
+    - my-cluster.example.com
+  nodeSelector:
+    disktype: ssd
+  expose:
+    ingress:
+      ingressClassName: nginx
+      annotations:
+        nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+        nginx.ingress.kubernetes.io/backend-protocol: "true"
+        nginx.ingress.kubernetes.io/ssl-redirect: "HTTPS"
+  clusterCIDR: 10.42.0.0/16
+  serviceCIDR: 10.43.0.0/16
+  clusterDNS: 10.43.0.10
+  serverArgs:
+  - --tls-san=my-cluster.example.com
+  persistence:
+    type: dynamic
+    storageClassName: local-path
+----
+
+=== `mode`
+
+Le champ `mode` spécifie le mode de provisionnement du cluster, qui peut être soit `shared` soit `virtual`. Le mode par défaut est `shared`.
+
+* *`shared` mode :* Dans ce mode, le cluster virtuel partage les ressources et le réseau du cluster hôte. Ce mode est adapté aux charges de travail légères et aux environnements de développement où l'isolation n'est pas une préoccupation principale.
+* *`virtual` mode :* Dans ce mode, le cluster virtuel fonctionne comme un cluster K3s séparé au sein du cluster hôte. Ce mode offre une isolation plus forte et est adapté aux charges de travail de production ou lorsque des ressources dédiées sont requises.
+
+=== `version`
+
+Le champ `version` spécifie la version de Kubernetes à utiliser par les nœuds virtuels. Si non spécifié, K3k utilisera la même version de K3s que le cluster hôte. Par exemple, si le cluster hôte exécute Kubernetes v1.31.3, K3k utilisera la version correspondante de K3s (par exemple, `v1.31.3-k3s1`).
+
+=== `servers`
+
+Le champ `servers` spécifie le nombre de nœuds serveur K3s à déployer pour le cluster virtuel. La valeur par défaut est 1.
+
+=== `agents`
+
+Le champ `agents` spécifie le nombre de nœuds agents K3s à déployer pour le cluster virtuel. La valeur par défaut est 0.
+
+NOTE: En mode `shared`, ce champ est ignoré, car le Virtual Kubelet agit en tant qu'agent, et il n'y a pas de nœuds de travail K3s.
+
+=== `nodeSelector`
+
+Le champ `nodeSelector` vous permet de spécifier un sélecteur de nœuds qui sera appliqué à tous les pods serveur/agent. En mode `shared`, le sélecteur de nœuds sera également appliqué aux charges de travail.
+
+=== `expose`
+
+Le champ `expose` contient des options pour exposer le serveur API du cluster virtuel. Par défaut, le serveur API est uniquement exposé en tant que `ClusterIP`, ce qui est relativement sécurisé mais difficile d'accès depuis l'extérieur du cluster.
+
+Vous pouvez utiliser le champ `expose` pour activer l'exposition via `NodePort`, `LoadBalancer` ou `Ingress`.
+
+Dans cet exemple, nous exposons le cluster avec un contrôleur d'entrée Nginx, qui doit être configuré avec l'option `--enable-ssl-passthrough`.
+
+=== `clusterCIDR`
+
+Le champ `clusterCIDR` spécifie la plage CIDR pour les pods du cluster. La valeur par défaut est `10.42.0.0/16` en mode partagé, et `10.52.0.0/16` en mode virtuel.
+
+=== `serviceCIDR`
+
+Le champ `serviceCIDR` spécifie la plage CIDR pour les services dans le cluster. La valeur par défaut est `10.43.0.0/16` en mode partagé, et `10.53.0.0/16` en mode virtuel.
+
+NOTE: En mode `shared`, le `serviceCIDR` doit correspondre au `serviceCIDR` du cluster hôte pour éviter les conflits et en mode `virtual`, `serviceCIDR` et `clusterCIDR` doivent être différents de ceux du cluster hôte.
+
+=== `clusterDNS`
+
+Le champ `clusterDNS` spécifie l'adresse IP pour le service CoreDNS. Elle doit être dans la plage fournie par `serviceCIDR`. La valeur par défaut est `10.43.0.10`.
+
+=== `serverArgs`
+
+Le champ `serverArgs` vous permet de spécifier des arguments supplémentaires à passer aux pods du serveur K3s.
+
+== Utiliser la CLI
+
+Vous pouvez consulter la xref:/references/k3kcli.adoc[documentation de k3kcli] pour les spécifications complètes.
+
+=== Aucun fournisseur de stockage{nbsp}:
+
+* Stockage éphémère{nbsp}:
++
+[,bash]
+----
+  k3kcli cluster create --persistence-type ephemeral my-cluster
+----
+
+[IMPORTANT]
+====
+* Utiliser `--persistence-type ephemeral` entraînera une perte de données si les nœuds sont redémarrés.
+* Il est fortement recommandé d'utiliser `--persistence-type dynamic` avec une classe de stockage configurée.
+====
