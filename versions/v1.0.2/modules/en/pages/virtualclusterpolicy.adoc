@@ -1,4 +1,5 @@
 = VirtualClusterPolicy: Concepts
+:description: Learn how to define and enforce consistent configurations, security settings, and resource management rules for virtual clusters and Namespaces
 :revdate: 2025-11-18
 :page-revdate: {revdate}
 

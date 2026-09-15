@@ -1,4 +1,5 @@
 = Introduction
+:description: Learn about SUSE® Virtual Clusters, which combine K3s and SUSE Virtual Cluster Management to enable multi-tenancy in Kubernetes and allow developers
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2025-09-16
 :page-revdate: {revdate}

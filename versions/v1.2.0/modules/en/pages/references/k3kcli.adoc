@@ -1,4 +1,5 @@
 = K3k CLI commands
+:description: Use K3k CLI commands to create, delete, list, and update clusters and policies, and manage kubeconfig files for Kubernetes environments
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-08-26
 :page-revdate: {revdate}

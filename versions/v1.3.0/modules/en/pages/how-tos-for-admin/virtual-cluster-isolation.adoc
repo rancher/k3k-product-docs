@@ -1,4 +1,5 @@
 = Virtual Cluster Isolation
+:description: Learn how to isolate virtual clusters using NetworkPolicies and apply host-side policies to achieve full isolation
 :revdate: 2026-07-09
 :page-revdate: {revdate}
 

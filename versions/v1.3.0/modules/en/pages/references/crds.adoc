@@ -1,6 +1,7 @@
 [id="k3k-api-reference"]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 = API Reference
+:description: Find definitions and specifications for API resources like Cluster, ClusterList, and VirtualClusterPolicy that manage virtual Kubernetes clusters and their
 :revdate: 2026-08-26
 :page-revdate: {revdate}
 :anchor_prefix: k8s-api

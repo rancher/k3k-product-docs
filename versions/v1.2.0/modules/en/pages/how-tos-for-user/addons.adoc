@@ -1,4 +1,5 @@
 = Add-ons
+:description: Provision the K3k cluster using add-ons by installing the controller chart and creating a secret key with a .yaml extension
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2025-11-07
 :page-revdate: {revdate}
