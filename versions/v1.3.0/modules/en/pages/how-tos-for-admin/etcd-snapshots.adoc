@@ -1,0 +1,154 @@
+= Creating Etcd Snapshots of a Virtual Cluster
+:description: Create local or S3-uploaded etcd snapshots of a Kubernetes virtual cluster's datastore using the EtcdSnapshot custom resource
+:revdate: 2026-10-09
+:page-revdate: {revdate}
+
+{k3k-product-name} can trigger an etcd snapshot of a virtual cluster's datastore on demand by creating an `EtcdSnapshot` resource. The virtual cluster's own K3s server takes the snapshot, using the same https://docs.k3s.io/cli/etcd-snapshot[K3s etcd-snapshot feature] that K3s itself uses. The snapshot is stored on the server's local disk, or uploaded to an S3-compatible object store.
+
+[NOTE]
+====
+Snapshots are only supported for virtual clusters using the default embedded datastore. Clusters configured with an xref:how-tos-for-admin/external-datastore.adoc[external datastore] do not run an embedded etcd and do not support this feature.
+
+Restoring a virtual cluster from an `EtcdSnapshot` is not supported yet. This guide only covers creating and deleting snapshots.
+====
+
+== Prerequisites
+
+* A virtual cluster in the `Ready` phase. The snapshot controller requeues the request until the target cluster becomes ready.
+* For S3 uploads, an S3-compatible bucket and credentials.
+
+== Create a local snapshot
+
+Create an `EtcdSnapshot` resource that references the target cluster by name. The snapshot is saved to the server's local disk:
+
+[source,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: EtcdSnapshot
+metadata:
+  name: my-cluster-snapshot
+  namespace: test-k3k
+spec:
+  clusterRef:
+    name: my-cluster
+----
+
+Set `spec.compress: true` to compress the snapshot file:
+
+[source,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: EtcdSnapshot
+metadata:
+  name: my-cluster-snapshot-compressed
+  namespace: test-k3k
+spec:
+  clusterRef:
+    name: my-cluster
+  compress: true
+----
+
+[IMPORTANT]
+====
+`clusterRef`, `s3ConfigSecretRef`, and `compress` are immutable after the `EtcdSnapshot` is created. To change any of these values, delete the resource and create a new one.
+====
+
+== Create an S3 snapshot
+
+To additionally upload the snapshot to an S3-compatible bucket, create a `Secret` with the S3 connection details. Place the `Secret` in the same namespace as the `EtcdSnapshot`, then reference it with `spec.s3ConfigSecretRef`.
+
+The secret's keys match the https://docs.k3s.io/cli/etcd-snapshot?_highlight=snapshot#s3-compatible-object-store-support[K3s S3 configuration options]:
+
+[cols="30a,70a", options="header"]
+|===
+| Key | Description
+| `etcd-s3-endpoint` | S3 endpoint (required unless using the default `s3.amazonaws.com`).
+| `etcd-s3-access-key` | S3 access key.
+| `etcd-s3-secret-key` | S3 secret key.
+| `etcd-s3-bucket` | S3 bucket name.
+| `etcd-s3-folder` | Folder/prefix inside the bucket.
+| `etcd-s3-region` | S3 region.
+| `etcd-s3-bucket-lookup-type` | S3 bucket lookup type, for example `path`.
+| `etcd-s3-proxy` | Proxy server to use when connecting to S3.
+| `etcd-s3-session-token` | S3 session token.
+| `etcd-s3-timeout` | Timeout for S3 operations, for example `5m`.
+| `etcd-s3-retention` | Number of snapshots to retain in S3.
+| `etcd-s3-insecure` | Set to `"true"` to use plain HTTP instead of HTTPS.
+| `etcd-s3-skip-ssl-verify` | Set to `"true"` to skip TLS certificate verification.
+| `etcd-s3-endpoint-ca` | Inline PEM-encoded CA bundle for the S3 endpoint.
+| `etcd-s3-endpoint-ca-name` | Name of a `ConfigMap` (in the same namespace as the secret) containing CA bundle(s) for the S3 endpoint.
+|===
+
+[source,yaml]
+----
+apiVersion: v1
+kind: Secret
+metadata:
+  name: etcd-s3-config
+  namespace: test-k3k
+type: Opaque
+stringData:
+  etcd-s3-endpoint: s3.example.com
+  etcd-s3-access-key: AKIAEXAMPLE
+  etcd-s3-secret-key: supersecret
+  etcd-s3-bucket: k3k-etcd-snapshots
+  etcd-s3-folder: my-cluster
+  etcd-s3-region: us-east-1
+----
+
+[source,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: EtcdSnapshot
+metadata:
+  name: my-cluster-s3-snapshot
+  namespace: test-k3k
+spec:
+  clusterRef:
+    name: my-cluster
+  s3ConfigSecretRef:
+    name: etcd-s3-config
+----
+
+[NOTE]
+====
+`s3ConfigSecretRef` only looks up the secret by `name`, always in the same namespace as the `EtcdSnapshot`. Any `namespace` set on `s3ConfigSecretRef` is ignored.
+
+Setting `s3ConfigSecretRef` also creates a local snapshot on disk before it is uploaded to S3.
+====
+
+== Verify the snapshot
+
+Check the `EtcdSnapshot` status for the generated snapshot file name and the `Ready` condition:
+
+[source,sh]
+----
+kubectl get etcdsnapshot my-cluster-snapshot -n test-k3k -o yaml
+----
+
+[source,yaml]
+----
+status:
+  filename: etcd-snapshot-my-cluster-server-0-1234567890
+  conditions:
+  - type: Ready
+    status: "True"
+    reason: SuccessfulCreate
+    message: Snapshot was created
+----
+
+A `kubectl get etcdsnapshots` also shows the `FILE NAME` column once the snapshot is created. If the snapshot fails, the `Ready` condition is set to `False` with reason `FailedCreate` and a message describing the error.
+
+== Delete a snapshot
+
+Deleting the `EtcdSnapshot` resource removes the underlying snapshot file from the virtual cluster, and from the S3 bucket if one was configured:
+
+[source,sh]
+----
+kubectl delete etcdsnapshot my-cluster-snapshot -n test-k3k
+----
+
+== Related fields
+
+* xref:references/crds.adoc[CRD reference] -- see `EtcdSnapshot`, `EtcdSnapshotSpec`, and `EtcdSnapshotStatus` for the full field list.
+* xref:how-tos-for-admin/external-datastore.adoc[Configuring an External Datastore] -- clusters using an external datastore do not support etcd snapshots.

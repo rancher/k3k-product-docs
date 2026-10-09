@@ -29,6 +29,7 @@ endif::[]
 ** xref:how-tos-for-admin/virtual-cluster-isolation.adoc[Virtual cluster isolation]
 ** xref:how-tos-for-admin/custom-runtime-class.adoc[Using a custom container runtime]
 ** xref:how-tos-for-admin/external-datastore.adoc[Configuring an external datastore]
+** xref:how-tos-for-admin/etcd-snapshots.adoc[Creating etcd snapshots of a virtual cluster]
 
 * References
 ** xref:references/crds.adoc[Customer Resource Definitions (CRDs)]
