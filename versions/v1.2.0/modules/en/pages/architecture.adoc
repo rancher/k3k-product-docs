@@ -145,7 +145,7 @@ HCP mode is *experimental* in {product-name} v1.2.0.
 
 The `hcp` (Hosted Control Plane) mode runs an agentless K3s control plane (apiserver, scheduler, controller-manager) as pods inside the host cluster, but unlike `virtual` mode it does *not* provision any worker pods. Worker nodes live outside the host cluster -- on bare metal, virtual machines, or edge devices that you manage -- and join the virtual cluster using the standard K3s installer (`curl -sfL https://get.k3s.io | K3S_URL=... K3S_TOKEN=... sh -`).
 
-// TODO: add image::architecture/hcp-mode.png[HCP Mode] once the diagram is available
+image::architecture/hcp-mode.png[HCP Mode]
 
 This mode gives you the operational convenience of a K3k-managed control plane combined with real, fully-isolated worker nodes. To make the apiserver reachable from outside the host cluster, an HCP cluster requires an externally reachable endpoint (`spec.expose.nodePort`, `spec.expose.loadBalancer`, or `spec.expose.ingress`) and a non-loopback entry in `spec.tlsSANs`.
 
