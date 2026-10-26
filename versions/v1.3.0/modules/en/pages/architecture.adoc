@@ -34,20 +34,23 @@ The network architecture spans three functional layers:
 [#_shared_mode]
 == Shared Mode
 
-The default *shared* mode uses a K3s server as control plane with an https://docs.k3s.io/advanced#running-agentless-servers-experimental[agentless servers configuration]. With this option enabled, the servers do not run the kubelet, container runtime, or CNI. The server uses a https://virtual-kubelet.io/[Virtual Kubelet] provider implementation specific to K3k, which schedules the workloads and other eventually needed resources on the host cluster. This K3k Virtual Kubelet provider handles the reflection of resources and workload execution within the shared host cluster environment.
-
 image::architecture/shared-mode.png[Shared Mode]
 
-[#_workload_deployment_flow_shared_mode]
-=== Workload Deployment Flow 
+The default *shared* mode uses a K3s server as control plane with an https://docs.k3s.io/advanced#running-agentless-servers-experimental[agentless servers configuration]. With this option enabled, the servers do not run the kubelet, container runtime, or CNI. The server uses a https://virtual-kubelet.io/[Virtual Kubelet] provider implementation specific to K3k, which schedules the workloads and other eventually needed resources on the host cluster. This K3k Virtual Kubelet provider handles the reflection of resources and workload execution within the shared host cluster environment.
+
+[#_network_architecture_shared_mode]
+=== Network Architecture
+
+image::architecture/shared-mode_networking.png[Shared Mode]
+
+**Workload Deployment Flow** 
 
 . User executes `kubectl run` to call the Virtual Cluster's K3s API server. 
 . K3s server receives the request and calls the `virtual-kubelet`. 
 . The `virtual-kubelet` calls the *Host API Server* to schedule the pods on the cluster. 
 . The Host API Server schedules and executes the actual tenant Pods (for example, `CoreDNS`, `MyApp-1`, `MyApp-2`) directly on host cluster worker nodes. 
 
-[#_in_cluster_pod_to_pod_network_flow]
-=== In-Cluster Pod-to-Pod Network Flow 
+**In-Cluster Pod-to-Pod Network Flow** 
 
 . When one application (for example, `MyApp-1`) needs to connect to another (for example, `MyApp-2`), it calls the virtual cluster's dedicated *CoreDNS* pod. 
 . CoreDNS resolves the domain name and returns `MyApp-2` host-level pod IP address back to `MyApp-1` which enables it to call `MyApp-2`. 
@@ -121,11 +124,6 @@ It is important to understand that ResourceQuotas are applied at the namespace l
 
 This dynamic sharing can be both a benefit and a challenge. It allows for efficient resource utilization, but it can also lead to unpredictable performance if workloads have varying resource demands. Furthermore, this approach makes it difficult to guarantee strict resource isolation between workloads within the same virtual cluster.
 
-[NOTE]
-====
-GPU resource sharing is an area of ongoing investigation. K3k is actively exploring potential solutions in this area.
-====
-
 [#_isolation_and_security_shared_mode]
 === Isolation and Security
 
@@ -151,19 +149,22 @@ The shared mode architecture is designed with security in mind. K3k employs mult
 [#_virtual_mode]
 == Virtual Mode
 
-The `virtual` mode in K3k deploys fully functional K3s clusters (including both server and agent components) as virtual clusters. These K3s clusters run as pods within the host cluster. Each virtual cluster has its own dedicated K3s server and one or more K3s agents acting as worker nodes. This approach provides strong isolation, as each virtual cluster operates independently with its own control plane and worker nodes. While these virtual clusters run as pods on the host cluster, they function as complete and separate Kubernetes environments.
-
 image::architecture/virtual-mode.png[Virtual Mode]
 
-[#_workload_deployment_flow_virtual_mode]
-=== Workload Deployment Flow 
+The `virtual` mode in K3k deploys fully functional K3s clusters (including both server and agent components) as virtual clusters. These K3s clusters run as pods within the host cluster. Each virtual cluster has its own dedicated K3s server and one or more K3s agents acting as worker nodes. This approach provides strong isolation, as each virtual cluster operates independently with its own control plane and worker nodes. While these virtual clusters run as pods on the host cluster, they function as complete and separate Kubernetes environments.
+
+[#_network_architecture_virtual_mode]
+=== Network Architecture
+
+image::architecture/virtual-mode_networking.png[Virtual Mode]
+
+**Workload Deployment Flow** 
 
 . User executes `kubectl run` to call the Virtual Cluster's K3s API server. 
 . The Virtual K3s Server schedules the workload onto one of the dedicated *K3s Worker (agent)* pods running inside the tenant namespace.
 . The K3s Worker pod executes the application containers (`nginx`, `myapp`, internal `coreDNS`) within its own isolated container runtime. 
 
-[#_network_overlay_and_isolation_virtual_mode]
-=== Network Overlay and Isolation 
+**Network Overlay and Isolation** 
 
 * *Isolated Virtual CNI*: Virtual mode manages an independent networking stack and CNI plugin inside the K3s agent pods. 
 * *Network Encapsulation*: Pod-to-pod communication inside a virtual-mode cluster takes place within the nested CNI overlay network (`10.52.0.0/16` by default). * 
@@ -218,19 +219,20 @@ HCP mode is *experimental* in {product-name} v1.2.0.
 
 The `hcp` (Hosted Control Plane) mode runs an agentless K3s control plane (apiserver, scheduler, controller-manager) as pods inside the host cluster, but unlike `virtual` mode it does *not* provision any worker pods. Worker nodes live outside the host cluster -- on bare metal, virtual machines, or edge devices that you manage -- and join the virtual cluster using the standard K3s installer (`curl -sfL https://get.k3s.io | K3S_URL=... K3S_TOKEN=... sh -`).
 
-image::architecture/hcp-mode.png[HCP Mode Architecture]
-
 This mode gives you the operational convenience of a K3k-managed control plane combined with real, isolated worker nodes. To make the API server reachable from outside the host cluster, an HCP cluster requires an externally reachable endpoint (`spec.expose.nodePort`, `spec.expose.loadBalancer`, or `spec.expose.ingress`) and a non-loopback entry in `spec.tlsSANs`.
 
-[#_workload_deployment_flow_hcp_mode]
-=== Workload Deployment Flow 
+[#_network_architecture_hcp_mode]
+=== Networking Architecture
+
+image::architecture/hcp-mode_networking.png[HCP Mode Architecture]
+
+**Workload Deployment Flow** 
 
 . The K3k Controller provisions a K3s server pod in the host namespace. No worker agent pods are deployed on the host cluster. 
 . External machines connect back to the host cluster using the standard K3s agent installation command with `K3s_URL` and `K3s_TOKEN`. The worker connects to the externally exposed API server endpoint (`NodePort`, `LoadBalancer`, or `Ingress`) verified by `spec.tlsSANs`. 
 . When a user executes `kubectl run`, the virtual K3s server schedules workloads directly onto the external K3s agent machines.
 
-[#_network_tunneling_and_workload_isolation_hcp_mode]
-=== Network Tunneling & Workload Isolation 
+**Network Tunneling & Workload Isolation** 
 
 * *WebSocket Tunneling*: Because the control plane resides on the host cluster while worker nodes live outside it, the API server has no direct route to the external pod network. K3k tunnels API server egress traffic (used for `kubectl exec`, `logs`, and webhooks) securely through the K3s agent WebSocket connection. 
 * *Local Worker CNI*: Workload pods (`nginx`, `myapp`, `coreDNS`, `metrics`) run entirely on the external worker machines. CNI networking, storage, and container runtimes are managed locally on the worker node and do not interact with host cluster resources. 
