@@ -12,12 +12,6 @@ To choose an installation method, start with link:{prime-install-url}/installati
 .Use the SUSE Rancher Prime chart, not the community chart
 ====
 The community Helm chart from `https://rancher.github.io/k3k` is not the supported artifact for SUSE Rancher Prime.
-
-Install and upgrade the engine with the chart and images from the SUSE registry:
-
-* Chart: `oci://registry.suse.com/rancher/charts/appco-suse-virtual-cluster-engine`
-* Release name: `suse-virtual-cluster-engine`, in the `k3k-system` namespace
-* Images: `registry.suse.com/rancher/appco-k3k` and `registry.suse.com/rancher/appco-k3k-kubelet`
 ====
 
 == Install the {product-name} engine
