@@ -1,10 +1,41 @@
 = Quick Start
 :description: Install K3k and use the k3kcli tool to create and manage isolated K3s clusters in your existing Kubernetes environment
-:revdate: 2025-11-19
+:revdate: 2026-11-05
 :page-revdate: {revdate}
+:prime-install-url: https://scc.suse.com/rancher-docs/rancherprime/latest/en/suse-virtual-cluster/installation-and-upgrades
 
 ifndef::ss-build-community[]
-To know about installing and creating the clusters, see link:https://scc.suse.com/rancher-docs/rancherprime/latest/en/suse-virtual-cluster/installation-and-upgrades/quickstart.html[Installation and cluster creation via the UI].
+{rancher-product-name} customers install and upgrade the {product-name} engine by following the {rancher-product-name} documentation on SUSE Customer Center (SCC).
+To choose an installation method, start with link:{prime-install-url}/installation-overview.html[Installation overview].
+
+[IMPORTANT]
+.Use the SUSE Rancher Prime chart, not the community chart
+====
+The community Helm chart from `https://rancher.github.io/k3k` is not the supported artifact for SUSE Rancher Prime.
+
+Install and upgrade the engine with the chart and images from the SUSE registry:
+
+* Chart: `oci://registry.suse.com/rancher/charts/appco-suse-virtual-cluster-engine`
+* Release name: `suse-virtual-cluster-engine`, in the `k3k-system` namespace
+* Images: `registry.suse.com/rancher/appco-k3k` and `registry.suse.com/rancher/appco-k3k-kubelet`
+====
+
+== Install the {product-name} engine
+
+Select the installation method that fits your environment:
+
+* link:{prime-install-url}/quickstart.html[Install from the SUSE Rancher Prime UI]: The quick install always installs the latest stable version.
+* link:{prime-install-url}/install-with-helm.html[Install with Helm]: Use Helm to set chart values or to control the installed version.
+* link:{prime-install-url}/install-with-helm.html#install-specific-version[Install a specific version]: Use Helm to install a patch or earlier version, for example, 1.1.x when 1.2.0 is the latest stable version.
+* link:{prime-install-url}/install-with-continuous-delivery.html[Install with SUSE Rancher Prime: Continuous Delivery]: Deploy the engine with HelmOps or GitOps.
+* link:{prime-install-url}/k3k-air-gap.html[Install in an air-gapped environment]: Mirror the chart and images to a private registry, then install.
+
+== Upgrade the {product-name} engine
+
+Upgrade the engine with Helm.
+For instructions, see link:{prime-install-url}/install-with-helm.html#upgrade[Upgrade the engine].
+
+To scale virtual clusters or upgrade their K3s version, see link:{prime-install-url}/day2ops.html[Day 2 operations].
 endif::[]
 
 ifdef::ss-build-community[]
@@ -26,7 +57,7 @@ NOTE: If you do not have a storage provider, you can configure the cluster to us
 
 === Install the K3k controller
 
-NOTE: Rancher Prime customers, please see https://scc.suse.com/rancher-docs/rancherprime/latest/en/suse-virtual-cluster/installation-and-upgrades/quickstart.html[Quick Start].
+NOTE: This procedure installs the community K3k chart. For {rancher-product-name}, the supported chart, installation methods, and upgrade procedure are described in link:{prime-install-url}/installation-overview.html[Installation overview].
 
 . Add the K3k Helm repository:
 +
