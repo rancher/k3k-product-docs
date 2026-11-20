@@ -140,6 +140,10 @@ To fix this you should use a valid node affinity/selector.
 
 When creating a Virtual Cluster in air-gapped environment, images need to be available in the configured registry. You can check for `ImagePullBackOff` status when getting the pods in the virtual cluster namespace.
 
+ifndef::ss-build-community[]
+NOTE: For {rancher-product-name}, the required images and the air-gapped installation procedure are described in link:https://scc.suse.com/rancher-docs/rancherprime/latest/en/suse-virtual-cluster/installation-and-upgrades/k3k-air-gap.html[Air-gapped installation].
+endif::[]
+
 ==== Example
 
 The `server` is failing:
