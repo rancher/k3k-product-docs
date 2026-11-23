@@ -64,7 +64,7 @@ k3kcli cluster create \
   hcp-server
 ----
 
-The CLI prints an experimental-mode warning, waits for the cluster to become ready, and adds a `<namespace>/hcp-server` context to your current kubeconfig. It then prints the instructions you'll need for Steps 2 and 3.
+The CLI waits for the cluster to become ready and adds a `<namespace>/hcp-server` context to your current kubeconfig. It then prints the instructions you'll need for Steps 2 and 3.
 
 == Step 2: Fetch the join token
 
