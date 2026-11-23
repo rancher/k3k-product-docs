@@ -1,7 +1,8 @@
 = How to: Create an HCP (Hosted Control Plane) Virtual Cluster
 :description: Create an HCP virtual cluster by setting up external worker nodes and configuring the control plane in the host cluster
-:revdate: 2026-07-07
+:revdate: 2026-11-23
 :page-revdate: {revdate}
+:experimental:
 
 In *HCP* (Hosted Control Plane) mode, K3k runs an agentless K3s control plane inside the host cluster, while you provide your own external worker nodes that join the cluster using the standard K3s installer script.
 
@@ -12,6 +13,8 @@ This is different from `shared` and `virtual` modes:
 * In *hcp* mode, only the control plane runs inside the host cluster -- worker nodes live outside it, on machines that you manage.
 
 See xref:../architecture.adoc#_hcp_mode[Architecture: HCP Mode] for a deeper explanation, and xref:../how-tos-for-admin/choose-mode.adoc[Choosing a Mode] for guidance on when to pick HCP.
+
+You can create an HCP virtual cluster with a `Cluster` resource, with `k3kcli`, or from the {rancher-product-name} UI. For the UI flow, see <<_create_an_hcp_virtual_cluster_from_the_rancher_ui>>.
 
 [WARNING]
 ====
@@ -110,6 +113,111 @@ kubectl get nodes
 ----
 
 Each external worker should appear in the output with status `Ready`.
+
+[#_create_an_hcp_virtual_cluster_from_the_rancher_ui]
+== Create an HCP virtual cluster from the Rancher UI
+
+The Virtual Clusters UI extension for {rancher-product-name} can provision an HCP virtual cluster and display the registration command for your external worker nodes. The result is the same as with the CLI and CRD methods:
+
+* The control plane runs in the host cluster.
+* The API server is exposed outside the host cluster.
+* You join external worker nodes with the K3s installer.
+
+[#_ui_prerequisites]
+=== Prerequisites
+
+* {rancher-product-name}. The Virtual Clusters UI extension is only available in {rancher-product-name}.
+* The Virtual Clusters UI extension installed, at a version that includes HCP mode. The v1.3.0 extension requires {rancher-product-name} v2.16.0 or later.
+* A host cluster managed by {rancher-product-name} with the K3k controller v1.2.0 or later installed. The *HCP (Hosted Control Plane)* mode option is not shown for host clusters that run an earlier K3k version.
+* Permission to read resources in the host cluster. The registration command is read from the host cluster. Without access, the *Registration* tab shows `You do not have access to the host cluster, so the registration command cannot be shown`.
+* External Linux machines that meet the requirements listed in <<_prerequisites>>.
+
+[#_ui_create_cluster]
+=== Create the cluster
+
+. In {rancher-product-name}, select menu:Cluster Management[Clusters] and click btn:[Create].
+. Under *Create a Virtual Cluster*, click btn:[K3K].
+. Enter a name for the cluster.
+. In the *Basics* section, configure the following fields:
+.. *Host cluster*: select the host cluster that runs the K3k controller.
+.. *Virtual Cluster Policy*: select *No policy*, or a policy whose allowed mode is HCP.
++
+When you select a policy, the *Virtual cluster mode* option is hidden and the policy sets the mode.
+.. *K3s Version*: optionally select a K3s version.
++
+By default, the virtual cluster uses the same Kubernetes version as the host cluster.
+.. *Virtual cluster mode*: select *HCP (Hosted Control Plane)*.
++
+In HCP mode, the form shows `Not available in HCP mode` for settings that do not apply to external worker nodes. These settings include *Resource Synchronization*, *Agents*, and *Agent Scheduling*.
+. In the *Server and Agents* section, under *Server*, set *Number of Server Pods*.
++
+This field corresponds to `spec.servers`. Agent pod settings are not available, because worker nodes are external.
+. In the *Networking* section, under *Certificates*, click btn:[Add alternative name].
+. Enter a non-loopback IP address or DNS name of the host cluster that your external workers can reach.
++
+This value is added to `spec.tlsSANs`.
++
+[IMPORTANT]
+.Workers need a reachable TLS Subject Alternative Name
+====
+External workers only accept the API server certificate for hosts listed in the TLS Subject Alternative Names. Without a reachable entry, workers fail TLS verification and cannot join.
+
+Add at least one non-loopback host that the workers can reach.
+====
+. Under *Direct API Server Exposure*, select *Ingress*, *Load Balancer*, or *Node Port*.
++
+HCP mode requires one of these options. If you leave *Not Exposed* selected, the form shows `In HCP mode, worker nodes outside the host cluster must be able to reach the API server. Select Ingress, Load Balancer or Node Port.`
++
+* *Node Port*: optionally set *Server Port*.
+* *Load Balancer*: optionally set *Server Port*. A custom server port requires K3k v1.3.0 or later on the host cluster. With earlier versions, the field is disabled.
+* *Ingress*: set *Ingress Class Name*. With this option, *TLS Subject Alternative Names* is mandatory.
+. Optionally, configure the remaining sections, such as *Topology* > *Server Scheduling* and *Advanced*.
+. Click btn:[Create].
+
+After the cluster is created, {rancher-product-name} opens the cluster detail page instead of the cluster list.
+
+[#_ui_register_workers]
+=== Register external worker nodes
+
+. On the cluster detail page, select the *Registration* tab.
++
+This tab is only shown for HCP virtual clusters.
++
+While the cluster provisions, the tab shows `Waiting for the virtual cluster to provision. The command will be available when its token, K3s version and server address are ready.` The command is displayed automatically when it is ready.
+. Optionally, expand *Advanced command options* to add per-node settings to the command.
+These values often differ for each node, so update them before you copy the command for each worker:
+* *Node name*: adds `--node-name`.
+* *Node public IP*: adds `--node-external-ip`.
+* *Node private IP*: adds `--node-ip`.
+* *Node labels*: click btn:[Add node label] to add `--node-label key=value`.
+* *Taints*: click btn:[Add taint] to add `--node-taint key=value:effect`. The default effect is `NoSchedule`.
+* *Insecure*: adds `--insecure` to `curl`, which skips TLS verification when downloading the install script.
+. Click the command under *Registration command* to copy it.
++
+Do not select the command text manually. A manual selection can join the arguments without spaces.
++
+The command has the following form:
++
+[,sh]
+----
+curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=<k3s-version> K3S_URL=https://<host>:<port> K3S_TOKEN=<token> sh -
+----
++
+* `INSTALL_K3S_VERSION` matches the K3s version of the virtual cluster.
+* `<host>` is the load balancer address when the API server is exposed with *Load Balancer*. Otherwise, it is the first non-loopback entry of the TLS Subject Alternative Names. If there is no such entry, it is the internal IP of a host node that runs a server pod. This IP must be listed in the server certificate.
+* `<port>` is the node port when the API server is exposed with *Node Port*. Otherwise, it is the service port.
+* `<token>` is the join token of the virtual cluster. You do not need to retrieve it from the Secret.
+. Run the copied command on each external Linux machine you want to register. Only worker nodes can be registered.
+
+If the UI finds no address that external workers can reach, the tab shows `No server address reachable by external workers was found. Expose the API server with an ingress, load balancer or node port, and add an address the workers can reach to the virtual cluster's TLS SANs.` Edit the cluster to add an exposure option or a TLS Subject Alternative Name.
+
+[#_ui_verify]
+=== Verify
+
+. In {rancher-product-name}, open the virtual cluster and go to its *Nodes* list.
+. Confirm that each external worker is listed and runs the expected K3s version.
+
+You can also download the kubeconfig of the virtual cluster from {rancher-product-name} and run `kubectl get nodes`. Each external worker should be listed with status `Ready`.
 
 == Troubleshooting
 
