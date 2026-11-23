@@ -1,7 +1,7 @@
 = VirtualClusterPolicy: Concepts
 :description: Learn how to define and enforce consistent configurations, security settings, and resource management rules for virtual clusters and Namespaces
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2025-11-18
+:revdate: 2026-11-23
 :page-revdate: {revdate}
 
 The `VirtualClusterPolicy` Custom Resource in K3k provides a way to define and enforce consistent configurations, security settings, and resource management rules for your virtual clusters and the Namespaces they operate within.
@@ -166,6 +166,28 @@ The value used is the same as the `spec.affinity` field from pods.
 If set, this value overrides any value set on the cluster CR directly.
 
 For more information, see k8s docs: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity
+
+=== Allowing custom host schedulers (`allowedHostSchedulers`)
+
+In shared mode, workloads can request a scheduler running on the host cluster with the `k3k.io/host-scheduler-name` Pod annotation. The `allowedHostSchedulers` field lists the host schedulers that virtual clusters in bound Namespaces can request. Pods that request a scheduler not in the list are not synced to the host cluster.
+
+If set, this value overrides the `allowedHostSchedulers` value set on the cluster CR directly.
+
+*Example:* Allow two custom host schedulers.
+
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: batch-policy
+spec:
+  allowedHostSchedulers:
+  - custom-scheduler
+  - gpu-scheduler
+----
+
+For more information, see xref:how-tos-for-admin/custom-host-scheduler.adoc[Using Custom Host Schedulers in Shared Mode].
 
 == Additional information
 
