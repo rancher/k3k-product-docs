@@ -1,6 +1,6 @@
 = Resource Sync
 :description: Learn which resources K3k syncs between virtual and host clusters, why, and how to control sync behavior
-:revdate: 2026-04-29
+:revdate: 2026-11-23
 :page-revdate: {revdate}
 
 In `shared` mode, K3k virtual clusters run their workloads directly on the host cluster
@@ -101,8 +101,9 @@ spec:
   sync:
     configMaps:
       enabled: true
-      selector:
-        app: my-application
+      labelSelector:
+        matchLabels:
+          app: my-application
 ----
 
 === Secrets
@@ -131,8 +132,9 @@ spec:
   sync:
     secrets:
       enabled: true
-      selector:
-        sync-enabled: "true"
+      labelSelector:
+        matchLabels:
+          sync-enabled: "true"
 ----
 
 === PersistentVolumeClaims
@@ -284,7 +286,8 @@ Add `+k3k.io/sync-enabled+` label to StorageClasses on the host to control sync
 
 *Cluster-Level Selector (Optional):*
 
-Further filter which StorageClasses appear in your virtual cluster based on labels
+Further filter which StorageClasses appear in your virtual cluster with the `labelSelector` field of `spec.sync.storageClasses`.
+K3k evaluates the selector against the labels of the StorageClasses on the host cluster.
 
 *When to use:*
 
@@ -320,7 +323,7 @@ metadata:
 provisioner: custom.csi.driver
 ----
 
-*Example - Sync only specific StorageClasses using selector:*
+*Example - Sync only specific StorageClasses using a label selector:*
 
 [source,yaml]
 ----
@@ -343,8 +346,9 @@ spec:
   sync:
     storageClasses:
       enabled: true
-      selector:
-        tier: premium  # Only sync StorageClasses with tier=premium label
+      labelSelector:
+        matchLabels:
+          tier: premium  # Only sync StorageClasses with tier=premium label
 ----
 
 == Configuration Options
@@ -386,6 +390,9 @@ This is ideal for multi-tenant environments where you want consistent behavior.
 *Policy overrides cluster configuration:*
 
 When a policy is applied, its sync settings take precedence over individual cluster settings.
+The `sync` configuration of the policy replaces the `sync` configuration of the cluster as a whole.
+K3k doesn't merge the two, so label selectors defined in the cluster are ignored.
+Resource types that the policy doesn't list use their default settings.
 
 [source,yaml]
 ----
@@ -402,16 +409,33 @@ spec:
       enabled: true  # Enable external access for production
     storageClasses:
       enabled: true
-      selector:
-        tier: premium  # Only premium storage in production
+      labelSelector:
+        matchLabels:
+          tier: premium  # Only premium storage in production
 ----
 
 All clusters in the `+prod-clusters+` namespace inherit these settings.
 
-=== Using Label Selectors
+[#_using_label_selectors]
+=== Using label selectors
 
-Label selectors let you sync only specific resources based on labels.
-An empty selector syncs all resources of that type.
+Label selectors let you sync only specific resources based on their labels.
+Every resource type in `spec.sync` accepts a `labelSelector` field: `services`, `endpointSlices`, `configMaps`, `secrets`, `ingresses`, `persistentVolumeClaims`, `priorityClasses` and `storageClasses`.
+The same field is available in the `sync` configuration of a VirtualClusterPolicy.
+
+The `labelSelector` field uses the standard Kubernetes label selector format, with two optional fields:
+
+* `matchLabels`: A map of `key: value` pairs. A resource matches when it has every listed label with the exact value.
+* `matchExpressions`: A list of set-based requirements. Each requirement has a `key` and an `operator`.
+Depending on the operator, it also has a list of `values`.
+The supported operators are:
+** `In`: The label value is one of the listed values.
+** `NotIn`: The label is absent, or its value is not one of the listed values.
+** `Exists`: The resource has the label, regardless of its value. Don't set `values`.
+** `DoesNotExist`: The resource doesn't have the label. Don't set `values`.
+
+When you set both `matchLabels` and `matchExpressions`, a resource must satisfy all of them to be synced.
+An empty or omitted `labelSelector` syncs all resources of that type.
 
 *Example - Environment-specific ConfigMaps:*
 
@@ -421,8 +445,9 @@ spec:
   sync:
     configMaps:
       enabled: true
-      selector:
-        environment: production
+      labelSelector:
+        matchLabels:
+          environment: production
 ----
 
 *Example - CSI-specific StorageClasses:*
@@ -433,6 +458,84 @@ spec:
   sync:
     storageClasses:
       enabled: true
+      labelSelector:
+        matchLabels:
+          csi-driver: aws-ebs
+----
+
+*Example - Set-based selection with `matchExpressions`:*
+
+The following configuration syncs only the Secrets whose `env` label is `prod` or `staging`, and that don't have the `skip-sync` label:
+
+[source,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: my-cluster
+spec:
+  sync:
+    secrets:
+      enabled: true
+      labelSelector:
+        matchExpressions:
+        - key: env
+          operator: In
+          values:
+          - prod
+          - staging
+        - key: skip-sync
+          operator: DoesNotExist
+----
+
+For more information on the selector syntax, refer to the https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#label-selectors[Kubernetes label selectors documentation].
+
+*Invalid label selectors:*
+
+K3k validates the `labelSelector` fields of the cluster and of its VirtualClusterPolicy.
+For example, an unknown operator or an `Exists` requirement that sets `values` is invalid.
+If a selector is invalid, the cluster moves to the `Pending` phase, and its `Ready` condition is set to `False` with the `ValidationFailed` reason.
+The condition message identifies the invalid field, for example `sync.secrets.labelSelector is invalid`.
+
+[#_deprecated_selector_field]
+==== Deprecated `selector` field
+
+[IMPORTANT]
+.The `selector` field is deprecated
+====
+The `selector` field of each resource type in `spec.sync` is deprecated and will be removed in a future release.
+When the field is removed, filters defined with `selector` will no longer apply.
+
+To avoid this, use `labelSelector` instead.
+====
+
+The `selector` field only supports equality-based matching on a map of labels.
+It still works in this release.
+If you set both `selector` and `labelSelector` for the same resource type, K3k combines them: a resource must match both to be synced.
+
+To migrate, move the labels of the `selector` map under `labelSelector.matchLabels`.
+
+*Before - Deprecated `selector` field:*
+
+[source,yaml]
+----
+spec:
+  sync:
+    configMaps:
+      enabled: true
       selector:
-        csi-driver: aws-ebs
+        app: my-application
+----
+
+*After - `labelSelector` field:*
+
+[source,yaml]
+----
+spec:
+  sync:
+    configMaps:
+      enabled: true
+      labelSelector:
+        matchLabels:
+          app: my-application
 ----

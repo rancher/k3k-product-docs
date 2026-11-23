@@ -1,7 +1,7 @@
 = Architecture
 :description: Learn about K3s virtual cluster architecture, including shared mode, Virtual HCP, and how K3s functions as the control plane
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-10-15
+:revdate: 2026-11-23
 :page-revdate: {revdate}
 
 Virtual Clusters are isolated Kubernetes clusters provisioned on a physical cluster. K3k leverages link:https://k3s.io/[K3s] as the control plane of the Kubernetes cluster because of its lightweight footprint.
@@ -94,7 +94,7 @@ Additionally, synchronization for the following resources is supported but disab
 
 *Configuration*
 
-You can configure resource synchronization within your virtual cluster's Cluster Custom Resource (CR) under the `spec.sync` field. Each supported resource type includes a selector field to filter which resources get synced by label.
+You can configure resource synchronization within your virtual cluster's Cluster Custom Resource (CR) under the `spec.sync` field. Each supported resource type includes a `labelSelector` field to filter which resources get synced by label. For details, see xref:resource-sync.adoc#_using_label_selectors[Using label selectors].
 
 *Storage and Persistent Volume Claims (PVCs)*
 
