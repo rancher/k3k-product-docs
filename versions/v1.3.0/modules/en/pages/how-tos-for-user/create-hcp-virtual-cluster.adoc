@@ -16,11 +16,6 @@ See xref:../architecture.adoc#_hcp_mode[Architecture: HCP Mode] for a deeper exp
 
 You can create an HCP virtual cluster with a `Cluster` resource, with `k3kcli`, or from the {rancher-product-name} UI. For the UI flow, see <<_create_an_hcp_virtual_cluster_from_the_rancher_ui>>.
 
-[WARNING]
-====
-HCP mode is *experimental* in {product-name} v1.2.0. The `k3kcli` prints a warning when this mode is used. The API and behavior may change before HCP is declared stable.
-====
-
 == Prerequisites
 
 * A K3k controller installed on the host cluster (see xref:../quickstart.adoc[Quick Start]).
