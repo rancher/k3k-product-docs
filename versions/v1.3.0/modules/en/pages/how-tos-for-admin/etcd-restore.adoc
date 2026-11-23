@@ -134,7 +134,7 @@ The restore pods use the same scheduling constraints as the server pods of the v
 
 Each restore `Job` is retried up to three times before the `Job` is marked as failed.
 
-== Deleting an EtcdRestore
+== Delete an EtcdRestore
 
 The restore jobs and the S3 configuration `Secret` of a restore are owned by the `EtcdRestore`. Deleting the `EtcdRestore` also deletes these resources. While a restore job is still running, a finalizer prevents the deletion of the `EtcdRestore`. The deletion completes after all restore jobs finish.
 

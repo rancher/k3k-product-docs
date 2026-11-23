@@ -21,7 +21,7 @@ Snapshots are only supported for virtual clusters that use the default embedded 
 [#_create_a_local_snapshot]
 == Create a local snapshot
 
-. Create an `EtcdSnapshot` resource that references the target cluster by name. The snapshot is saved to the local disk of the server:
+. Create a manifest file named `my-cluster-snapshot.yaml` with an `EtcdSnapshot` resource that references the target cluster by name:
 +
 [source,yaml]
 ----
@@ -33,21 +33,16 @@ metadata:
 spec:
   clusterRef:
     name: my-cluster
+  compress: true # optional, compresses the snapshot file
 ----
-
-. Optional: Set `spec.compress: true` to compress the snapshot file:
 +
-[source,yaml]
+The `compress` field is optional and defaults to `false`.
+
+. Apply the manifest. The snapshot is saved to the local disk of the server:
++
+[source,bash]
 ----
-apiVersion: k3k.io/v1beta1
-kind: EtcdSnapshot
-metadata:
-  name: my-cluster-snapshot-compressed
-  namespace: test-k3k
-spec:
-  clusterRef:
-    name: my-cluster
-  compress: true
+kubectl apply --filename my-cluster-snapshot.yaml
 ----
 
 The `clusterRef`, `s3ConfigSecretRef` and `compress` fields are immutable after the `EtcdSnapshot` is created. To change any of these values, delete the resource and create a new one.
@@ -79,7 +74,7 @@ The keys of the secret match the link:https://docs.k3s.io/cli/etcd-snapshot#s3-c
 | `etcd-s3-endpoint-ca-name` | Name of a `ConfigMap` that contains CA bundles for the S3 endpoint. The `ConfigMap` must be in the same namespace as the secret.
 |===
 
-. Create the `Secret` in the same namespace as the `EtcdSnapshot`:
+. Create a manifest file named `etcd-s3-config.yaml` with a `Secret` in the same namespace as the `EtcdSnapshot`:
 +
 [source,yaml]
 ----
@@ -98,7 +93,7 @@ stringData:
   etcd-s3-region: us-east-1
 ----
 
-. Create an `EtcdSnapshot` resource that references the secret in `spec.s3ConfigSecretRef`:
+. Create a manifest file named `my-cluster-s3-snapshot.yaml` with an `EtcdSnapshot` resource that references the secret in `spec.s3ConfigSecretRef`:
 +
 [source,yaml]
 ----
@@ -112,6 +107,13 @@ spec:
     name: my-cluster
   s3ConfigSecretRef:
     name: etcd-s3-config
+----
+
+. Apply both manifests:
++
+[source,bash]
+----
+kubectl apply --filename etcd-s3-config.yaml --filename my-cluster-s3-snapshot.yaml
 ----
 
 [NOTE]
