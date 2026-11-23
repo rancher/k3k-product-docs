@@ -134,7 +134,8 @@ spec:
 ----
 
 You can also set `+spec.sync.endpointSlices+` in a VirtualClusterPolicy.
-When a policy is applied, its setting takes precedence over the cluster setting.
+When a policy is applied, the `+sync+` block of the policy replaces the `+sync+` block of the cluster as a whole.
+If the policy doesn't enable `+endpointSlices+`, EndpointSlices aren't synced, even when the cluster enables them.
 For more information, see <<_policy_level_configuration>>.
 
 === ConfigMaps
