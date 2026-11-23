@@ -203,4 +203,4 @@ The host Pod keeps the node selector and node affinity set by the Virtual Kubele
 == Additional information
 
 * For the full list of `Cluster` and `VirtualClusterPolicy` fields, see xref:references/crds.adoc[Custom Resource Definitions (CRDs)].
-* For guidance on choosing a mode, see xref:how-tos-for-admin/choose-mode.adoc[Choosing between Shared and Virtual Mode].
+* For guidance on choosing a mode, see xref:how-tos-for-admin/choose-mode.adoc[How to Choose Between Shared, Virtual, and HCP Mode].
