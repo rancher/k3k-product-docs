@@ -1,6 +1,6 @@
 = Resource Sync
 :description: Learn which resources K3k syncs between virtual and host clusters, why, and how to control sync behavior
-:revdate: 2026-04-29
+:revdate: 2026-11-23
 :page-revdate: {revdate}
 
 In `shared` mode, K3k virtual clusters run their workloads directly on the host cluster
@@ -16,7 +16,7 @@ This guide explains what resources are synced, why, and how to control sync beha
 By default, K3k syncs the essential resources needed for your workloads to run:
 
 - *Enabled:* Services, ConfigMaps, Secrets, PersistentVolumeClaims
-- *Disabled:* Ingresses, PriorityClasses, StorageClasses
+- *Disabled:* EndpointSlices, Ingresses, PriorityClasses, StorageClasses
 
 [IMPORTANT] 
 ====
@@ -75,6 +75,67 @@ available on the host cluster so traffic can reach your pods.
 - Required for ClusterIP, LoadBalancer, and NodePort services
 - Disabling this will break networking for your workloads
 - only disable if you know what you're doing
+
+[#_endpointslices]
+=== EndpointSlices
+
+*Default: Disabled* | *Direction: Virtual → Host*
+
+EndpointSlices list the network endpoints (IP addresses and ports) that back a Service.
+Kubernetes normally creates and manages them automatically for Services that have a selector.
+For a Service without a selector, you create and manage its EndpointSlices yourself.
+When EndpointSlice sync is enabled, K3k syncs these manually managed EndpointSlices to the host cluster.
+The synced Service on the host then routes traffic to the endpoints you defined.
+
+*What gets synced:*
+
+K3k syncs only EndpointSlices that meet all of the following conditions:
+
+- They have the `+kubernetes.io/service-name+` label.
+- They are not managed by the Kubernetes EndpointSlice controller (the `+endpointslice.kubernetes.io/managed-by+` label is not `+endpointslice-controller.k8s.io+`).
+- They match the configured `+selector+` and `+labelSelector+`, if set.
+
+On the host, K3k translates the EndpointSlice name, the `+kubernetes.io/service-name+` label and any endpoint `+targetRef+` to the corresponding host resource names.
+
+[IMPORTANT]
+.EndpointSlice sync requires Services sync
+====
+If either `+services+` or `+endpointSlices+` sync is disabled, K3k does not sync new or updated EndpointSlices.
+It only removes the host copy when you delete the EndpointSlice in the virtual cluster.
+
+To sync EndpointSlices, enable both `+services+` and `+endpointSlices+` sync.
+====
+
+*Why disabled by default:*
+
+Most Services use a selector, and Kubernetes already generates their EndpointSlices.
+Enable this sync only when you manage EndpointSlices manually.
+
+*When to use:*
+
+- Services without a selector that point to external endpoints or to endpoints you manage yourself
+- A Service with multiple manually defined EndpointSlices, for example, for multiple endpoint IP addresses or ports
+- Kubernetes conformance tests in `shared` mode that rely on manually managed EndpointSlices
+
+*Example:*
+
+[source,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: my-cluster
+spec:
+  sync:
+    services:
+      enabled: true  # Required for EndpointSlice sync
+    endpointSlices:
+      enabled: true
+----
+
+You can also set `+spec.sync.endpointSlices+` in a VirtualClusterPolicy.
+When a policy is applied, its setting takes precedence over the cluster setting.
+For more information, see <<_policy_level_configuration>>.
 
 === ConfigMaps
 
@@ -364,6 +425,8 @@ spec:
   sync:
     services:
       enabled: true
+    endpointSlices:
+      enabled: false  # Disabled by default
     configMaps:
       enabled: true
     secrets:
