@@ -1,0 +1,155 @@
+= Restoring a Virtual Cluster from an Etcd Snapshot
+:description: Restore the embedded etcd datastore of a Kubernetes virtual cluster from a local or S3 etcd snapshot using the EtcdRestore custom resource
+:revdate: 2026-11-23
+:page-revdate: {revdate}
+
+{k3k-product-name} restores the datastore of a virtual cluster from an existing xref:how-tos-for-admin/etcd-snapshots.adoc[etcd snapshot] when you create an `EtcdRestore` resource. An `EtcdRestore` is a one-time restore request. The request references the virtual cluster to restore and the `EtcdSnapshot` to restore from.
+
+The restore uses the link:https://docs.k3s.io/datastore/backup-restore[K3s cluster reset and restore] feature. During the restore, {k3k-product-name} performs the following actions:
+
+. Sets the cluster phase to `Restoring` and stores the `EtcdRestore` name in the `status.activeRestoreRef` field of the cluster.
+. Scales the server pods of the virtual cluster down to zero.
+. Creates one restore `Job` for each server, with the same K3s image as the servers:
+** The `Job` of the first server runs `k3s server --cluster-reset --cluster-reset-restore-path` with the snapshot. The first server is `server-0`.
+** The `Job` of each additional server deletes the datastore and TLS directories of the server. The server then rejoins the restored cluster.
+. After all restore jobs complete, marks the restore as completed and sets the cluster phase back to `Ready`. The servers then scale back up to their original count.
+
+[WARNING]
+.Changes made after the snapshot are lost
+====
+A restore replaces the full datastore of the virtual cluster. Any change made to the virtual cluster after the snapshot was taken is lost. The API server of the virtual cluster is unavailable while the restore is in progress.
+
+Before you restore, make sure that the selected snapshot contains the state you need.
+====
+
+== Prerequisites
+
+* A virtual cluster that uses `dynamic` persistence. The restore jobs mount the persistent volume claims of the server pods, so clusters that use `ephemeral` persistence cannot be restored.
+* An `EtcdSnapshot` of the same virtual cluster, in the same namespace, with a populated `status.filename` field. For more information, see xref:how-tos-for-admin/etcd-snapshots.adoc[Creating Etcd Snapshots of a Virtual Cluster].
+* For snapshots uploaded to S3, the `Secret` referenced by the `s3ConfigSecretRef` field of the `EtcdSnapshot`.
+
+[#_restore_a_snapshot]
+== Restore a snapshot
+
+. Find the snapshot to restore and check that its `FILE NAME` column is populated:
++
+[source,bash]
+----
+kubectl get etcdsnapshots --namespace test-k3k
+----
+
+. Create an `EtcdRestore` manifest in the namespace of the cluster and the snapshot. Set `spec.clusterRef` to the cluster and `spec.snapshotRef` to the snapshot:
++
+[source,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: EtcdRestore
+metadata:
+  name: my-cluster-restore
+  namespace: test-k3k
+spec:
+  clusterRef:
+    name: my-cluster
+  snapshotRef:
+    name: my-cluster-snapshot
+----
+
+. Apply the manifest:
++
+[source,bash]
+----
+kubectl apply --filename my-cluster-restore.yaml
+----
+
+The `clusterRef` and `snapshotRef` fields are immutable after the `EtcdRestore` is created. To restore a different snapshot, create a new `EtcdRestore` resource.
+
+The restore process is the same for local snapshots and S3 snapshots. For a local snapshot, the restore job reads the snapshot file from the persistent volume of the first server, where the snapshot was taken. For an `EtcdSnapshot` that uses `s3ConfigSecretRef`, {k3k-product-name} copies the S3 configuration into a `Secret` owned by the `EtcdRestore`. The restore job of the first server then downloads the snapshot from the S3 bucket.
+
+=== Multiple restore requests
+
+A virtual cluster processes one `EtcdRestore` at a time. If several pending `EtcdRestore` resources reference the same cluster, {k3k-product-name} processes them one after the other, starting with the oldest. A completed or failed `EtcdRestore` never runs again. To repeat a restore, create a new `EtcdRestore` resource.
+
+[#_verification]
+== Verification
+
+* While the restore runs, the cluster is in the `Restoring` phase. The `Ready` condition of the cluster is `False` with reason `Restoring`:
++
+[source,bash]
+----
+kubectl get clusters.k3k.io my-cluster --namespace test-k3k
+----
++
+The `status.activeRestoreRef` field of the cluster contains the name of the `EtcdRestore` in progress. The field is cleared when the restore completes or fails.
+
+* The `SUCCEEDED` and `REASON` columns show the result of the restore:
++
+[source,bash]
+----
+kubectl get etcdrestores --namespace test-k3k
+----
++
+[cols="20a,20a,60a", options="header"]
+|===
+| `SUCCEEDED` | `REASON` | Description
+| `Unknown` | `RestoreInProgress` | The servers are scaling down or the restore jobs are running. The condition message describes the current step.
+| `True` | `RestoreCompleted` | The restore completed. The cluster returns to the `Ready` phase.
+| `False` | `SnapshotValidationFailed` | The `EtcdSnapshot` does not exist, belongs to a different cluster, or has no valid `status.filename` field.
+| `False` | `PersistenceValidationFailed` | The cluster does not use `dynamic` persistence.
+| `False` | `RestoreFailed` | A restore `Job` failed. The condition message contains the failure message of the `Job`.
+|===
+
+* To view the full condition and its message, check the `EtcdRestore` status:
++
+[source,bash]
+----
+kubectl get etcdrestore my-cluster-restore --namespace test-k3k --output yaml
+----
++
+[source,yaml]
+----
+status:
+  conditions:
+  - type: Succeeded
+    status: "True"
+    reason: RestoreCompleted
+    message: Completed restore of my-cluster-snapshot snapshot
+----
+
+* To follow the restore jobs, list the `Job` resources in the namespace of the cluster. The jobs are named `k3k-<cluster-name>-restore-<restore-name>-<server-index>`:
++
+[source,bash]
+----
+kubectl get jobs --namespace test-k3k
+kubectl logs --namespace test-k3k job/k3k-my-cluster-restore-my-cluster-restore-0
+----
+
+When a restore fails, the cluster moves to the `Failed` phase and a `Warning` event is recorded on the cluster. The `Ready` condition of the cluster is set to `False` with reason `RestoringFailed`.
+
+== Scheduling of the restore pods
+
+The restore pods use the same scheduling constraints as the server pods of the virtual cluster:
+
+* The priority class of the cluster, set in `spec.priorityClass`. If a `VirtualClusterPolicy` with a `defaultPriorityClass` applies to the namespace, the restore pods use the priority class of the policy instead.
+* The node selector and the server affinity of the cluster, or the ones enforced by the `VirtualClusterPolicy`.
+
+Each restore `Job` is retried up to three times before the `Job` is marked as failed.
+
+== Deleting an EtcdRestore
+
+The restore jobs and the S3 configuration `Secret` of a restore are owned by the `EtcdRestore`. Deleting the `EtcdRestore` also deletes these resources. While a restore job is still running, a finalizer prevents the deletion of the `EtcdRestore`. The deletion completes after all restore jobs finish.
+
+Deleting an `EtcdRestore` does not revert the restore and does not delete the referenced `EtcdSnapshot`.
+
+The `EtcdRestore` custom resource definition is annotated with `helm.sh/resource-policy=keep`. Uninstalling the {k3k-product-name} Helm chart does not delete the custom resource definition, so existing `EtcdRestore` resources are kept.
+
+== Limitations
+
+* Only clusters that use `dynamic` persistence can be restored.
+* An `EtcdRestore` can only restore a snapshot taken from the same virtual cluster. Restoring a snapshot into a different virtual cluster is not supported.
+* Clusters configured with an xref:how-tos-for-admin/external-datastore.adoc[external datastore] do not run an embedded etcd. You cannot create an `EtcdSnapshot` of these clusters or restore them with an `EtcdRestore`. Use the backup and restore tools of the external datastore instead.
+* Snapshot and restore support for xref:how-tos-for-user/create-hcp-virtual-cluster.adoc[HCP mode] virtual clusters has not yet reached parity with the shared and virtual modes. {k3k-product-name} does not reject an `EtcdRestore` for an HCP mode cluster, but this guide does not cover that scenario.
+
+== Related links
+
+* For more information on the full field list, see `EtcdRestore`, `EtcdRestoreSpec`, `EtcdRestoreStatus`, and `ClusterStatus` in the xref:references/crds.adoc[CRD reference].
+* For more information on creating snapshots, see xref:how-tos-for-admin/etcd-snapshots.adoc[Creating Etcd Snapshots of a Virtual Cluster].
