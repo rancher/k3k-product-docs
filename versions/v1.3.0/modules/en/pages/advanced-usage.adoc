@@ -192,7 +192,7 @@ When the cluster is exposed with a `LoadBalancer`, K3k does the following:
 * Generates a kubeconfig that points to the first load-balancer address, using `serverPort` if it is set or `443` otherwise.
 * Rolls out the server pods when the load-balancer address changes or when you switch the expose type, because K3s reads its TLS SANs only at startup.
 
-`k3kcli cluster create` always exposes the cluster with a `NodePort` and has no flag for `expose.loadBalancer`. To use a `LoadBalancer`, create the `Cluster` resource with a manifest. A `VirtualClusterPolicy` cannot set the expose configuration.
+`k3kcli cluster create` always exposes the cluster with a `NodePort` and has no flag for `expose.loadBalancer`. To use a `LoadBalancer`, create the `Cluster` resource with a manifest, or select *Load Balancer* under *Direct API Server Exposure* in the Rancher UI. The Rancher UI sets the ports but not `loadBalancerClass`, so set `loadBalancerClass` with a manifest. A `VirtualClusterPolicy` cannot set the expose configuration.
 
 === `clusterCIDR`
 
