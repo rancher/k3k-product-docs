@@ -1,7 +1,7 @@
 = Adding custom certificates to k3s from k3k cluster
 :description: Add custom certificates to k3s from a k3s cluster by generating them with a script, copying to a local directory, and using the path
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2025-09-16
+:revdate: 2026-11-23
 :page-revdate: {revdate}
 
 == Generate and add the custom certificates
@@ -23,20 +23,31 @@
 +
 ----
 $ k3kcli cluster create --namespace virtual-ns --persistence-type ephemeral --version v1.33.3-k3s1 --mode virtual --custom-certs /home/ubuntu/k3k/custom-certs/tls mdvirtcl1
-INFO[0000] Creating cluster [mdvirtcl1] in namespace [virtual-ns]
-INFO[0000] Waiting for cluster to be available..
-INFO[0070] Extracting Kubeconfig for [mdvirtcl1] cluster
-INFO[0070] certificate CN=system:admin,O=system:masters signed by CN=k3s-client-ca@1756155858: notBefore=2025-08-25 21:04:18 +0000 UTC notAfter=2026-08-25 21:06:55 +0000 UTC
-INFO[0070] You can start using the cluster with:
+INFO[0000] Creating cluster 'mdvirtcl1' in namespace 'virtual-ns'
+INFO[0001] Cluster details:
+  Mode: virtual
+  Servers: 1
+  Version: v1.33.3-k3s1 (Host: v1.33.3)
+  Persistence:
+    Type: ephemeral
+INFO[0001] Waiting for cluster to be available..
+INFO[0070] Extracting Kubeconfig for 'mdvirtcl1' cluster
+WARN[0070] Writing a kubeconfig to the current directory is deprecated and will be removed in a future release. The cluster is now added as a context to your kubeconfig. Use --out to keep writing a standalone kubeconfig, or --no-out to silence this warning.
+INFO[0070] Wrote a standalone kubeconfig to '/home/ubuntu/virtual-ns-mdvirtcl1-kubeconfig.yaml'
+INFO[0070] Added the 'virtual-ns/mdvirtcl1' context in the current kubeconfig (/home/ubuntu/.kube/config)
 
-	export KUBECONFIG=/home/ubuntu/virtual-ns-mdvirtcl1-kubeconfig.yaml
+You can start using the cluster with:
+
+	kubectl config use-context virtual-ns/mdvirtcl1
 	kubectl cluster-info
 ----
++
+To create only the context, without the standalone kubeconfig file, add `--no-out` to the command. For more information, see xref:advanced-usage.adoc#_managing_kubeconfig_contexts[Managing kubeconfig contexts].
 
-. k3k cluster:
+. Verify the newly created k3k cluster with the `virtual-ns/mdvirtcl1` context:
 +
 ----
-$ KUBECONFIG=/home/ubuntu/virtual-ns-mdvirtcl1-kubeconfig.yaml kubectl get nodes,pods -A
+$ kubectl --context virtual-ns/mdvirtcl1 get nodes,pods -A
 NAME                          STATUS   ROLES                       AGE   VERSION
 node/k3k-mdvirtcl1-server-0   Ready    control-plane,etcd,master   88s   v1.33.3+k3s1
 
@@ -146,21 +157,30 @@ service.key
 +
 ----
 $ k3kcli cluster create --namespace shared-ns --persistence-type ephemeral --version v1.33.3-k3s1 --mode shared --custom-certs /home/ubuntu/k3k/custom-certs/tls mdshcl1
-INFO[0000] Creating namespace [shared-ns]
-INFO[0000] Creating cluster [mdshcl1] in namespace [shared-ns]
-INFO[0000] Waiting for cluster to be available..
-INFO[0075] Extracting Kubeconfig for [mdshcl1] cluster
-INFO[0075] certificate CN=system:admin,O=system:masters signed by CN=k3s-client-ca@1756155858: notBefore=2025-08-25 21:04:18 +0000 UTC notAfter=2026-08-25 21:49:42 +0000 UTC
-INFO[0075] You can start using the cluster with:
+INFO[0000] Creating namespace 'shared-ns'
+INFO[0000] Creating cluster 'mdshcl1' in namespace 'shared-ns'
+INFO[0001] Cluster details:
+  Mode: shared
+  Servers: 1
+  Version: v1.33.3-k3s1 (Host: v1.33.3)
+  Persistence:
+    Type: ephemeral
+INFO[0001] Waiting for cluster to be available..
+INFO[0075] Extracting Kubeconfig for 'mdshcl1' cluster
+WARN[0075] Writing a kubeconfig to the current directory is deprecated and will be removed in a future release. The cluster is now added as a context to your kubeconfig. Use --out to keep writing a standalone kubeconfig, or --no-out to silence this warning.
+INFO[0075] Wrote a standalone kubeconfig to '/home/ubuntu/shared-ns-mdshcl1-kubeconfig.yaml'
+INFO[0075] Added the 'shared-ns/mdshcl1' context in the current kubeconfig (/home/ubuntu/.kube/config)
 
-	export KUBECONFIG=/home/ubuntu/shared-ns-mdshcl1-kubeconfig.yaml
+You can start using the cluster with:
+
+	kubectl config use-context shared-ns/mdshcl1
 	kubectl cluster-info
 ----
 
-. Verify the newly created k3k cluster:
+. Verify the newly created k3k cluster with the `shared-ns/mdshcl1` context:
 +
 ----
-$ KUBECONFIG=/home/ubuntu/shared-ns-mdshcl1-kubeconfig.yaml kubectl get nodes,pods -A
+$ kubectl --context shared-ns/mdshcl1 get nodes,pods -A
 NAME                                             STATUS   ROLES   AGE   VERSION
 node/ip-172-31-28-7.us-east-2.compute.internal   Ready    agent   84s   v1.33.3-k3s1
 

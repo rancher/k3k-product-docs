@@ -1,6 +1,6 @@
 = How to: Create an HCP (Hosted Control Plane) Virtual Cluster
 :description: Create an HCP virtual cluster by setting up external worker nodes and configuring the control plane in the host cluster
-:revdate: 2026-07-07
+:revdate: 2026-11-23
 :page-revdate: {revdate}
 
 In *HCP* (Hosted Control Plane) mode, K3k runs an agentless K3s control plane inside the host cluster, while you provide your own external worker nodes that join the cluster using the standard K3s installer script.
@@ -64,7 +64,7 @@ k3kcli cluster create \
   hcp-server
 ----
 
-The CLI prints an experimental-mode warning, waits for the cluster to become ready, writes a kubeconfig file, and then prints the instructions you'll need for Steps 2 and 3.
+The CLI prints an experimental-mode warning, waits for the cluster to become ready, and adds a `<namespace>/hcp-server` context to your current kubeconfig. It then prints the instructions you'll need for Steps 2 and 3.
 
 == Step 2: Fetch the join token
 
@@ -79,7 +79,7 @@ The token secret is named `<cluster-name>-token`. For the example above it would
 
 [NOTE]
 ====
-`k3kcli cluster create` and `k3kcli kubeconfig generate` print the exact command (with the correct namespace and secret name) for your cluster after the kubeconfig is written.
+`k3kcli cluster create` and `k3kcli kubeconfig generate` print the exact command for your cluster, with the correct namespace and secret name. The command is printed after the context is added to your kubeconfig.
 ====
 
 == Step 3: Join an external worker
@@ -100,14 +100,14 @@ Repeat on each worker you want to join. Make sure each one has a unique hostname
 
 == Verify
 
-Generate a kubeconfig for the virtual cluster (or use the one written by `k3kcli cluster create`):
+List the nodes of the virtual cluster using the context that `k3kcli cluster create` added to your kubeconfig:
 
 [,sh]
 ----
-k3kcli kubeconfig generate --namespace <namespace> --name hcp-server
-export KUBECONFIG=$PWD/hcp-server-kubeconfig.yaml
-kubectl get nodes
+kubectl --context <namespace>/hcp-server get nodes
 ----
+
+If the context is missing, add it with `k3kcli kubeconfig generate --no-out <namespace>/hcp-server`. For more information, see xref:advanced-usage.adoc#_managing_kubeconfig_contexts[Managing kubeconfig contexts].
 
 Each external worker should appear in the output with status `Ready`.
 
@@ -123,4 +123,4 @@ Confirm that `tlsSANs` contains the exact host the workers use to reach the apis
 The workers are sharing an IP (typically NAT). Give each worker a unique routable IP on a network segment the apiserver can reach back to, and a unique hostname.
 
 *Need a fresh kubeconfig or to re-print the join instructions* +
-Run `k3kcli kubeconfig generate --namespace <namespace> --name <cluster>` again -- the join instructions are re-printed each time.
+Run `k3kcli kubeconfig generate <namespace>/<cluster>` again -- the context in your kubeconfig is updated and the join instructions are re-printed each time.
