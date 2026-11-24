@@ -1,7 +1,7 @@
 [id="k3k-api-reference"]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 = APIリファレンス
-:revdate: 2026-08-26
+:revdate: 2026-11-18
 :page-revdate: {revdate}
 :anchor_prefix: k8s-api
 
@@ -16,6 +16,10 @@
 === リソースタイプ
 - xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-cluster[$$Cluster$$]
 - xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clusterlist[$$ClusterList$$]
+- xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdrestore[$$EtcdRestore$$]
+- xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdrestorelist[$$EtcdRestoreList$$]
+- xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdsnapshot[$$EtcdSnapshot$$]
+- xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdsnapshotlist[$$EtcdSnapshotList$$]
 - xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-virtualclusterpolicy[$$VirtualClusterPolicy$$]
 - xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-virtualclusterpolicylist[$$VirtualClusterPolicyList$$]
 
@@ -59,24 +63,41 @@ _表示される:_
 |===
 | フィールド | 説明 | デフォルト | 検証
 | *`name`* __string__| name は、このクラスターに現在適用されている VirtualClusterPolicy の名前です。 + |  | MinLength: 1 +
+Required: \{} +
 
-| *`priorityClass`* __string__| priorityClass は、アクティブな VirtualClusterPolicy によって適用される優先度クラスです。 + |  | 
-| *`nodeSelector`* __object (keys:string, values:string)__| nodeSelector は、アクティブな VirtualClusterPolicy によって適用されるノードセレクターです。 + |  | 
+| *`priorityClass`* __string__| priorityClass は、アクティブな VirtualClusterPolicy によって適用される優先度クラスです。 + |  | Optional: \{} +
+
+| *`nodeSelector`* __object (keys:string, values:string)__| nodeSelector は、アクティブな VirtualClusterPolicy によって適用されるノードセレクターです。 + |  | Optional: \{} +
+
 | *`serverAffinity`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#affinity-v1-core[$$Affinity$$]__| serverAffinity は、アクティブな VirtualClusterPolicy によって適用されるサーバーポッドのアフィニティルールです。 +
-これには、ノードアフィニティルールとポッドアフィニティ/アンチアフィニティルールの両方が含まれます。 + |  | 
+これには、ノードアフィニティルールとポッドアフィニティ/アンチアフィニティルールの両方が含まれます。 + |  | Optional: \{} +
+
 | *`agentAffinity`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#affinity-v1-core[$$Affinity$$]__| agentAffinity は、アクティブな VirtualClusterPolicy によって適用されるエージェントポッドのアフィニティルールです。 +
-これには、ノードアフィニティルールとポッドアフィニティ/アンチアフィニティルールの両方が含まれます。 + |  | 
-| *`sync`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-syncconfig[$$SyncConfig$$]__| sync は、アクティブな VirtualClusterPolicy によって適用される SyncConfig です。 + |  | 
+これには、ノードアフィニティルールとポッドアフィニティ/アンチアフィニティルールの両方が含まれます。 + |  | Optional: \{} +
+
+| *`sync`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-syncconfig[$$SyncConfig$$]__| sync は、アクティブな VirtualClusterPolicy によって適用される SyncConfig です。 + |  | Optional: \{} +
+
 | *`runtimeClassName`* __string__| RuntimeClassName は、virtual または shared モードのクラスターのエージェントおよび +
-サーバーポッドに対する代替のランタイムクラスを指定します。 + |  | 
+サーバーポッドに対する代替のランタイムクラスを指定します。 + |  | Optional: \{} +
+
 | *`podSecurityContext`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#podsecuritycontext-v1-core[$$PodSecurityContext$$]__| PodSecurityContext は、virtual または shared モードのクラスターのエージェントおよび +
-サーバーポッドに追加するカスタム SecurityContext を指定します。 + |  | 
+サーバーポッドに追加するカスタム SecurityContext を指定します。 + |  | Optional: \{} +
+
 | *`securityContext`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#securitycontext-v1-core[$$SecurityContext$$]__| SecurityContext は、virtual または shared モードのクラスターのエージェントおよび +
-サーバーコンテナーに追加するカスタムコンテナー SecurityContext を指定します。 + |  | 
+サーバーコンテナーに追加するカスタムコンテナー SecurityContext を指定します。 + |  | Optional: \{} +
+
 | *`hostUsers`* __ブール値__| HostUsers は、サーバーポッドおよびエージェントポッドのユーザー名前空間を設定します。 +
 true に設定されている場合、または指定されていない場合、ポッドはホストのユーザー名前空間で実行されます。 +
 false に設定されている場合、ポッド用に新しい userns が作成されます。 +
-このフィールドはアルファレベルであり、UserNamespacesSupport 機能を有効にしたサーバーでのみ有効です。 + |  | 
+このフィールドはアルファレベルであり、UserNamespacesSupport 機能を有効にしたサーバーでのみ有効です。 + |  | Optional: \{} +
+
+| *`allowedHostSchedulers`* __string array__| AllowedHostSchedulersは、ワークロードが"k3k.io/host-scheduler-name"アノテーションで +
+要求できるホストクラスターのスケジューラーのリストです。これは shared モードにのみ適用され、 +
+要求されたスケジューラーはホストクラスターに同期される Pod に設定されます。 +
+このリストにないスケジューラーを要求する Pod は同期されません。 +
+このリストはアノテーションとの照合にのみ使用され、Pod の spec.schedulerName フィールドとは +
+無関係です。spec.schedulerName フィールドは引き続き仮想クラスターによって処理されます。 + |  | Optional: \{} +
+
 |===
 
 
@@ -100,8 +121,10 @@ _表示される:_
 | *`apiVersion`* __string__| `k3k.io/v1beta1` |  | 
 | *`kind`* __string__| `Cluster` |  | 
 | *`metadata`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#objectmeta-v1-meta[$$ObjectMeta$$]__| `metadata`のフィールドについてはKubernetes APIドキュメントを参照してください。 |  | 
-| *`spec`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clusterspec[$$ClusterSpec$$]__| Specはクラスターの望ましい状態を定義します。 + | {  } | 
-| *`status`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clusterstatus[$$ClusterStatus$$]__| Statusは、クラスターの観測された状態を反映します。 + | {  } | 
+| *`spec`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clusterspec[$$ClusterSpec$$]__| Specはクラスターの望ましい状態を定義します。 + | {  } | Optional: \{} +
+
+| *`status`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clusterstatus[$$ClusterStatus$$]__| Statusは、クラスターの観測された状態を反映します。 + | {  } | Optional: \{} +
+
 |===
 
 
@@ -177,67 +200,106 @@ _表示される:_
 | フィールド | 説明 | デフォルト | 検証
 | *`version`* __string__| バージョンは、仮想ノードに使用するK3sのバージョンです。 +
 K3sのバージョン管理規則に従う必要があります（例：v1.28.2-k3s1）。 +
-指定されていない場合、ホストノードのKubernetesバージョンが使用されます。 + |  | 
+指定されていない場合、ホストノードのKubernetesバージョンが使用されます。 + |  | Optional: \{} +
+
 | *`mode`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clustermode[$$ClusterMode$$]__| Modeは、クラスターのプロビジョニングモードを指定します。このフィールドは不変です。 + | shared | Enum: [shared virtual hcp] +
+Optional: \{} +
 
 | *`servers`* __整数__| サーバーは、サーバー（コントロールプレーン）モードで実行するK3sポッドの数を指定します。 +
-少なくとも1でなければなりません。デフォルトは1です。 + | 1 | 
+少なくとも1でなければなりません。デフォルトは1です。 + | 1 | Optional: \{} +
+
 | *`agents`* __整数__| エージェントは、エージェント（ワーカー）モードで実行するK3sポッドの数を指定します。 +
 0以上でなければなりません。デフォルトは0です。 +
-このフィールドは"shared"モードでは無視されます。 + | 0 | 
+このフィールドは"shared"モードと"hcp"モードでは無視されます。 + | 0 | Optional: \{} +
+
 | *`clusterCIDR`* __string__| ClusterCIDRは、ポッドIPのCIDR範囲です。 +
 "shared"モードでは10.42.0.0/16、"virtual"モードでは10.52.0.0/16がデフォルトです。 +
-このフィールドは不変です。 + |  | 
+このフィールドは不変です。 + |  | Optional: \{} +
+
 | *`serviceCIDR`* __string__| ServiceCIDRはサービスIPのCIDR範囲です。 +
 "shared"モードでは10.43.0.0/16、"virtual"モードでは10.53.0.0/16がデフォルトです。 +
-このフィールドは不変です。 + |  | 
+このフィールドは不変です。 + |  | Optional: \{} +
+
 | *`clusterDNS`* __string__| ClusterDNSはCoreDNSサービスのIPアドレスです。 +
 ServiceCIDR範囲内である必要があります。デフォルトは10.43.0.10です。 +
-このフィールドは不変です。 + |  | 
+このフィールドは不変です。 + |  | Optional: \{} +
+
 | *`persistence`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-persistenceconfig[$$PersistenceConfig$$]__| Persistenceはetcdデータを永続化するためのオプションを指定します。 +
 デフォルトは動的永続化で、PersistentVolumeClaimを使用してデータの永続化を提供します。 +
-動的永続化にはデフォルトのStorageClassが必要です。 + |  | 
+動的永続化にはデフォルトのStorageClassが必要です。 + |  | Optional: \{} +
+
 | *`expose`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-exposeconfig[$$ExposeConfig$$]__| ExposeはAPIサーバーを公開するためのオプションを指定します。 +
-デフォルトでは、ClusterIPとしてのみ公開されます。 + |  | 
+デフォルトでは、ClusterIPとしてのみ公開されます。 + |  | Optional: \{} +
+
 | *`nodeSelector`* __object (keys:string, values:string)__| NodeSelectorはサーバー/エージェントポッドがスケジュールされるノードラベルを指定します。 +
-"shared"モードでは、これもワークロードに適用されます。 + |  | 
+"shared"モードでは、これもワークロードに適用されます。 + |  | Optional: \{} +
+
 | *`priorityClass`* __string__| PriorityClassはサーバー/エージェントポッドのpriorityClassNameを指定します。 +
-"shared"モードでは、これもワークロードに適用されます。 + |  | 
+"shared"モードでは、これもワークロードに適用されます。 + |  | Optional: \{} +
+
 | *`tokenSecretRef`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#secretreference-v1-core[$$SecretReference$$]__| TokenSecretRefは、ワーカーノードがクラスターに参加するために使用するトークンを含むSecret参照です。 +
-Secretにはデータに「token」フィールドが必要です。 + |  | 
-| *`tlsSANs`* __string array__| TLSSANsはK3sサーバー証明書のサブジェクト代替名を指定します。 + |  | 
+Secretにはデータに「token」フィールドが必要です。 + |  | Optional: \{} +
+
+| *`tlsSANs`* __string array__| TLSSANsはK3sサーバー証明書のサブジェクト代替名を指定します。 + |  | Optional: \{} +
+
 | *`serverArgs`* __string array__| ServerArgsはK3sサーバーポッドのための順序付きキー-バリューペアを指定します。 +
-例: ["--tls-san=example.com"] + |  | 
+例: ["--tls-san=example.com"] + |  | Optional: \{} +
+
 | *`agentArgs`* __string array__| AgentArgsはK3sエージェントポッドのための順序付きキー-バリューペアを指定します。 +
-Example: ["--node-name=my-agent-node"] + |  | 
-| *`serverEnvs`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#envvar-v1-core[$$EnvVar$$] array__| ServerEnvsはサーバーポッドに設定する環境変数のリストを指定します。 + |  | 
-| *`agentEnvs`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#envvar-v1-core[$$EnvVar$$] array__| AgentEnvsはエージェントポッドに設定する環境変数のリストを指定します。 + |  | 
-| *`addons`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-addon[$$Addon$$] array__| Addonsはクラスター起動時にデプロイする生のYAMLを含むシークレットを指定します。 + |  | 
-| *`serverLimit`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#resourcelist-v1-core[$$ResourceList$$]__| ServerLimitはサーバーノードのリソース制限を指定します。 + |  | 
-| *`workerLimit`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#resourcelist-v1-core[$$ResourceList$$]__| WorkerLimitはエージェントノードのリソース制限を指定します。 + |  | 
-| *`serverResources`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#resourcerequirements-v1-core[$$ResourceRequirements$$]__| ServerResourcesは、サーバーノードのリソース制限とリクエストを指定します。 + |  | 
-| *`workerResources`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#resourcerequirements-v1-core[$$ResourceRequirements$$]__| WorkerResourcesは、ワーカーノードのリソース制限とリクエストを指定します。 + |  | 
+Example: ["--node-name=my-agent-node"] + |  | Optional: \{} +
+
+| *`serverEnvs`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#envvar-v1-core[$$EnvVar$$] array__| ServerEnvsはサーバーポッドに設定する環境変数のリストを指定します。 + |  | Optional: \{} +
+
+| *`agentEnvs`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#envvar-v1-core[$$EnvVar$$] array__| AgentEnvsはエージェントポッドに設定する環境変数のリストを指定します。 + |  | Optional: \{} +
+
+| *`addons`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-addon[$$Addon$$] array__| Addonsはクラスター起動時にデプロイする生のYAMLを含むシークレットを指定します。 + |  | Optional: \{} +
+
+| *`serverLimit`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#resourcelist-v1-core[$$ResourceList$$]__| ServerLimitはサーバーノードのリソース制限を指定します。 + |  | Optional: \{} +
+
+| *`workerLimit`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#resourcelist-v1-core[$$ResourceList$$]__| WorkerLimitはエージェントノードのリソース制限を指定します。 + |  | Optional: \{} +
+
+| *`serverResources`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#resourcerequirements-v1-core[$$ResourceRequirements$$]__| ServerResourcesは、サーバーノードのリソース制限とリクエストを指定します。 + |  | Optional: \{} +
+
+| *`workerResources`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#resourcerequirements-v1-core[$$ResourceRequirements$$]__| WorkerResourcesは、ワーカーノードのリソース制限とリクエストを指定します。 + |  | Optional: \{} +
+
 | *`serverAffinity`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#affinity-v1-core[$$Affinity$$]__| ServerAffinityは、サーバーポッドのアフィニティルールを指定します。 +
-これには、ノードアフィニティルールとポッドアフィニティ/アンチアフィニティルールの両方が含まれます。 + |  | 
+これには、ノードアフィニティルールとポッドアフィニティ/アンチアフィニティルールの両方が含まれます。 + |  | Optional: \{} +
+
 | *`agentAffinity`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#affinity-v1-core[$$Affinity$$]__| AgentAffinityは、エージェントポッドのアフィニティルールを指定します。 +
-これには、ノードアフィニティルールとポッドアフィニティ/アンチアフィニティルールの両方が含まれます。 + |  | 
+これには、ノードアフィニティルールとポッドアフィニティ/アンチアフィニティルールの両方が含まれます。 + |  | Optional: \{} +
+
 | *`mirrorHostNodes`* __ブール値__| MirrorHostNodesはホストクラスターからのノードオブジェクトが +
-仮想クラスターにミラーリングされるかどうかを制御します。 + |  | 
-| *`customCAs`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-customcas[$$CustomCAs$$]__| CustomCAsはカスタムCA証明書のための証明書/鍵ペアを指定します。 + |  | 
-| *`sync`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-syncconfig[$$SyncConfig$$]__| Syncは仮想クラスターからホストクラスターに同期されるリソースタイプを指定します。 + | {  } | 
+仮想クラスターにミラーリングされるかどうかを制御します。 + |  | Optional: \{} +
+
+| *`customCAs`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-customcas[$$CustomCAs$$]__| CustomCAsはカスタムCA証明書のための証明書/鍵ペアを指定します。 + |  | Optional: \{} +
+
+| *`sync`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-syncconfig[$$SyncConfig$$]__| Syncは仮想クラスターからホストクラスターに同期されるリソースタイプを指定します。 + | {  } | Optional: \{} +
+
 | *`secretMounts`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-secretmount[$$SecretMount$$] array__| SecretMountsはサーバーおよびエージェントポッドにマウントするシークレットのリストを指定します。 +
-各エントリは、シークレットとそのポッド内のマウントパスを定義します。 + |  | 
+各エントリは、シークレットとそのポッド内のマウントパスを定義します。 + |  | Optional: \{} +
+
 | *`podSecurityContext`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#podsecuritycontext-v1-core[$$PodSecurityContext$$]__| PodSecurityContext は、virtual または shared モードのクラスターのエージェントおよび +
-サーバーポッドに追加するカスタム PodSecurityContext を指定します。 + |  | 
+サーバーポッドに追加するカスタム PodSecurityContext を指定します。 + |  | Optional: \{} +
+
 | *`securityContext`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#securitycontext-v1-core[$$SecurityContext$$]__| SecurityContext は、virtual または shared モードのクラスターのエージェントおよび +
 サーバーコンテナーに追加するカスタムコンテナー SecurityContext を指定します。 +
-このオプションは、virtual モードでデフォルトに設定されている SecurityContext を上書きします。 + |  | 
+このオプションは、virtual モードでデフォルトに設定されている SecurityContext を上書きします。 + |  | Optional: \{} +
+
 | *`runtimeClassName`* __string__| RuntimeClassName は、virtual または shared モードのクラスターのエージェントおよび +
-サーバーポッドに対する代替のランタイムクラスを指定します。 + |  | 
+サーバーポッドに対する代替のランタイムクラスを指定します。 + |  | Optional: \{} +
+
 | *`hostUsers`* __ブール値__| HostUsers は、サーバーポッドおよびエージェントポッドのユーザー名前空間を設定します。 +
 true に設定されている場合、または指定されていない場合、ポッドはホストのユーザー名前空間で実行されます。 +
 false に設定されている場合、ポッド用に新しい userns が作成されます。 +
-このフィールドはアルファレベルであり、UserNamespacesSupport 機能を有効にしたサーバーでのみ有効です。 + |  | 
+このフィールドはアルファレベルであり、UserNamespacesSupport 機能を有効にしたサーバーでのみ有効です。 + |  | Optional: \{} +
+
+| *`allowedHostSchedulers`* __string array__| AllowedHostSchedulersは、ワークロードが"k3k.io/host-scheduler-name"アノテーションで +
+要求できるホストクラスターのスケジューラーのリストです。これは shared モードにのみ適用され、 +
+要求されたスケジューラーはホストクラスターに同期される Pod に設定されます。 +
+このリストにないスケジューラーを要求する Pod は同期されません。 +
+このリストはアノテーションとの照合にのみ使用され、Pod の spec.schedulerName フィールドとは +
+無関係です。spec.schedulerName フィールドは引き続き仮想クラスターによって処理されます。 + |  | Optional: \{} +
+
 |===
 
 
@@ -257,17 +319,29 @@ _表示される:_
 [cols="25a,55a,10a,10a", options="header"]
 |===
 | フィールド | 説明 | デフォルト | 検証
-| *`hostVersion`* __string__| HostVersionは、ホストノードのKubernetesバージョンです。 + |  | 
-| *`clusterCIDR`* __string__| ClusterCIDRは、ポッドIPのCIDR範囲です。 + |  | 
-| *`serviceCIDR`* __string__| ServiceCIDRはサービスIPのCIDR範囲です。 + |  | 
-| *`clusterDNS`* __string__| ClusterDNSはCoreDNSサービスのIPアドレスです。 + |  | 
-| *`tlsSANs`* __string array__| TLSSANsはK3sサーバー証明書のサブジェクト代替名を指定します。 + |  | 
-| *`policyName`* __string__| PolicyNameは、仮想クラスターにバインドされた仮想クラスターポリシー名を指定します。 + |  | 
+| *`hostVersion`* __string__| HostVersionは、ホストノードのKubernetesバージョンです。 + |  | Optional: \{} +
+
+| *`clusterCIDR`* __string__| ClusterCIDRは、ポッドIPのCIDR範囲です。 + |  | Optional: \{} +
+
+| *`serviceCIDR`* __string__| ServiceCIDRはサービスIPのCIDR範囲です。 + |  | Optional: \{} +
+
+| *`clusterDNS`* __string__| ClusterDNSはCoreDNSサービスのIPアドレスです。 + |  | Optional: \{} +
+
+| *`tlsSANs`* __string array__| TLSSANsはK3sサーバー証明書のサブジェクト代替名を指定します。 + |  | Optional: \{} +
+
+| *`policyName`* __string__| PolicyNameは、仮想クラスターにバインドされた仮想クラスターポリシー名を指定します。 + |  | Optional: \{} +
+
 | *`policy`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-appliedpolicy[$$AppliedPolicy$$]__| policy は、このクラスターに適用されたポリシーのステータスを表します。 +
-このフィールドは VirtualClusterPolicy コントローラーによって設定されます。 + |  | 
-| *`kubeletPort`* __整数__| KubeletPortは、shared モードで k3k-kubelet が使用するポートを指定します。 + |  | 
-| *`conditions`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#condition-v1-meta[$$Condition$$] array__| Conditionsは、クラスターに設定された個々の条件です。 + |  | 
-| *`phase`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clusterphase[$$ClusterPhase$$]__| Phaseは、クラスターの現在のライフサイクル状態の概要です。 + | Unknown | Enum: [Pending Provisioning Ready Failed Terminating Unknown] +
+このフィールドは VirtualClusterPolicy コントローラーによって設定されます。 + |  | Optional: \{} +
+
+| *`kubeletPort`* __整数__| KubeletPortは、shared モードで k3k-kubelet が使用するポートを指定します。 + |  | Optional: \{} +
+
+| *`conditions`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#condition-v1-meta[$$Condition$$] array__| Conditionsは、クラスターに設定された個々の条件です。 + |  | Optional: \{} +
+
+| *`phase`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clusterphase[$$ClusterPhase$$]__| Phaseは、クラスターの現在のライフサイクル状態の概要です。 + | Unknown | Enum: [Pending Provisioning Ready Restoring Failed Terminating Unknown] +
+Optional: \{} +
+
+| *`activeRestoreRef`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#localobjectreference-v1-core[$$LocalObjectReference$$]__| ActiveRestoreRefは、現在実行中のアクティブな復元オブジェクトへの参照です。 + |  | Optional: \{} +
 
 |===
 
@@ -288,9 +362,17 @@ _表示される:_
 [cols="25a,55a,10a,10a", options="header"]
 |===
 | フィールド | 説明 | デフォルト | 検証
-| *`enabled`* __ブール値__| Enabledは、リソースの同期のオン/オフスイッチです。 + | true | 
+| *`enabled`* __ブール値__| Enabledは、リソースの同期のオン/オフスイッチです。 + | true | Required: \{} +
+
 | *`selector`* __object (keys:string, values:string)__| Selectorは、同期されるリソースのラベルのセットを指定します。空の場合、 +
-指定されたタイプのすべてのリソースが同期されます。 + |  | 
+指定されたタイプのすべてのリソースが同期されます。 +
+
+非推奨: 代わりにLabelSelectorを使用してください。 + |  | Optional: \{} +
+
+| *`labelSelector`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#labelselector-v1-meta[$$LabelSelector$$]__| LabelSelectorは、同期されるリソースの集合ベースのラベルセレクターです。 +
+Selectorと組み合わされ、リソースが同期されるには両方に一致する必要があります。 +
+空の場合、指定されたタイプのすべてのリソースが同期されます。 + |  | Optional: \{} +
+
 |===
 
 
@@ -336,8 +418,8 @@ _表示される:_
 | *`serverCA`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-credentialsource[$$CredentialSource$$]__| ServerCAは、server-ca証明書/鍵ペアを指定します。 + |  | 
 | *`clientCA`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-credentialsource[$$CredentialSource$$]__| ClientCAは、client-ca証明書/鍵ペアを指定します。 + |  | 
 | *`requestHeaderCA`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-credentialsource[$$CredentialSource$$]__| RequestHeaderCAは、request-header-ca証明書/鍵ペアを指定します。 + |  | 
-| *`etcdServerCA`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-credentialsource[$$CredentialSource$$]__| ETCDServerCAは、etcd-server-ca証明書/鍵ペアを指定します。 + |  | 
-| *`etcdPeerCA`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-credentialsource[$$CredentialSource$$]__| ETCDPeerCAは、etcd-peer-ca証明書/鍵ペアを指定します。 + |  | 
+| *`etcdServerCA`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-credentialsource[$$CredentialSource$$]__| EtcdServerCAは、etcd-server-ca証明書/鍵ペアを指定します。 + |  | 
+| *`etcdPeerCA`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-credentialsource[$$CredentialSource$$]__| EtcdPeerCAは、etcd-peer-ca証明書/鍵ペアを指定します。 + |  | 
 | *`serviceAccountToken`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-credentialsource[$$CredentialSource$$]__| ServiceAccountTokenは、service-account-tokenキーを指定します。 + |  | 
 |===
 
@@ -363,6 +445,233 @@ _表示される:_
 |===
 
 
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-endpointslicesyncconfig"]
+=== EndpointSliceSyncConfig
+
+
+
+EndpointSliceSyncConfigは、EndpointSliceの同期オプションを指定します。
+
+
+
+_表示される:_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-syncconfig[$$SyncConfig$$]
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| フィールド | 説明 | デフォルト | 検証
+| *`enabled`* __ブール値__| Enabledは、リソースの同期のオン/オフスイッチです。 + | false | Required: \{} +
+
+| *`selector`* __object (keys:string, values:string)__| Selectorは、同期されるリソースのラベルのセットを指定します。空の場合、 +
+指定されたタイプのすべてのリソースが同期されます。 +
+
+非推奨: 代わりにLabelSelectorを使用してください。 + |  | Optional: \{} +
+
+| *`labelSelector`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#labelselector-v1-meta[$$LabelSelector$$]__| LabelSelectorは、同期されるリソースの集合ベースのラベルセレクターです。 +
+Selectorと組み合わされ、リソースが同期されるには両方に一致する必要があります。 +
+空の場合、指定されたタイプのすべてのリソースが同期されます。 + |  | Optional: \{} +
+
+|===
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdrestore"]
+=== EtcdRestore
+
+
+
+
+
+
+
+_表示される:_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdrestorelist[$$EtcdRestoreList$$]
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| フィールド | 説明 | デフォルト | 検証
+| *`apiVersion`* __string__| `k3k.io/v1beta1` |  | 
+| *`kind`* __string__| `EtcdRestore` |  | 
+| *`metadata`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#objectmeta-v1-meta[$$ObjectMeta$$]__| `metadata`のフィールドについてはKubernetes APIドキュメントを参照してください。 |  | 
+| *`spec`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdrestorespec[$$EtcdRestoreSpec$$]__|  |  | Required: \{} +
+
+| *`status`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdrestorestatus[$$EtcdRestoreStatus$$]__|  |  | Optional: \{} +
+
+|===
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdrestorelist"]
+=== EtcdRestoreList
+
+
+
+EtcdRestoreListは、EtcdRestoreリソースのリストです。
+
+
+
+
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| フィールド | 説明 | デフォルト | 検証
+| *`apiVersion`* __string__| `k3k.io/v1beta1` |  | 
+| *`kind`* __string__| `EtcdRestoreList` |  | 
+| *`metadata`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#listmeta-v1-meta[$$ListMeta$$]__| `metadata`のフィールドについてはKubernetes APIドキュメントを参照してください。 |  | 
+| *`items`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdrestore[$$EtcdRestore$$] array__|  |  | 
+|===
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdrestorespec"]
+=== EtcdRestoreSpec
+
+
+
+EtcdRestoreSpecは、EtcdRestoreの望ましい状態を定義します。
+
+
+
+_表示される:_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdrestore[$$EtcdRestore$$]
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| フィールド | 説明 | デフォルト | 検証
+| *`clusterRef`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#localobjectreference-v1-core[$$LocalObjectReference$$]__| ClusterRefは、スナップショットが復元されるクラスターへの参照です。 +
+このフィールドは不変です。 + |  | Required: \{} +
+
+| *`snapshotRef`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#localobjectreference-v1-core[$$LocalObjectReference$$]__| SnapshotRefは、クラスター上で復元されるEtcdSnapshotオブジェクトへの参照です。 +
+このフィールドは不変です。 + |  | Required: \{} +
+
+|===
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdrestorestatus"]
+=== EtcdRestoreStatus
+
+
+
+EtcdRestoreStatusは、EtcdRestoreの観測された状態を反映します。
+
+
+
+_表示される:_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdrestore[$$EtcdRestore$$]
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| フィールド | 説明 | デフォルト | 検証
+| *`conditions`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#condition-v1-meta[$$Condition$$] array__| Conditionsは、EtcdRestoreの個々の条件です。 + |  | Optional: \{} +
+
+|===
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdsnapshot"]
+=== EtcdSnapshot
+
+
+
+
+
+
+
+_表示される:_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdsnapshotlist[$$EtcdSnapshotList$$]
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| フィールド | 説明 | デフォルト | 検証
+| *`apiVersion`* __string__| `k3k.io/v1beta1` |  | 
+| *`kind`* __string__| `EtcdSnapshot` |  | 
+| *`metadata`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#objectmeta-v1-meta[$$ObjectMeta$$]__| `metadata`のフィールドについてはKubernetes APIドキュメントを参照してください。 |  | 
+| *`spec`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdsnapshotspec[$$EtcdSnapshotSpec$$]__|  |  | Required: \{} +
+
+| *`status`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdsnapshotstatus[$$EtcdSnapshotStatus$$]__|  |  | Optional: \{} +
+
+|===
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdsnapshotlist"]
+=== EtcdSnapshotList
+
+
+
+EtcdSnapshotListは、EtcdSnapshotリソースのリストです。
+
+
+
+
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| フィールド | 説明 | デフォルト | 検証
+| *`apiVersion`* __string__| `k3k.io/v1beta1` |  | 
+| *`kind`* __string__| `EtcdSnapshotList` |  | 
+| *`metadata`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#listmeta-v1-meta[$$ListMeta$$]__| `metadata`のフィールドについてはKubernetes APIドキュメントを参照してください。 |  | 
+| *`items`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdsnapshot[$$EtcdSnapshot$$] array__|  |  | 
+|===
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdsnapshotspec"]
+=== EtcdSnapshotSpec
+
+
+
+EtcdSnapshotSpecは、EtcdSnapshotの望ましい状態を定義します。
+
+
+
+_表示される:_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdsnapshot[$$EtcdSnapshot$$]
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| フィールド | 説明 | デフォルト | 検証
+| *`clusterRef`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#localobjectreference-v1-core[$$LocalObjectReference$$]__| ClusterRefは、スナップショットが取得されるクラスターへの参照です。 +
+このフィールドは不変です。 + |  | Required: \{} +
+
+| *`s3ConfigSecretRef`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#secretreference-v1-core[$$SecretReference$$]__| S3ConfigSecretRefは、すべてのS3設定を含む +
+S3設定シークレットを定義します。設定項目は以下の内容と一致する必要があります: +
+https://docs.k3s.io/cli/etcd-snapshot?_highlight=snapshot#s3-compatible-object-store-support +
+
+このフィールドは、スナップショット作成後の不整合を避けるために不変です。 +
+
+これを設定すると、k3sはディスク上にローカルのetcdスナップショットを作成し、それを +
+S3にアップロードします。リクエストが削除されると、ディスク上のファイルとS3上のファイルの両方が削除されます。 + |  | Optional: \{} +
+
+| *`compress`* __ブール値__| Compressは、スナップショットを圧縮するかどうかを指定します + | false | Optional: \{} +
+
+|===
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdsnapshotstatus"]
+=== EtcdSnapshotStatus
+
+
+
+EtcdSnapshotStatusは、EtcdSnapshotの観測された状態を反映します。
+
+
+
+_表示される:_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdsnapshot[$$EtcdSnapshot$$]
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| フィールド | 説明 | デフォルト | 検証
+| *`filename`* __string__| Filenameは、仮想クラスター内に作成された +
+スナップショットファイルの名前です + |  | Optional: \{} +
+
+| *`conditions`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#condition-v1-meta[$$Condition$$] array__| Conditionsは、スナップショットの個々の条件です。 + |  | Optional: \{} +
+
+|===
+
+
 [id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-exposeconfig"]
 === ExposeConfig
 
@@ -379,10 +688,14 @@ _表示される:_
 [cols="25a,55a,10a,10a", options="header"]
 |===
 | フィールド | 説明 | デフォルト | 検証
-| *`ingress`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-ingressconfig[$$IngressConfig$$]__| Ingressは、Ingressを通じてAPIサーバーを公開するためのオプションを指定します。 + |  | 
-| *`loadBalancer`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-loadbalancerconfig[$$LoadBalancerConfig$$]__| LoadBalancerは、LoadBalancerサービスを通じてAPIサーバーを公開するためのオプションを指定します。 + |  | 
-| *`nodePort`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-nodeportconfig[$$NodePortConfig$$]__| NodePortは、NodePortを通じてAPIサーバーを公開するためのオプションを指定します。 + |  | 
-| *`annotations`* __object (keys:string, values:string)__| Annotationsは、生成されるServiceに追加するアノテーションを指定します。 + |  | 
+| *`ingress`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-ingressconfig[$$IngressConfig$$]__| Ingressは、Ingressを通じてAPIサーバーを公開するためのオプションを指定します。 + |  | Optional: \{} +
+
+| *`loadBalancer`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-loadbalancerconfig[$$LoadBalancerConfig$$]__| LoadBalancerは、LoadBalancerサービスを通じてAPIサーバーを公開するためのオプションを指定します。 + |  | Optional: \{} +
+
+| *`nodePort`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-nodeportconfig[$$NodePortConfig$$]__| NodePortは、NodePortを通じてAPIサーバーを公開するためのオプションを指定します。 + |  | Optional: \{} +
+
+| *`annotations`* __object (keys:string, values:string)__| Annotationsは、生成されるServiceに追加するアノテーションを指定します。 + |  | Optional: \{} +
+
 |===
 
 
@@ -402,8 +715,10 @@ _表示される:_
 [cols="25a,55a,10a,10a", options="header"]
 |===
 | フィールド | 説明 | デフォルト | 検証
-| *`annotations`* __object (keys:string, values:string)__| Annotationsは、Ingressに追加するアノテーションを指定します。 + |  | 
-| *`ingressClassName`* __string__| IngressClassNameは、Ingressに使用するIngressClassを指定します。 + |  | 
+| *`annotations`* __object (keys:string, values:string)__| Annotationsは、Ingressに追加するアノテーションを指定します。 + |  | Optional: \{} +
+
+| *`ingressClassName`* __string__| IngressClassNameは、Ingressに使用するIngressClassを指定します。 + |  | Optional: \{} +
+
 |===
 
 
@@ -423,11 +738,20 @@ _表示される:_
 [cols="25a,55a,10a,10a", options="header"]
 |===
 | フィールド | 説明 | デフォルト | 検証
-| *`enabled`* __ブール値__| Enabledは、リソースのsyncのオン/オフスイッチです。 + | false | 
+| *`enabled`* __ブール値__| Enabledは、リソースのsyncのオン/オフスイッチです。 + | false | Required: \{} +
+
 | *`selector`* __object (keys:string, values:string)__| Selectorは、syncされるリソースのラベルのセットを指定します。空の場合、 +
-指定されたタイプのすべてのリソースがsyncされます。 + |  | 
+指定されたタイプのすべてのリソースがsyncされます。 +
+
+非推奨: 代わりにLabelSelectorを使用してください。 + |  | Optional: \{} +
+
+| *`labelSelector`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#labelselector-v1-meta[$$LabelSelector$$]__| LabelSelectorは、同期されるリソースの集合ベースのラベルセレクターです。 +
+Selectorと組み合わされ、リソースが同期されるには両方に一致する必要があります。 +
+空の場合、指定されたタイプのすべてのリソースが同期されます。 + |  | Optional: \{} +
+
 | *`disableTLSSecretTranslation`* __ブール値__| DisableTLSSecretTranslationは、仮想クラスターからホストクラスターへの +
-TLSシークレットの変換のオン/オフスイッチです + | false | 
+TLSシークレットの変換のオン/オフスイッチです + | false | Optional: \{} +
+
 |===
 
 
@@ -448,11 +772,18 @@ _表示される:_
 |===
 | フィールド | 説明 | デフォルト | 検証
 | *`serverPort`* __整数__| ServerPortは、タイプがLoadBalancerのときにK3sサーバーが公開されるポートです。 +
-指定されていない場合、デフォルトのhttps 443ポートが割り当てられます。 +
-0または負の値の場合、ポートは公開されません。 + |  | 
-| *`etcdPort`* __整数__| ETCDPortは、タイプがLoadBalancerのときにETCDサービスが公開されるポートです。 +
+デフォルトのhttps 443ポートは、内部コンポーネントがサーバーに到達するために使用されるため、常に割り当てられます。 +
+ServerPortを指定した場合は、追加のポートとして割り当てられます。 +
+0または負の値の場合、デフォルトのhttps 443ポートのみが割り当てられます。 + |  | Optional: \{} +
+
+| *`etcdPort`* __整数__| EtcdPortは、タイプがLoadBalancerのときにEtcdサービスが公開されるポートです。 +
 指定されていない場合、デフォルトのetcd 2379ポートが割り当てられます。 +
-0または負の値の場合、ポートは公開されません。 + |  | 
+0または負の値の場合、ポートは公開されません。 + |  | Optional: \{} +
+
+| *`loadBalancerClass`* __string__| LoadBalancerClassは、公開されるServiceのロードバランサー実装のクラスを指定します。 +
+指定されていない場合、ホストクラスターのデフォルトのロードバランサー実装が使用されます。 +
+一度設定すると、ServiceのタイプがLoadBalancerのままである間、KubernetesはServiceのloadBalancerClassの変更を許可しません。 + |  | Optional: \{} +
+
 |===
 
 
@@ -474,10 +805,12 @@ _表示される:_
 | フィールド | 説明 | デフォルト | 検証
 | *`serverPort`* __整数__| ServerPortは、NodePortタイプのときにK3sサーバーが公開される各ノードのポートです。 +
 指定されていない場合、30000から32767の間のランダムなポートが割り当てられます。 +
-範囲外の場合、ポートは公開されません。 + |  | 
-| *`etcdPort`* __整数__| ETCDPortは、NodePortタイプのときにETCDサービスが公開される各ノードのポートです。 +
+範囲外の場合、ポートは公開されません。 + |  | Optional: \{} +
+
+| *`etcdPort`* __整数__| EtcdPortは、NodePortタイプのときにEtcdサービスが公開される各ノードのポートです。 +
 指定されていない場合、30000から32767の間のランダムなポートが割り当てられます。 +
-範囲外の場合、ポートは公開されません。 + |  | 
+範囲外の場合、ポートは公開されません。 + |  | Optional: \{} +
+
 |===
 
 
@@ -499,9 +832,11 @@ _表示される:_
 | フィールド | 説明 | デフォルト | 検証
 | *`type`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-persistencemode[$$PersistenceMode$$]__| Typeは、永続化モードを指定します。 + | dynamic | 
 | *`storageClassName`* __string__| StorageClassNameは、PVCに使用するStorageClassの名前です。 +
-このフィールドは「動的」モードでのみ関連します。 + |  | 
+このフィールドは「動的」モードでのみ関連します。 + |  | Optional: \{} +
+
 | *`storageRequestSize`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#quantity-resource-api[$$Quantity$$]__| StorageRequestSizeは、PVCの要求サイズです。 +
-このフィールドは「動的」モードでのみ関連します。 + | 2G | 
+このフィールドは「動的」モードでのみ関連します。 + | 2G | Optional: \{} +
+
 |===
 
 
@@ -536,9 +871,17 @@ _表示される:_
 [cols="25a,55a,10a,10a", options="header"]
 |===
 | フィールド | 説明 | デフォルト | 検証
-| *`enabled`* __ブール値__| Enabledは、リソースのsyncのオン/オフスイッチです。 + | true | 
+| *`enabled`* __ブール値__| Enabledは、リソースのsyncのオン/オフスイッチです。 + | true | Required: \{} +
+
 | *`selector`* __object (keys:string, values:string)__| Selectorは、syncされるリソースのラベルのセットを指定します。空の場合、 +
-指定されたタイプのすべてのリソースがsyncされます。 + |  | 
+指定されたタイプのすべてのリソースがsyncされます。 +
+
+非推奨: 代わりにLabelSelectorを使用してください。 + |  | Optional: \{} +
+
+| *`labelSelector`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#labelselector-v1-meta[$$LabelSelector$$]__| LabelSelectorは、同期されるリソースの集合ベースのラベルセレクターです。 +
+Selectorと組み合わされ、リソースが同期されるには両方に一致する必要があります。 +
+空の場合、指定されたタイプのすべてのリソースが同期されます。 + |  | Optional: \{} +
+
 |===
 
 
@@ -575,9 +918,17 @@ _表示される:_
 [cols="25a,55a,10a,10a", options="header"]
 |===
 | フィールド | 説明 | デフォルト | 検証
-| *`enabled`* __ブール値__| Enabledは、リソースの同期のオン/オフスイッチです。 + | false | 
+| *`enabled`* __ブール値__| Enabledは、リソースの同期のオン/オフスイッチです。 + | false | Required: \{} +
+
 | *`selector`* __object (keys:string, values:string)__| Selectorは、syncされるリソースのラベルのセットを指定します。空の場合、 +
-指定されたタイプのすべてのリソースがsyncされます。 + |  | 
+指定されたタイプのすべてのリソースがsyncされます。 +
+
+非推奨: 代わりにLabelSelectorを使用してください。 + |  | Optional: \{} +
+
+| *`labelSelector`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#labelselector-v1-meta[$$LabelSelector$$]__| LabelSelectorは、同期されるリソースの集合ベースのラベルセレクターです。 +
+Selectorと組み合わされ、リソースが同期されるには両方に一致する必要があります。 +
+空の場合、指定されたタイプのすべてのリソースが同期されます。 + |  | Optional: \{} +
+
 |===
 
 
@@ -598,34 +949,46 @@ _表示される:_
 |===
 | フィールド | 説明 | デフォルト | 検証
 | *`secretName`* __string__| secretNameは、ポッドのネームスペースで使用するシークレットの名前です。 +
-その他の情報: https://kubernetes.io/docs/concepts/storage/volumes#secret + |  | 
+その他の情報: https://kubernetes.io/docs/concepts/storage/volumes#secret + |  | Optional: \{} +
+
 | *`items`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#keytopath-v1-core[$$KeyToPath$$] array__| items: 未指定の場合、参照されたデータフィールド内の各キーと値のペアが +
 Secretは、名前がキーで内容が値のファイルとしてボリュームに投影されます。 +
 キーがファイル名、内容が値となります。指定された場合、リストされたキーは +
 指定されたパスに投影され、リストされていないキーは投影されません。 +
 存在しません。Secretに存在しないキーが指定された場合、 +
 Secretに存在しないキーが指定された場合、ボリュームのセットアップは、オプションとしてマークされていない場合にエラーとなります。相対的でなければならず、'..'パスを含むことや'..'で始まることはできません。 +
-相対的でなければならず、「..」パスを含むことや「..」で始まることはできません。 + |  | 
+相対的でなければならず、「..」パスを含むことや「..」で始まることはできません。 + |  | Optional: \{} +
+
 | *`defaultMode`* __整数__| defaultModeは任意のフィールドで、作成されたファイルのパーミッションを設定するためのモードビットを指定します。 +
 値は、0000から0777の間の8進数値、または0から511の間の10進数値でなければなりません。 +
 YAMLでは8進数値と10進数値の両方が受け入れられますが、JSONでは10進数値が要求されます。 +
 これはモードビットのための指定です。デフォルトは0644です。 +
 パス内のディレクトリはこの設定の影響を受けません。 +
 これは、ファイルに影響を与える他のオプションと競合する可能性があります。 +
-モードはfsGroupなどの他のファイルモード設定と競合する場合があり、その結果、他のモードビットが設定されることもあります。 + |  | 
-| *`optional`* __ブール値__| オプションのフィールドは、Secretまたはそのキーが定義される必要があるかどうかを指定します。 + |  | 
+モードはfsGroupなどの他のファイルモード設定と競合する場合があり、その結果、他のモードビットが設定されることもあります。 + |  | Optional: \{} +
+
+| *`optional`* __ブール値__| オプションのフィールドは、Secretまたはそのキーが定義される必要があるかどうかを指定します。 + |  | Optional: \{} +
+
+| *`defaultUser`* __整数__| defaultUserは任意のフィールドで、デフォルトで作成されるファイルの所有者UIDを指定します。 +
+defaultUserフィールドは、項目レベルのuserフィールドが設定されていない場合のフォールバックとしてのみ使用されます。 +
+（アルファ）このフィールドを使用するには、AtomicWriteVolumeUserFieldsフィーチャーゲートを有効にする必要があります。 + |  | Optional: \{} +
+
 | *`name`* __string__| Name は、サーバーポッドまたはエージェントポッドのボリュームおよび +
 ボリュームマウントの名前として使用される Secret マウントボリュームの名前です。 +
 空の場合は、代わりに Secret の名前が使用されます。 + |  | MaxLength: 63 +
 MinLength: 1 +
 Pattern: `^[a-z0-9]([-a-z0-9]*[a-z0-9])?$` +
+Optional: \{} +
 
 | *`mountPath`* __string__| MountPathは、サーバーおよびエージェントポッド内のパスです。 +
-シークレットの内容がマウントされます。 + |  | 
+シークレットの内容がマウントされます。 + |  | Optional: \{} +
+
 | *`subPath`* __string__| SubPathは、ルートの代わりにマウントするためのシークレット内のオプションのパスです。 +
 指定された場合、シークレットから指定されたキーのみがファイルとしてマウントされます。 +
-MountPathで、親ディレクトリは書き込み可能のままです。 + |  | 
+MountPathで、親ディレクトリは書き込み可能のままです。 + |  | Optional: \{} +
+
 | *`role`* __string__| Roleは、Secretのマウントに使用されるk3kポッドのタイプです。 + |  | Enum: [server agent all] +
+Optional: \{} +
 
 |===
 
@@ -646,9 +1009,17 @@ _表示される:_
 [cols="25a,55a,10a,10a", options="header"]
 |===
 | フィールド | 説明 | デフォルト | 検証
-| *`enabled`* __ブール値__| Enabledは、リソースの同期のオン/オフスイッチです。 + | true | 
+| *`enabled`* __ブール値__| Enabledは、リソースの同期のオン/オフスイッチです。 + | true | Optional: \{} +
+
 | *`selector`* __object (keys:string, values:string)__| Selectorは、同期されるリソースのラベルのセットを指定します。空の場合、 +
-指定されたタイプのすべてのリソースが同期されます。 + |  | 
+指定されたタイプのすべてのリソースが同期されます。 +
+
+非推奨: 代わりにLabelSelectorを使用してください。 + |  | Optional: \{} +
+
+| *`labelSelector`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#labelselector-v1-meta[$$LabelSelector$$]__| LabelSelectorは、同期されるリソースの集合ベースのラベルセレクターです。 +
+Selectorと組み合わされ、リソースが同期されるには両方に一致する必要があります。 +
+空の場合、指定されたタイプのすべてのリソースが同期されます。 + |  | Optional: \{} +
+
 |===
 
 
@@ -668,9 +1039,17 @@ _表示される:_
 [cols="25a,55a,10a,10a", options="header"]
 |===
 | フィールド | 説明 | デフォルト | 検証
-| *`enabled`* __ブール値__| Enabledは、リソースの同期のオン/オフスイッチです。 + | true | 
+| *`enabled`* __ブール値__| Enabledは、リソースの同期のオン/オフスイッチです。 + | true | Required: \{} +
+
 | *`selector`* __object (keys:string, values:string)__| Selectorは、同期されるリソースのラベルのセットを指定します。空の場合、 +
-指定されたタイプのすべてのリソースが同期されます。 + |  | 
+指定されたタイプのすべてのリソースが同期されます。 +
+
+非推奨: 代わりにLabelSelectorを使用してください。 + |  | Optional: \{} +
+
+| *`labelSelector`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#labelselector-v1-meta[$$LabelSelector$$]__| LabelSelectorは、同期されるリソースの集合ベースのラベルセレクターです。 +
+Selectorと組み合わされ、リソースが同期されるには両方に一致する必要があります。 +
+空の場合、指定されたタイプのすべてのリソースが同期されます。 + |  | Optional: \{} +
+
 |===
 
 
@@ -690,9 +1069,17 @@ _表示される:_
 [cols="25a,55a,10a,10a", options="header"]
 |===
 | フィールド | 説明 | デフォルト | 検証
-| *`enabled`* __ブール値__| Enabledは、リソースの同期のオン/オフスイッチです。 + | false | 
+| *`enabled`* __ブール値__| Enabledは、リソースの同期のオン/オフスイッチです。 + | false | Required: \{} +
+
 | *`selector`* __object (keys:string, values:string)__| Selectorは、同期されるリソースのラベルのセットを指定します。空の場合、 +
-指定されたタイプのすべてのリソースが同期されます。 + |  | 
+指定されたタイプのすべてのリソースが同期されます。 +
+
+非推奨: 代わりにLabelSelectorを使用してください。 + |  | Optional: \{} +
+
+| *`labelSelector`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#labelselector-v1-meta[$$LabelSelector$$]__| LabelSelectorは、同期されるリソースの集合ベースのラベルセレクターです。 +
+Selectorと組み合わされ、リソースが同期されるには両方に一致する必要があります。 +
+空の場合、指定されたタイプのすべてのリソースが同期されます。 + |  | Optional: \{} +
+
 |===
 
 
@@ -714,13 +1101,22 @@ _表示される:_
 [cols="25a,55a,10a,10a", options="header"]
 |===
 | フィールド | 説明 | デフォルト | 検証
-| *`services`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-servicesyncconfig[$$ServiceSyncConfig$$]__| サービスリソースの同期設定。 + | { enabled:true } | 
-| *`configMaps`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-configmapsyncconfig[$$ConfigMapSyncConfig$$]__| ConfigMapsリソースの同期設定。 + | { enabled:true } | 
-| *`secrets`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-secretsyncconfig[$$SecretSyncConfig$$]__| Secretsリソースの同期設定。 + | { enabled:true } | 
-| *`ingresses`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-ingresssyncconfig[$$IngressSyncConfig$$]__| Ingressesリソースの同期設定。 + | { enabled:false } | 
-| *`persistentVolumeClaims`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-persistentvolumeclaimsyncconfig[$$PersistentVolumeClaimSyncConfig$$]__| PersistentVolumeClaimsリソースの同期設定。 + | { enabled:true } | 
-| *`priorityClasses`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-priorityclasssyncconfig[$$PriorityClassSyncConfig$$]__| PriorityClassesリソースの同期設定。 + | { enabled:false } | 
-| *`storageClasses`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-storageclasssyncconfig[$$StorageClassSyncConfig$$]__| StorageClassesリソースの同期設定。 + | { enabled:false } | 
+| *`services`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-servicesyncconfig[$$ServiceSyncConfig$$]__| サービスリソースの同期設定。 + | { enabled:true } | Optional: \{} +
+
+| *`endpointSlices`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-endpointslicesyncconfig[$$EndpointSliceSyncConfig$$]__| EndpointSlicesリソースの同期設定。 + | { enabled:false } | Optional: \{} +
+
+| *`configMaps`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-configmapsyncconfig[$$ConfigMapSyncConfig$$]__| ConfigMapsリソースの同期設定。 + | { enabled:true } | Optional: \{} +
+
+| *`secrets`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-secretsyncconfig[$$SecretSyncConfig$$]__| Secretsリソースの同期設定。 + | { enabled:true } | Optional: \{} +
+
+| *`ingresses`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-ingresssyncconfig[$$IngressSyncConfig$$]__| Ingressesリソースの同期設定。 + | { enabled:false } | Optional: \{} +
+
+| *`persistentVolumeClaims`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-persistentvolumeclaimsyncconfig[$$PersistentVolumeClaimSyncConfig$$]__| PersistentVolumeClaimsリソースの同期設定。 + | { enabled:true } | Optional: \{} +
+
+| *`priorityClasses`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-priorityclasssyncconfig[$$PriorityClassSyncConfig$$]__| PriorityClassesリソースの同期設定。 + | { enabled:false } | Optional: \{} +
+
+| *`storageClasses`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-storageclasssyncconfig[$$StorageClassSyncConfig$$]__| StorageClassesリソースの同期設定。 + | { enabled:false } | Optional: \{} +
+
 |===
 
 
@@ -744,7 +1140,8 @@ _表示される:_
 | *`kind`* __string__| `VirtualClusterPolicy` |  | 
 | *`metadata`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#objectmeta-v1-meta[$$ObjectMeta$$]__| `metadata`のフィールドについてはKubernetes APIドキュメントを参照してください。 |  | 
 | *`spec`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-virtualclusterpolicyspec[$$VirtualClusterPolicySpec$$]__| Specは、VirtualClusterPolicyの望ましい状態を定義します。 + | {  } | 
-| *`status`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-virtualclusterpolicystatus[$$VirtualClusterPolicyStatus$$]__| Statusは、VirtualClusterPolicyの観測された状態を反映します。 + |  | 
+| *`status`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-virtualclusterpolicystatus[$$VirtualClusterPolicyStatus$$]__| Statusは、VirtualClusterPolicyの観測された状態を反映します。 + |  | Optional: \{} +
+
 |===
 
 
@@ -785,29 +1182,50 @@ _表示される:_
 [cols="25a,55a,10a,10a", options="header"]
 |===
 | フィールド | 説明 | デフォルト | 検証
-| *`quota`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#resourcequotaspec-v1-core[$$ResourceQuotaSpec$$]__| Quotaは、クラスター・ポリシー内のクラスターに対するリソース制限を指定します。 + |  | 
+| *`quota`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#resourcequotaspec-v1-core[$$ResourceQuotaSpec$$]__| Quotaは、クラスター・ポリシー内のクラスターに対するリソース制限を指定します。 + |  | Optional: \{} +
+
 | *`limit`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#limitrangespec-v1-core[$$LimitRangeSpec$$]__| Limitは、VirtualClusterPolicy内のすべてのポッドに適用されるLimitRangeを指定します。 +
-デフォルト値と制約（最小値/最大値）を設定するためのものです。 + |  | 
-| *`defaultNodeSelector`* __object (keys:string, values:string)__| DefaultNodeSelectorは、ターゲットネームスペース内のすべてのクラスター（サーバー + エージェント）に適用されるノードセレクターを指定します。 + |  | 
-| *`defaultPriorityClass`* __string__| DefaultPriorityClassは、ターゲットネームスペース内のすべてのクラスターのすべてのポッドに適用されるpriorityClassNameを指定します。 + |  | 
+デフォルト値と制約（最小値/最大値）を設定するためのものです。 + |  | Optional: \{} +
+
+| *`defaultNodeSelector`* __object (keys:string, values:string)__| DefaultNodeSelectorは、ターゲットネームスペース内のすべてのクラスター（サーバー + エージェント）に適用されるノードセレクターを指定します。 + |  | Optional: \{} +
+
+| *`defaultPriorityClass`* __string__| DefaultPriorityClassは、ターゲットネームスペース内のクラスターに適用されるpriorityClassNameを指定します。 +
+設定されている場合、サーバーポッドとエージェントポッド、および"shared"モードではワークロードについて、ClusterのpriorityClassを上書きします。 + |  | Optional: \{} +
+
 | *`defaultServerAffinity`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#affinity-v1-core[$$Affinity$$]__| DefaultServerAffinityは、対象の名前空間内のすべてのクラスターのサーバーポッドに適用されるアフィニティルールを指定します。 +
-これには、ノードアフィニティルールとポッドアフィニティ/アンチアフィニティルールの両方が含まれます。 + |  | 
+これには、ノードアフィニティルールとポッドアフィニティ/アンチアフィニティルールの両方が含まれます。 + |  | Optional: \{} +
+
 | *`defaultAgentAffinity`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#affinity-v1-core[$$Affinity$$]__| DefaultAgentAffinityは、対象の名前空間内のすべてのクラスターのエージェントポッドに適用されるアフィニティルールを指定します。 +
-これには、ノードアフィニティルールとポッドアフィニティ/アンチアフィニティルールの両方が含まれます。 + |  | 
+これには、ノードアフィニティルールとポッドアフィニティ/アンチアフィニティルールの両方が含まれます。 + |  | Optional: \{} +
+
 | *`allowedMode`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clustermode[$$ClusterMode$$]__| AllowedModeは、許可されるクラスターのプロビジョニングモードを指定します。 + | shared | Enum: [shared virtual hcp] +
+Optional: \{} +
 
-| *`disableNetworkPolicy`* __ブール値__| DisableNetworkPolicyは、クラスターの分離のためにデフォルトのネットワークポリシーの作成を無効にするかどうかを示します。 + |  | 
+| *`disableNetworkPolicy`* __ブール値__| DisableNetworkPolicyは、クラスターの分離のためにデフォルトのネットワークポリシーの作成を無効にするかどうかを示します。 + |  | Optional: \{} +
+
 | *`podSecurityAdmissionLevel`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-podsecurityadmissionlevel[$$PodSecurityAdmissionLevel$$]__| PodSecurityAdmissionLevelは、ネームスペース内のポッドに適用されるポッドセキュリティの入場レベルを指定します。 + |  | Enum: [privileged baseline restricted] +
+Optional: \{} +
 
-| *`sync`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-syncconfig[$$SyncConfig$$]__| Syncは仮想クラスターからホストクラスターに同期されるリソースタイプを指定します。 + | {  } | 
-| *`runtimeClassName`* __string__| SecurityContext は、virtual または shared モードのクラスターのエージェントおよび +
-サーバーポッドに追加するカスタム SecurityContext を指定します。 + |  | 
-| *`securityContext`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#securitycontext-v1-core[$$SecurityContext$$]__| RuntimeClassName は、virtual または shared モードのクラスターのエージェントおよび +
-サーバーポッドに対する代替のランタイムクラスを指定します。 + |  | 
+| *`sync`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-syncconfig[$$SyncConfig$$]__| Syncは仮想クラスターからホストクラスターに同期されるリソースタイプを指定します。 + | {  } | Optional: \{} +
+
+| *`runtimeClassName`* __string__| RuntimeClassName は、クラスターのエージェントおよび +
+サーバーポッドに対する代替のランタイムクラスを指定します。 + |  | Optional: \{} +
+
+| *`securityContext`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#securitycontext-v1-core[$$SecurityContext$$]__| SecurityContext は、クラスターのエージェントおよび +
+サーバーポッドに追加するカスタム SecurityContext を指定します。 + |  | Optional: \{} +
+
 | *`hostUsers`* __ブール値__| HostUsers は、サーバーポッドおよびエージェントポッドのユーザー名前空間を設定します。 +
 true に設定されている場合、または指定されていない場合、ポッドはホストのユーザー名前空間で実行されます。 +
 false に設定されている場合、ポッド用に新しい userns が作成されます。 +
-このフィールドはアルファレベルであり、UserNamespacesSupport 機能を有効にしたサーバーでのみ有効です。 + |  | 
+このフィールドはアルファレベルであり、UserNamespacesSupport 機能を有効にしたサーバーでのみ有効です。 + |  | Optional: \{} +
+
+| *`allowedHostSchedulers`* __string array__| AllowedHostSchedulersは、ワークロードが"k3k.io/host-scheduler-name"アノテーションで +
+要求できるホストクラスターのスケジューラーのリストです。これは shared モードにのみ適用され、 +
+要求されたスケジューラーはホストクラスターに同期される Pod に設定されます。 +
+このリストにないスケジューラーを要求する Pod は同期されません。 +
+このリストはアノテーションとの照合にのみ使用され、Pod の spec.schedulerName フィールドとは +
+無関係です。spec.schedulerName フィールドは引き続き仮想クラスターによって処理されます。 + |  | Optional: \{} +
+
 |===
 
 
@@ -827,10 +1245,14 @@ _表示される:_
 [cols="25a,55a,10a,10a", options="header"]
 |===
 | フィールド | 説明 | デフォルト | 検証
-| *`observedGeneration`* __整数__| ObservedGenerationは、ステータスが更新された時点のジェネレーションです。 + |  | 
-| *`lastUpdateTime`* __string__| LastUpdateは、ステータスが最後に更新されたタイムスタンプです。 + |  | 
-| *`summary`* __string__| Summaryは、ステータスの概要です。 + |  | 
-| *`conditions`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#condition-v1-meta[$$Condition$$] array__| Conditionsは、クラスターに設定された個々の条件です。 + |  | 
+| *`observedGeneration`* __整数__| ObservedGenerationは、ステータスが更新された時点のジェネレーションです。 + |  | Optional: \{} +
+
+| *`lastUpdateTime`* __string__| LastUpdateは、ステータスが最後に更新されたタイムスタンプです。 + |  | Optional: \{} +
+
+| *`summary`* __string__| Summaryは、ステータスの概要です。 + |  | Optional: \{} +
+
+| *`conditions`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#condition-v1-meta[$$Condition$$] array__| Conditionsは、クラスターに設定された個々の条件です。 + |  | Optional: \{} +
+
 |===
 
 

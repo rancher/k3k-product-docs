@@ -1,7 +1,7 @@
 [id="k3k-api-reference"]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 = API 参考
-:revdate: 2026-08-26
+:revdate: 2026-11-18
 :page-revdate: {revdate}
 :anchor_prefix: k8s-api
 
@@ -16,6 +16,10 @@
 === 资源类型
 - xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-cluster[$$集群$$]
 - xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clusterlist[$$ClusterList$$]
+- xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdrestore[$$EtcdRestore$$]
+- xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdrestorelist[$$EtcdRestoreList$$]
+- xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdsnapshot[$$EtcdSnapshot$$]
+- xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdsnapshotlist[$$EtcdSnapshotList$$]
 - xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-virtualclusterpolicy[$$VirtualClusterPolicy$$]
 - xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-virtualclusterpolicylist[$$VirtualClusterPolicyList$$]
 
@@ -59,24 +63,41 @@ _出现在：_
 |===
 | 字段 | 说明 | 默认值 | Validation
 | *`name`* __字符串__| name 是当前应用于此集群的 VirtualClusterPolicy 的名称。 + |  | MinLength: 1 +
+Required: \{} +
 
-| *`priorityClass`* __字符串__| priorityClass 是由活动的 VirtualClusterPolicy 强制执行的优先级类。 + |  | 
-| *`nodeSelector`* __object (keys:string, values:string)__| nodeSelector 是由活动的 VirtualClusterPolicy 强制执行的节点选择器。 + |  | 
+| *`priorityClass`* __字符串__| priorityClass 是由活动的 VirtualClusterPolicy 强制执行的优先级类。 + |  | Optional: \{} +
+
+| *`nodeSelector`* __object (keys:string, values:string)__| nodeSelector 是由活动的 VirtualClusterPolicy 强制执行的节点选择器。 + |  | Optional: \{} +
+
 | *`serverAffinity`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#affinity-v1-core[$$Affinity$$]__| serverAffinity 是由活动的 VirtualClusterPolicy 强制执行的服务器 Pod 亲和性规则。 +
-这包括节点亲和性规则和 Pod 亲和性/反亲和性规则。 + |  | 
+这包括节点亲和性规则和 Pod 亲和性/反亲和性规则。 + |  | Optional: \{} +
+
 | *`agentAffinity`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#affinity-v1-core[$$Affinity$$]__| agentAffinity 是由活动的 VirtualClusterPolicy 强制执行的代理 Pod 亲和性规则。 +
-这包括节点亲和性规则和 Pod 亲和性/反亲和性规则。 + |  | 
-| *`sync`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-syncconfig[$$SyncConfig$$]__| sync 是由活动的 VirtualClusterPolicy 强制执行的 SyncConfig。 + |  | 
+这包括节点亲和性规则和 Pod 亲和性/反亲和性规则。 + |  | Optional: \{} +
+
+| *`sync`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-syncconfig[$$SyncConfig$$]__| sync 是由活动的 VirtualClusterPolicy 强制执行的 SyncConfig。 + |  | Optional: \{} +
+
 | *`runtimeClassName`* __字符串__| RuntimeClassName 为 virtual 或 shared 模式下集群的代理和服务器 Pod +
-指定备用运行时类。 + |  | 
+指定备用运行时类。 + |  | Optional: \{} +
+
 | *`podSecurityContext`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#podsecuritycontext-v1-core[$$PodSecurityContext$$]__| PodSecurityContext 指定要添加到 virtual 或 shared 模式下集群的代理和服务器 Pod 的 +
-自定义 SecurityContext。 + |  | 
+自定义 SecurityContext。 + |  | Optional: \{} +
+
 | *`securityContext`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#securitycontext-v1-core[$$SecurityContext$$]__| SecurityContext 指定要添加到 virtual 或 shared 模式下集群的代理和服务器容器的 +
-自定义容器 SecurityContext。 + |  | 
+自定义容器 SecurityContext。 + |  | Optional: \{} +
+
 | *`hostUsers`* __布尔数据类型__| HostUsers 设置服务器 Pod 和代理 Pod 的用户命名空间。 +
 如果设置为 true 或未设置，Pod 将在主机用户命名空间中运行。 +
 如果设置为 false，则会为 Pod 创建新的 userns。 +
-此字段为 alpha 级别，仅在启用了 UserNamespacesSupport 特性的服务器上生效。 + |  | 
+此字段为 alpha 级别，仅在启用了 UserNamespacesSupport 特性的服务器上生效。 + |  | Optional: \{} +
+
+| *`allowedHostSchedulers`* __字符串数组__| AllowedHostSchedulers 是工作负载可以通过 "k3k.io/host-scheduler-name" 注解 +
+请求的主集群调度器列表。它仅适用于 shared 模式， +
+在该模式下，请求的调度器会被设置在同步到主集群的 Pod 上。 +
+请求的调度器不在此列表中的 Pod 不会被同步。 +
+此列表仅针对该注解进行检查，与 Pod 的 +
+spec.schedulerName 字段无关，该字段仍由虚拟集群处理。 + |  | Optional: \{} +
+
 |===
 
 
@@ -100,8 +121,10 @@ _出现在：_
 | *`apiVersion`* __字符串__| `k3k.io/v1beta1` |  | 
 | *`kind`* __字符串__| `Cluster` |  | 
 | *`metadata`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#objectmeta-v1-meta[$$ObjectMeta$$]__| 请参阅 Kubernetes API 文档以获取 `metadata` 的字段。 |  | 
-| *`spec`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clusterspec[$$ClusterSpec$$]__| 规格定义了集群的期望状态。 + | {  } | 
-| *`status`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clusterstatus[$$ClusterStatus$$]__| Status 反映集群的观测状态。 + | {  } | 
+| *`spec`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clusterspec[$$ClusterSpec$$]__| 规格定义了集群的期望状态。 + | {  } | Optional: \{} +
+
+| *`status`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clusterstatus[$$ClusterStatus$$]__| Status 反映集群的观测状态。 + | {  } | Optional: \{} +
+
 |===
 
 
@@ -177,67 +200,106 @@ _出现在：_
 | 字段 | 说明 | 默认值 | Validation
 | *`version`* __字符串__| 版本是用于虚拟节点的 K3s 版本。 +
 它应遵循 K3s 版本命名约定（例如，v1.28.2-k3s1）。 +
-如果未指定，将使用主机节点的 Kubernetes 版本。 + |  | 
+如果未指定，将使用主机节点的 Kubernetes 版本。 + |  | Optional: \{} +
+
 | *`mode`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clustermode[$$ClusterMode$$]__| Mode 指定集群的配置模式。此字段是不可变的。 + | shared | Enum: [shared virtual hcp] +
+Optional: \{} +
 
 | *`servers`* __整数__| 服务器指定以服务器（控制平面）模式运行的 K3s pod 数量。 +
-必须至少为 1。默认值为 1。 + | 1 | 
+必须至少为 1。默认值为 1。 + | 1 | Optional: \{} +
+
 | *`agents`* __整数__| Agents 指定以代理（工作）模式运行的 K3s pod 数量。 +
 必须为 0 或更大。默认值为 0。 +
-在 "shared" 模式下，此字段被忽略。 + | 0 | 
+在 "shared" 和 "hcp" 模式下，此字段被忽略。 + | 0 | Optional: \{} +
+
 | *`clusterCIDR`* __字符串__| ClusterCIDR 是 pod IP 的 CIDR 范围。 +
 在 shared 模式下默认值为 10.42.0.0/16，在 virtual 模式下默认值为 10.52.0.0/16。 +
-此字段是不可变的。 + |  | 
+此字段是不可变的。 + |  | Optional: \{} +
+
 | *`serviceCIDR`* __字符串__| ServiceCIDR 是服务 IP 的 CIDR 范围。 +
 在 shared 模式下默认值为 10.43.0.0/16，在 virtual 模式下默认值为 10.53.0.0/16。 +
-此字段是不可变的。 + |  | 
+此字段是不可变的。 + |  | Optional: \{} +
+
 | *`clusterDNS`* __字符串__| ClusterDNS 是 CoreDNS 服务的 IP 地址。 +
 必须在 ServiceCIDR 范围内。默认值为 10.43.0.10。 +
-此字段是不可变的。 + |  | 
+此字段是不可变的。 + |  | Optional: \{} +
+
 | *`persistence`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-persistenceconfig[$$PersistenceConfig$$]__| Persistence 指定持久化 etcd 数据的选项。 +
 默认值为动态持久化，使用 PersistentVolumeClaim 提供数据持久化。 +
-动态持久化需要一个默认的 StorageClass。 + |  | 
+动态持久化需要一个默认的 StorageClass。 + |  | Optional: \{} +
+
 | *`expose`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-exposeconfig[$$ExposeConfig$$]__| Expose 指定暴露 API 服务器的选项。 +
-默认情况下，它仅作为 ClusterIP 暴露。 + |  | 
+默认情况下，它仅作为 ClusterIP 暴露。 + |  | Optional: \{} +
+
 | *`nodeSelector`* __object (keys:string, values:string)__| NodeSelector 指定节点标签，以限制服务器/代理 Pod 的调度位置。 +
-在 "shared" 模式下，这也适用于工作负载。 + |  | 
+在 "shared" 模式下，这也适用于工作负载。 + |  | Optional: \{} +
+
 | *`priorityClass`* __字符串__| PriorityClass 指定服务器/代理 Pod 的 priorityClassName。 +
-在 "shared" 模式下，这也适用于工作负载。 + |  | 
+在 "shared" 模式下，这也适用于工作负载。 + |  | Optional: \{} +
+
 | *`tokenSecretRef`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#secretreference-v1-core[$$SecretReference$$]__| TokenSecretRef是一个包含工作节点用于加入集群的令牌的Secret引用。 +
-Secret必须在其数据中包含一个“token”字段。 + |  | 
-| *`tlsSANs`* __字符串数组__| TLSSANs指定K3s服务器证书的主题备用名称。 + |  | 
+Secret必须在其数据中包含一个“token”字段。 + |  | Optional: \{} +
+
+| *`tlsSANs`* __字符串数组__| TLSSANs指定K3s服务器证书的主题备用名称。 + |  | Optional: \{} +
+
 | *`serverArgs`* __字符串数组__| ServerArgs指定K3s服务器Pod的有序键值对。 +
-示例：["--tls-san=example.com"] + |  | 
+示例：["--tls-san=example.com"] + |  | Optional: \{} +
+
 | *`agentArgs`* __字符串数组__| AgentArgs指定K3s代理Pod的有序键值对。 +
-示例：["--node-name=my-agent-node"] + |  | 
-| *`serverEnvs`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#envvar-v1-core[$$EnvVar$$] 数组__| ServerEnvs指定要在服务器Pod中设置的环境变量列表。 + |  | 
-| *`agentEnvs`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#envvar-v1-core[$$EnvVar$$] 数组__| AgentEnvs指定要在代理Pod中设置的环境变量列表。 + |  | 
-| *`addons`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-addon[$$Addon$$] 数组__| Addons指定包含原始YAML的 Secret，以便在集群启动时部署。 + |  | 
-| *`serverLimit`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#resourcelist-v1-core[$$ResourceList$$]__| ServerLimit指定服务器节点的资源限制。 + |  | 
-| *`workerLimit`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#resourcelist-v1-core[$$ResourceList$$]__| WorkerLimit指定代理节点的资源限制。 + |  | 
-| *`serverResources`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#resourcerequirements-v1-core[$$ResourceRequirements$$]__| ServerResources 指定服务器节点的资源限制和请求。 + |  | 
-| *`workerResources`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#resourcerequirements-v1-core[$$ResourceRequirements$$]__| WorkerResources 指定工作节点的资源限制和请求。 + |  | 
+示例：["--node-name=my-agent-node"] + |  | Optional: \{} +
+
+| *`serverEnvs`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#envvar-v1-core[$$EnvVar$$] 数组__| ServerEnvs指定要在服务器Pod中设置的环境变量列表。 + |  | Optional: \{} +
+
+| *`agentEnvs`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#envvar-v1-core[$$EnvVar$$] 数组__| AgentEnvs指定要在代理Pod中设置的环境变量列表。 + |  | Optional: \{} +
+
+| *`addons`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-addon[$$Addon$$] 数组__| Addons指定包含原始YAML的 Secret，以便在集群启动时部署。 + |  | Optional: \{} +
+
+| *`serverLimit`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#resourcelist-v1-core[$$ResourceList$$]__| ServerLimit指定服务器节点的资源限制。 + |  | Optional: \{} +
+
+| *`workerLimit`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#resourcelist-v1-core[$$ResourceList$$]__| WorkerLimit指定代理节点的资源限制。 + |  | Optional: \{} +
+
+| *`serverResources`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#resourcerequirements-v1-core[$$ResourceRequirements$$]__| ServerResources 指定服务器节点的资源限制和请求。 + |  | Optional: \{} +
+
+| *`workerResources`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#resourcerequirements-v1-core[$$ResourceRequirements$$]__| WorkerResources 指定工作节点的资源限制和请求。 + |  | Optional: \{} +
+
 | *`serverAffinity`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#affinity-v1-core[$$Affinity$$]__| ServerAffinity 指定服务器 Pod 的亲和性规则。 +
-这包括节点亲和性规则和 Pod 亲和性/反亲和性规则。 + |  | 
+这包括节点亲和性规则和 Pod 亲和性/反亲和性规则。 + |  | Optional: \{} +
+
 | *`agentAffinity`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#affinity-v1-core[$$Affinity$$]__| AgentAffinity 指定代理 Pod 的亲和性规则。 +
-这包括节点亲和性规则和 Pod 亲和性/反亲和性规则。 + |  | 
+这包括节点亲和性规则和 Pod 亲和性/反亲和性规则。 + |  | Optional: \{} +
+
 | *`mirrorHostNodes`* __布尔数据类型__| MirrorHostNodes 控制来自主集群的节点对象是否被镜像到虚拟集群中 +
-被镜像到虚拟集群中。 + |  | 
-| *`customCAs`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-customcas[$$CustomCAs$$]__| CustomCAs 指定自定义 CA 证书的证书/密钥对。 + |  | 
-| *`sync`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-syncconfig[$$SyncConfig$$]__| Sync 指定将从虚拟集群同步到主集群的资源类型。 + | {  } | 
+被镜像到虚拟集群中。 + |  | Optional: \{} +
+
+| *`customCAs`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-customcas[$$CustomCAs$$]__| CustomCAs 指定自定义 CA 证书的证书/密钥对。 + |  | Optional: \{} +
+
+| *`sync`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-syncconfig[$$SyncConfig$$]__| Sync 指定将从虚拟集群同步到主集群的资源类型。 + | {  } | Optional: \{} +
+
 | *`secretMounts`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-secretmount[$$SecretMount$$] 数组__| SecretMounts指定要挂载到服务器和代理 Pod 的 Secret 列表。 +
-每个条目定义一个 Secret 及其在 Pod 中的挂载路径。 + |  | 
+每个条目定义一个 Secret 及其在 Pod 中的挂载路径。 + |  | Optional: \{} +
+
 | *`podSecurityContext`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#podsecuritycontext-v1-core[$$PodSecurityContext$$]__| PodSecurityContext 指定要添加到 virtual 或 shared 模式下集群的代理和服务器 Pod 的 +
-自定义 PodSecurityContext。 + |  | 
+自定义 PodSecurityContext。 + |  | Optional: \{} +
+
 | *`securityContext`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#securitycontext-v1-core[$$SecurityContext$$]__| SecurityContext 指定要添加到 virtual 或 shared 模式下集群的代理和服务器容器的 +
 自定义容器 SecurityContext。 +
-此选项将覆盖为 virtual 模式默认设置的 SecurityContext。 + |  | 
+此选项将覆盖为 virtual 模式默认设置的 SecurityContext。 + |  | Optional: \{} +
+
 | *`runtimeClassName`* __字符串__| RuntimeClassName 为 virtual 或 shared 模式下集群的代理和服务器 Pod +
-指定备用运行时类。 + |  | 
+指定备用运行时类。 + |  | Optional: \{} +
+
 | *`hostUsers`* __布尔数据类型__| HostUsers 设置服务器 Pod 和代理 Pod 的用户命名空间。 +
 如果设置为 true 或未设置，Pod 将在主机用户命名空间中运行。 +
 如果设置为 false，则会为 Pod 创建新的 userns。 +
-此字段为 alpha 级别，仅在启用了 UserNamespacesSupport 特性的服务器上生效。 + |  | 
+此字段为 alpha 级别，仅在启用了 UserNamespacesSupport 特性的服务器上生效。 + |  | Optional: \{} +
+
+| *`allowedHostSchedulers`* __字符串数组__| AllowedHostSchedulers 是工作负载可以通过 "k3k.io/host-scheduler-name" 注解 +
+请求的主集群调度器列表。它仅适用于 shared 模式， +
+在该模式下，请求的调度器会被设置在同步到主集群的 Pod 上。 +
+请求的调度器不在此列表中的 Pod 不会被同步。 +
+此列表仅针对该注解进行检查，与 Pod 的 +
+spec.schedulerName 字段无关，该字段仍由虚拟集群处理。 + |  | Optional: \{} +
+
 |===
 
 
@@ -257,17 +319,29 @@ _出现在：_
 [cols="25a,55a,10a,10a", options="header"]
 |===
 | 字段 | 说明 | 默认值 | Validation
-| *`hostVersion`* __字符串__| HostVersion 是主机节点的 Kubernetes 版本。 + |  | 
-| *`clusterCIDR`* __字符串__| ClusterCIDR 是 pod IP 的 CIDR 范围。 + |  | 
-| *`serviceCIDR`* __字符串__| ServiceCIDR 是服务 IP 的 CIDR 范围。 + |  | 
-| *`clusterDNS`* __字符串__| ClusterDNS 是 CoreDNS 服务的 IP 地址。 + |  | 
-| *`tlsSANs`* __字符串数组__| TLSSANs指定K3s服务器证书的主题备用名称。 + |  | 
-| *`policyName`* __字符串__| PolicyName 指定绑定到虚拟集群的虚拟集群策略名称。 + |  | 
+| *`hostVersion`* __字符串__| HostVersion 是主机节点的 Kubernetes 版本。 + |  | Optional: \{} +
+
+| *`clusterCIDR`* __字符串__| ClusterCIDR 是 pod IP 的 CIDR 范围。 + |  | Optional: \{} +
+
+| *`serviceCIDR`* __字符串__| ServiceCIDR 是服务 IP 的 CIDR 范围。 + |  | Optional: \{} +
+
+| *`clusterDNS`* __字符串__| ClusterDNS 是 CoreDNS 服务的 IP 地址。 + |  | Optional: \{} +
+
+| *`tlsSANs`* __字符串数组__| TLSSANs指定K3s服务器证书的主题备用名称。 + |  | Optional: \{} +
+
+| *`policyName`* __字符串__| PolicyName 指定绑定到虚拟集群的虚拟集群策略名称。 + |  | Optional: \{} +
+
 | *`policy`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-appliedpolicy[$$AppliedPolicy$$]__| policy 表示应用于此集群的策略的状态。 +
-此字段由 VirtualClusterPolicy 控制器设置。 + |  | 
-| *`kubeletPort`* __整数__| KubeletPort 指定 k3k-kubelet 在 shared 模式下使用的端口。 + |  | 
-| *`conditions`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#condition-v1-meta[$$Condition$$] 数组__| Conditions 是为集群设置的各个状况。 + |  | 
-| *`phase`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clusterphase[$$ClusterPhase$$]__| Phase 是集群当前生命周期状态的高级摘要。 + | Unknown | Enum: [Pending Provisioning Ready Failed Terminating Unknown] +
+此字段由 VirtualClusterPolicy 控制器设置。 + |  | Optional: \{} +
+
+| *`kubeletPort`* __整数__| KubeletPort 指定 k3k-kubelet 在 shared 模式下使用的端口。 + |  | Optional: \{} +
+
+| *`conditions`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#condition-v1-meta[$$Condition$$] 数组__| Conditions 是为集群设置的各个状况。 + |  | Optional: \{} +
+
+| *`phase`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clusterphase[$$ClusterPhase$$]__| Phase 是集群当前生命周期状态的高级摘要。 + | Unknown | Enum: [Pending Provisioning Ready Restoring Failed Terminating Unknown] +
+Optional: \{} +
+
+| *`activeRestoreRef`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#localobjectreference-v1-core[$$LocalObjectReference$$]__| ActiveRestoreRef 是对当前正在进行的活动恢复对象的引用。 + |  | Optional: \{} +
 
 |===
 
@@ -288,9 +362,17 @@ _出现在：_
 [cols="25a,55a,10a,10a", options="header"]
 |===
 | 字段 | 说明 | 默认值 | Validation
-| *`enabled`* __布尔数据类型__| Enabled 是一个用于同步资源的开关。 + | true | 
+| *`enabled`* __布尔数据类型__| Enabled 是一个用于同步资源的开关。 + | true | Required: \{} +
+
 | *`selector`* __object (keys:string, values:string)__| Selector 指定将被同步的资源的标签集，如果为空， +
-则所有给定类型的资源将被同步。 + |  | 
+则所有给定类型的资源将被同步。 +
+
+已弃用：请改用 LabelSelector。 + |  | Optional: \{} +
+
+| *`labelSelector`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#labelselector-v1-meta[$$LabelSelector$$]__| LabelSelector 是一个基于集合的标签选择器，用于选择将被同步的资源。 +
+它与 Selector 组合使用，资源必须同时匹配两者才会被同步。 +
+如果为空，则所有给定类型的资源将被同步。 + |  | Optional: \{} +
+
 |===
 
 
@@ -336,8 +418,8 @@ _出现在：_
 | *`serverCA`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-credentialsource[$$CredentialSource$$]__| ServerCA 指定服务器 CA 证书/密钥对。 + |  | 
 | *`clientCA`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-credentialsource[$$CredentialSource$$]__| ClientCA 指定客户端 CA 证书/密钥对。 + |  | 
 | *`requestHeaderCA`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-credentialsource[$$CredentialSource$$]__| RequestHeaderCA 指定请求头 CA 证书/密钥对。 + |  | 
-| *`etcdServerCA`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-credentialsource[$$CredentialSource$$]__| ETCDServerCA 指定 etcd 服务器 CA 证书/密钥对。 + |  | 
-| *`etcdPeerCA`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-credentialsource[$$CredentialSource$$]__| ETCDPeerCA 指定 etcd 对等 CA 证书/密钥对。 + |  | 
+| *`etcdServerCA`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-credentialsource[$$CredentialSource$$]__| EtcdServerCA 指定 etcd 服务器 CA 证书/密钥对。 + |  | 
+| *`etcdPeerCA`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-credentialsource[$$CredentialSource$$]__| EtcdPeerCA 指定 etcd 对等 CA 证书/密钥对。 + |  | 
 | *`serviceAccountToken`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-credentialsource[$$CredentialSource$$]__| ServiceAccountToken 指定服务账户令牌密钥。 + |  | 
 |===
 
@@ -363,6 +445,233 @@ _出现在：_
 |===
 
 
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-endpointslicesyncconfig"]
+=== EndpointSliceSyncConfig
+
+
+
+EndpointSliceSyncConfig 指定 EndpointSlice 的同步选项。
+
+
+
+_出现在：_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-syncconfig[$$SyncConfig$$]
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| 字段 | 说明 | 默认值 | Validation
+| *`enabled`* __布尔数据类型__| Enabled 是一个用于同步资源的开关。 + | false | Required: \{} +
+
+| *`selector`* __object (keys:string, values:string)__| Selector 指定将被同步的资源的标签集，如果为空， +
+则所有给定类型的资源将被同步。 +
+
+已弃用：请改用 LabelSelector。 + |  | Optional: \{} +
+
+| *`labelSelector`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#labelselector-v1-meta[$$LabelSelector$$]__| LabelSelector 是一个基于集合的标签选择器，用于选择将被同步的资源。 +
+它与 Selector 组合使用，资源必须同时匹配两者才会被同步。 +
+如果为空，则所有给定类型的资源将被同步。 + |  | Optional: \{} +
+
+|===
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdrestore"]
+=== EtcdRestore
+
+
+
+
+
+
+
+_出现在：_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdrestorelist[$$EtcdRestoreList$$]
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| 字段 | 说明 | 默认值 | Validation
+| *`apiVersion`* __字符串__| `k3k.io/v1beta1` |  | 
+| *`kind`* __字符串__| `EtcdRestore` |  | 
+| *`metadata`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#objectmeta-v1-meta[$$ObjectMeta$$]__| 请参阅 Kubernetes API 文档以获取 `metadata` 的字段。 |  | 
+| *`spec`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdrestorespec[$$EtcdRestoreSpec$$]__|  |  | Required: \{} +
+
+| *`status`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdrestorestatus[$$EtcdRestoreStatus$$]__|  |  | Optional: \{} +
+
+|===
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdrestorelist"]
+=== EtcdRestoreList
+
+
+
+EtcdRestoreList 是 EtcdRestore 资源的列表。
+
+
+
+
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| 字段 | 说明 | 默认值 | Validation
+| *`apiVersion`* __字符串__| `k3k.io/v1beta1` |  | 
+| *`kind`* __字符串__| `EtcdRestoreList` |  | 
+| *`metadata`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#listmeta-v1-meta[$$ListMeta$$]__| 请参阅 Kubernetes API 文档以获取 `metadata` 的字段。 |  | 
+| *`items`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdrestore[$$EtcdRestore$$] 数组__|  |  | 
+|===
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdrestorespec"]
+=== EtcdRestoreSpec
+
+
+
+EtcdRestoreSpec 定义了 EtcdRestore 的期望状态。
+
+
+
+_出现在：_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdrestore[$$EtcdRestore$$]
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| 字段 | 说明 | 默认值 | Validation
+| *`clusterRef`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#localobjectreference-v1-core[$$LocalObjectReference$$]__| ClusterRef 是对将要在其上恢复快照的集群的引用。 +
+此字段是不可变的。 + |  | Required: \{} +
+
+| *`snapshotRef`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#localobjectreference-v1-core[$$LocalObjectReference$$]__| SnapshotRef 是对将在集群上恢复的 EtcdSnapshot 对象的引用。 +
+此字段是不可变的。 + |  | Required: \{} +
+
+|===
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdrestorestatus"]
+=== EtcdRestoreStatus
+
+
+
+EtcdRestoreStatus 反映 EtcdRestore 的观测状态。
+
+
+
+_出现在：_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdrestore[$$EtcdRestore$$]
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| 字段 | 说明 | 默认值 | Validation
+| *`conditions`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#condition-v1-meta[$$Condition$$] 数组__| Conditions 是 EtcdRestore 的各个状况。 + |  | Optional: \{} +
+
+|===
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdsnapshot"]
+=== EtcdSnapshot
+
+
+
+
+
+
+
+_出现在：_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdsnapshotlist[$$EtcdSnapshotList$$]
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| 字段 | 说明 | 默认值 | Validation
+| *`apiVersion`* __字符串__| `k3k.io/v1beta1` |  | 
+| *`kind`* __字符串__| `EtcdSnapshot` |  | 
+| *`metadata`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#objectmeta-v1-meta[$$ObjectMeta$$]__| 请参阅 Kubernetes API 文档以获取 `metadata` 的字段。 |  | 
+| *`spec`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdsnapshotspec[$$EtcdSnapshotSpec$$]__|  |  | Required: \{} +
+
+| *`status`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdsnapshotstatus[$$EtcdSnapshotStatus$$]__|  |  | Optional: \{} +
+
+|===
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdsnapshotlist"]
+=== EtcdSnapshotList
+
+
+
+EtcdSnapshotList 是 EtcdSnapshot 资源的列表。
+
+
+
+
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| 字段 | 说明 | 默认值 | Validation
+| *`apiVersion`* __字符串__| `k3k.io/v1beta1` |  | 
+| *`kind`* __字符串__| `EtcdSnapshotList` |  | 
+| *`metadata`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#listmeta-v1-meta[$$ListMeta$$]__| 请参阅 Kubernetes API 文档以获取 `metadata` 的字段。 |  | 
+| *`items`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdsnapshot[$$EtcdSnapshot$$] 数组__|  |  | 
+|===
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdsnapshotspec"]
+=== EtcdSnapshotSpec
+
+
+
+EtcdSnapshotSpec 定义了 EtcdSnapshot 的期望状态。
+
+
+
+_出现在：_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdsnapshot[$$EtcdSnapshot$$]
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| 字段 | 说明 | 默认值 | Validation
+| *`clusterRef`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#localobjectreference-v1-core[$$LocalObjectReference$$]__| ClusterRef 是对将要创建快照的集群的引用。 +
+此字段是不可变的。 + |  | Required: \{} +
+
+| *`s3ConfigSecretRef`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#secretreference-v1-core[$$SecretReference$$]__| S3ConfigSecretRef 定义包含全部 S3 配置的 +
+S3 配置 Secret。配置项应符合以下内容： +
+https://docs.k3s.io/cli/etcd-snapshot?_highlight=snapshot#s3-compatible-object-store-support +
+
+此字段是不可变的，以避免创建快照后出现不一致。 +
+
+设置此字段还会使 k3s 先在磁盘上创建本地 etcd 快照，然后将其 +
+上传到 S3。删除该请求时，磁盘上的文件和 S3 中的文件都将被删除。 + |  | Optional: \{} +
+
+| *`compress`* __布尔数据类型__| Compress 指定是否应压缩快照 + | false | Optional: \{} +
+
+|===
+
+
+[id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdsnapshotstatus"]
+=== EtcdSnapshotStatus
+
+
+
+EtcdSnapshotStatus 反映 EtcdSnapshot 的观测状态。
+
+
+
+_出现在：_
+
+* xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-etcdsnapshot[$$EtcdSnapshot$$]
+
+[cols="25a,55a,10a,10a", options="header"]
+|===
+| 字段 | 说明 | 默认值 | Validation
+| *`filename`* __字符串__| Filename 是在虚拟集群中创建的 +
+快照文件的名称 + |  | Optional: \{} +
+
+| *`conditions`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#condition-v1-meta[$$Condition$$] 数组__| Conditions 是快照的各个状况。 + |  | Optional: \{} +
+
+|===
+
+
 [id="{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-exposeconfig"]
 === 暴露配置
 
@@ -379,10 +688,14 @@ _出现在：_
 [cols="25a,55a,10a,10a", options="header"]
 |===
 | 字段 | 说明 | 默认值 | Validation
-| *`ingress`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-ingressconfig[$$IngressConfig$$]__| Ingress 指定通过 Ingress 暴露 API 服务器的选项。 + |  | 
-| *`loadBalancer`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-loadbalancerconfig[$$LoadBalancerConfig$$]__| LoadBalancer 指定用于通过 LoadBalancer 服务公开 API 服务器的选项。 + |  | 
-| *`nodePort`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-nodeportconfig[$$NodePortConfig$$]__| NodePort 指定用于通过 NodePort 公开 API 服务器的选项。 + |  | 
-| *`annotations`* __object (keys:string, values:string)__| Annotations 指定要添加到生成的 Service 的注解。 + |  | 
+| *`ingress`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-ingressconfig[$$IngressConfig$$]__| Ingress 指定通过 Ingress 暴露 API 服务器的选项。 + |  | Optional: \{} +
+
+| *`loadBalancer`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-loadbalancerconfig[$$LoadBalancerConfig$$]__| LoadBalancer 指定用于通过 LoadBalancer 服务公开 API 服务器的选项。 + |  | Optional: \{} +
+
+| *`nodePort`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-nodeportconfig[$$NodePortConfig$$]__| NodePort 指定用于通过 NodePort 公开 API 服务器的选项。 + |  | Optional: \{} +
+
+| *`annotations`* __object (keys:string, values:string)__| Annotations 指定要添加到生成的 Service 的注解。 + |  | Optional: \{} +
+
 |===
 
 
@@ -402,8 +715,10 @@ _出现在：_
 [cols="25a,55a,10a,10a", options="header"]
 |===
 | 字段 | 说明 | 默认值 | Validation
-| *`annotations`* __object (keys:string, values:string)__| Annotations 指定要添加到 Ingress 的注解。 + |  | 
-| *`ingressClassName`* __字符串__| IngressClassName 指定用于 Ingress 的 IngressClass。 + |  | 
+| *`annotations`* __object (keys:string, values:string)__| Annotations 指定要添加到 Ingress 的注解。 + |  | Optional: \{} +
+
+| *`ingressClassName`* __字符串__| IngressClassName 指定用于 Ingress 的 IngressClass。 + |  | Optional: \{} +
+
 |===
 
 
@@ -423,11 +738,20 @@ _出现在：_
 [cols="25a,55a,10a,10a", options="header"]
 |===
 | 字段 | 说明 | 默认值 | Validation
-| *`enabled`* __布尔数据类型__| Enabled 是一个用于同步资源的开关。 + | false | 
+| *`enabled`* __布尔数据类型__| Enabled 是一个用于同步资源的开关。 + | false | Required: \{} +
+
 | *`selector`* __object (keys:string, values:string)__| Selector 指定将被同步的资源的标签集，如果为空， +
-则所有给定类型的资源将被同步。 + |  | 
+则所有给定类型的资源将被同步。 +
+
+已弃用：请改用 LabelSelector。 + |  | Optional: \{} +
+
+| *`labelSelector`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#labelselector-v1-meta[$$LabelSelector$$]__| LabelSelector 是一个基于集合的标签选择器，用于选择将被同步的资源。 +
+它与 Selector 组合使用，资源必须同时匹配两者才会被同步。 +
+如果为空，则所有给定类型的资源将被同步。 + |  | Optional: \{} +
+
 | *`disableTLSSecretTranslation`* __布尔数据类型__| DisableTLSSecretTranslation 是将 TLS Secret 从虚拟集群转换到主集群的 +
-开关 + | false | 
+开关 + | false | Optional: \{} +
+
 |===
 
 
@@ -448,11 +772,18 @@ _出现在：_
 |===
 | 字段 | 说明 | 默认值 | Validation
 | *`serverPort`* __整数__| ServerPort 是当类型为 LoadBalancer 时 K3s 服务器公开的端口。 +
-如果未指定，将分配默认的 https 443 端口。 +
-如果为 0 或负数，则该端口将不会被公开。 + |  | 
-| *`etcdPort`* __整数__| ETCDPort 是当类型为 LoadBalancer 时 ETCD 服务公开的端口。 +
+默认的 https 443 端口始终会被分配，因为内部组件需要通过它 +
+访问服务器：如果指定了 ServerPort，则会将其作为附加端口分配。 +
+如果为 0 或负数，则仅分配默认的 https 443 端口。 + |  | Optional: \{} +
+
+| *`etcdPort`* __整数__| EtcdPort 是当类型为 LoadBalancer 时 Etcd 服务公开的端口。 +
 如果未指定，将分配默认的 etcd 2379 端口。 +
-如果为 0 或负数，则该端口将不会被公开。 + |  | 
+如果为 0 或负数，则该端口将不会被公开。 + |  | Optional: \{} +
+
+| *`loadBalancerClass`* __字符串__| LoadBalancerClass 指定所公开 Service 使用的负载均衡器实现的类。 +
+如果未指定，则使用主集群的默认负载均衡器实现。 +
+一旦设置，只要 Service 的类型仍为 LoadBalancer，Kubernetes 就不允许更改其 loadBalancerClass。 + |  | Optional: \{} +
+
 |===
 
 
@@ -474,10 +805,12 @@ _出现在：_
 | 字段 | 说明 | 默认值 | Validation
 | *`serverPort`* __整数__| ServerPort 是当类型为 NodePort 时每个节点上 K3s 服务器公开的端口。 +
 如果未指定，将分配 30000-32767 之间的随机端口。 +
-如果超出范围，端口将不会被公开。 + |  | 
-| *`etcdPort`* __整数__| ETCDPort 是当类型为 NodePort 时每个节点上 ETCD 服务公开的端口。 +
+如果超出范围，端口将不会被公开。 + |  | Optional: \{} +
+
+| *`etcdPort`* __整数__| EtcdPort 是当类型为 NodePort 时每个节点上 Etcd 服务公开的端口。 +
 如果未指定，将分配30000-32767之间的随机端口。 +
-如果超出范围，端口将不会被暴露。 + |  | 
+如果超出范围，端口将不会被暴露。 + |  | Optional: \{} +
+
 |===
 
 
@@ -499,9 +832,11 @@ _出现在：_
 | 字段 | 说明 | 默认值 | Validation
 | *`type`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-persistencemode[$$PersistenceMode$$]__| 类型指定持久化模式。 + | dynamic | 
 | *`storageClassName`* __字符串__| StorageClassName 是用于 PVC 的 StorageClass 的名称。 +
-此字段仅在“动态”模式下相关。 + |  | 
+此字段仅在“动态”模式下相关。 + |  | Optional: \{} +
+
 | *`storageRequestSize`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#quantity-resource-api[$$Quantity$$]__| StorageRequestSize 是 PVC 请求的大小。 +
-此字段仅在“动态”模式下相关。 + | 2G | 
+此字段仅在“动态”模式下相关。 + | 2G | Optional: \{} +
+
 |===
 
 
@@ -536,9 +871,17 @@ _出现在：_
 [cols="25a,55a,10a,10a", options="header"]
 |===
 | 字段 | 说明 | 默认值 | Validation
-| *`enabled`* __布尔数据类型__| Enabled 是一个用于同步资源的开关。 + | true | 
+| *`enabled`* __布尔数据类型__| Enabled 是一个用于同步资源的开关。 + | true | Required: \{} +
+
 | *`selector`* __object (keys:string, values:string)__| Selector 指定将被同步的资源的标签集，如果为空， +
-则所有给定类型的资源将被同步。 + |  | 
+则所有给定类型的资源将被同步。 +
+
+已弃用：请改用 LabelSelector。 + |  | Optional: \{} +
+
+| *`labelSelector`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#labelselector-v1-meta[$$LabelSelector$$]__| LabelSelector 是一个基于集合的标签选择器，用于选择将被同步的资源。 +
+它与 Selector 组合使用，资源必须同时匹配两者才会被同步。 +
+如果为空，则所有给定类型的资源将被同步。 + |  | Optional: \{} +
+
 |===
 
 
@@ -575,9 +918,17 @@ _出现在：_
 [cols="25a,55a,10a,10a", options="header"]
 |===
 | 字段 | 说明 | 默认值 | Validation
-| *`enabled`* __布尔数据类型__| Enabled 是一个用于同步资源的开关。 + | false | 
+| *`enabled`* __布尔数据类型__| Enabled 是一个用于同步资源的开关。 + | false | Required: \{} +
+
 | *`selector`* __object (keys:string, values:string)__| Selector 指定将被同步的资源的标签集，如果为空， +
-则所有给定类型的资源将被同步。 + |  | 
+则所有给定类型的资源将被同步。 +
+
+已弃用：请改用 LabelSelector。 + |  | Optional: \{} +
+
+| *`labelSelector`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#labelselector-v1-meta[$$LabelSelector$$]__| LabelSelector 是一个基于集合的标签选择器，用于选择将被同步的资源。 +
+它与 Selector 组合使用，资源必须同时匹配两者才会被同步。 +
+如果为空，则所有给定类型的资源将被同步。 + |  | Optional: \{} +
+
 |===
 
 
@@ -598,34 +949,46 @@ _出现在：_
 |===
 | 字段 | 说明 | 默认值 | Validation
 | *`secretName`* __字符串__| secretName 是要使用的、位于 Pod 命名空间中的 Secret 的名称。 +
-更多信息： https://kubernetes.io/docs/concepts/storage/volumes#secret + |  | 
+更多信息： https://kubernetes.io/docs/concepts/storage/volumes#secret + |  | Optional: \{} +
+
 | *`items`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#keytopath-v1-core[$$KeyToPath$$] 数组__| 项目：如果未指定，则引用的 Data 字段中的每个键值对。 +
 Secret 将以文件形式投影到卷中，其文件名为 +
 文件名为 key，内容为对应的值。如果指定，列出的键将被 +
 投影到指定路径中，未列出的键将不会被投影。 +
 存在。如果指定的键在 Secret 中不存在， +
 卷设置将出错，除非它被标记为可选。路径必须是 +
-相对的，且不能包含 '..' 路径或以 '..' 开头。 + |  | 
+相对的，且不能包含 '..' 路径或以 '..' 开头。 + |  | Optional: \{} +
+
 | *`defaultMode`* __整数__| defaultMode 是可选的：用于默认设置创建文件权限的模式位。 +
 必须是 0000 到 0777 之间的八进制值或 0 到 511 之间的十进制值。 +
 YAML 接受八进制和十进制值，JSON 要求十进制值 +
 用于模式位。默认值为 0644。 +
 路径中的目录不受此设置的影响。 +
 这可能与其他影响文件的选项冲突， +
-例如 fsGroup，结果可能会设置其他模式位。 + |  | 
-| *`optional`* __布尔数据类型__| 可选字段，指定是否必须定义 Secret 或其键。 + |  | 
+例如 fsGroup，结果可能会设置其他模式位。 + |  | Optional: \{} +
+
+| *`optional`* __布尔数据类型__| 可选字段，指定是否必须定义 Secret 或其键。 + |  | Optional: \{} +
+
+| *`defaultUser`* __整数__| defaultUser 是可选的：默认情况下所创建文件的所有者 UID。 +
+仅当条目级别的 user 字段未设置时，defaultUser 字段才会用作回退值。 +
+（Alpha）此字段需要启用 AtomicWriteVolumeUserFields 特性门控。 + |  | Optional: \{} +
+
 | *`name`* __字符串__| Name 是 Secret 挂载卷的名称，将用作服务器或代理 Pod 的 +
 卷和卷挂载的名称。 +
 如果为空，则改用 Secret 的名称。 + |  | MaxLength: 63 +
 MinLength: 1 +
 Pattern: `^[a-z0-9]([-a-z0-9]*[a-z0-9])?$` +
+Optional: \{} +
 
 | *`mountPath`* __字符串__| MountPath 是服务器和代理 Pod 内的路径 +
-密钥内容将被挂载。 + |  | 
+密钥内容将被挂载。 + |  | Optional: \{} +
+
 | *`subPath`* __字符串__| SubPath 是密钥内的可选路径，用于替代 root 进行挂载。 +
 当指定时，只有密钥中指定的键将作为文件挂载。 +
-在 MountPath 处，保持父目录可写。 + |  | 
+在 MountPath 处，保持父目录可写。 + |  | Optional: \{} +
+
 | *`role`* __字符串__| Role 是将用于挂载 Secret 的 k3k Pod 的类型。 + |  | Enum: [server agent all] +
+Optional: \{} +
 
 |===
 
@@ -646,9 +1009,17 @@ _出现在：_
 [cols="25a,55a,10a,10a", options="header"]
 |===
 | 字段 | 说明 | 默认值 | Validation
-| *`enabled`* __布尔数据类型__| Enabled 是一个用于同步资源的开关。 + | true | 
+| *`enabled`* __布尔数据类型__| Enabled 是一个用于同步资源的开关。 + | true | Optional: \{} +
+
 | *`selector`* __object (keys:string, values:string)__| Selector 指定将被同步的资源的标签集，如果为空， +
-则所有给定类型的资源将被同步。 + |  | 
+则所有给定类型的资源将被同步。 +
+
+已弃用：请改用 LabelSelector。 + |  | Optional: \{} +
+
+| *`labelSelector`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#labelselector-v1-meta[$$LabelSelector$$]__| LabelSelector 是一个基于集合的标签选择器，用于选择将被同步的资源。 +
+它与 Selector 组合使用，资源必须同时匹配两者才会被同步。 +
+如果为空，则所有给定类型的资源将被同步。 + |  | Optional: \{} +
+
 |===
 
 
@@ -668,9 +1039,17 @@ _出现在：_
 [cols="25a,55a,10a,10a", options="header"]
 |===
 | 字段 | 说明 | 默认值 | Validation
-| *`enabled`* __布尔数据类型__| Enabled 是一个用于同步资源的开关。 + | true | 
+| *`enabled`* __布尔数据类型__| Enabled 是一个用于同步资源的开关。 + | true | Required: \{} +
+
 | *`selector`* __object (keys:string, values:string)__| Selector 指定将被同步的资源的标签集，如果为空， +
-则所有给定类型的资源将被同步。 + |  | 
+则所有给定类型的资源将被同步。 +
+
+已弃用：请改用 LabelSelector。 + |  | Optional: \{} +
+
+| *`labelSelector`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#labelselector-v1-meta[$$LabelSelector$$]__| LabelSelector 是一个基于集合的标签选择器，用于选择将被同步的资源。 +
+它与 Selector 组合使用，资源必须同时匹配两者才会被同步。 +
+如果为空，则所有给定类型的资源将被同步。 + |  | Optional: \{} +
+
 |===
 
 
@@ -690,9 +1069,17 @@ _出现在：_
 [cols="25a,55a,10a,10a", options="header"]
 |===
 | 字段 | 说明 | 默认值 | Validation
-| *`enabled`* __布尔数据类型__| Enabled 是一个用于同步资源的开关。 + | false | 
+| *`enabled`* __布尔数据类型__| Enabled 是一个用于同步资源的开关。 + | false | Required: \{} +
+
 | *`selector`* __object (keys:string, values:string)__| Selector 指定将被同步的资源的标签集，如果为空， +
-则所有给定类型的资源将被同步。 + |  | 
+则所有给定类型的资源将被同步。 +
+
+已弃用：请改用 LabelSelector。 + |  | Optional: \{} +
+
+| *`labelSelector`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#labelselector-v1-meta[$$LabelSelector$$]__| LabelSelector 是一个基于集合的标签选择器，用于选择将被同步的资源。 +
+它与 Selector 组合使用，资源必须同时匹配两者才会被同步。 +
+如果为空，则所有给定类型的资源将被同步。 + |  | Optional: \{} +
+
 |===
 
 
@@ -714,13 +1101,22 @@ _出现在：_
 [cols="25a,55a,10a,10a", options="header"]
 |===
 | 字段 | 说明 | 默认值 | Validation
-| *`services`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-servicesyncconfig[$$ServiceSyncConfig$$]__| 服务资源同步配置。 + | { enabled:true } | 
-| *`configMaps`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-configmapsyncconfig[$$ConfigMapSyncConfig$$]__| ConfigMaps 资源同步配置。 + | { enabled:true } | 
-| *`secrets`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-secretsyncconfig[$$SecretSyncConfig$$]__| Secrets 资源同步配置。 + | { enabled:true } | 
-| *`ingresses`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-ingresssyncconfig[$$IngressSyncConfig$$]__| Ingresses 资源同步配置。 + | { enabled:false } | 
-| *`persistentVolumeClaims`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-persistentvolumeclaimsyncconfig[$$PersistentVolumeClaimSyncConfig$$]__| PersistentVolumeClaims 资源同步配置。 + | { enabled:true } | 
-| *`priorityClasses`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-priorityclasssyncconfig[$$PriorityClassSyncConfig$$]__| 优先级类资源同步配置。 + | { enabled:false } | 
-| *`storageClasses`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-storageclasssyncconfig[$$StorageClassSyncConfig$$]__| StorageClasses 资源同步配置。 + | { enabled:false } | 
+| *`services`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-servicesyncconfig[$$ServiceSyncConfig$$]__| 服务资源同步配置。 + | { enabled:true } | Optional: \{} +
+
+| *`endpointSlices`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-endpointslicesyncconfig[$$EndpointSliceSyncConfig$$]__| EndpointSlices 资源同步配置。 + | { enabled:false } | Optional: \{} +
+
+| *`configMaps`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-configmapsyncconfig[$$ConfigMapSyncConfig$$]__| ConfigMaps 资源同步配置。 + | { enabled:true } | Optional: \{} +
+
+| *`secrets`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-secretsyncconfig[$$SecretSyncConfig$$]__| Secrets 资源同步配置。 + | { enabled:true } | Optional: \{} +
+
+| *`ingresses`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-ingresssyncconfig[$$IngressSyncConfig$$]__| Ingresses 资源同步配置。 + | { enabled:false } | Optional: \{} +
+
+| *`persistentVolumeClaims`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-persistentvolumeclaimsyncconfig[$$PersistentVolumeClaimSyncConfig$$]__| PersistentVolumeClaims 资源同步配置。 + | { enabled:true } | Optional: \{} +
+
+| *`priorityClasses`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-priorityclasssyncconfig[$$PriorityClassSyncConfig$$]__| 优先级类资源同步配置。 + | { enabled:false } | Optional: \{} +
+
+| *`storageClasses`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-storageclasssyncconfig[$$StorageClassSyncConfig$$]__| StorageClasses 资源同步配置。 + | { enabled:false } | Optional: \{} +
+
 |===
 
 
@@ -744,7 +1140,8 @@ _出现在：_
 | *`kind`* __字符串__| `VirtualClusterPolicy` |  | 
 | *`metadata`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#objectmeta-v1-meta[$$ObjectMeta$$]__| 请参阅 Kubernetes API 文档以获取 `metadata` 的字段。 |  | 
 | *`spec`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-virtualclusterpolicyspec[$$VirtualClusterPolicySpec$$]__| Spec 定义了 VirtualClusterPolicy 的期望状态。 + | {  } | 
-| *`status`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-virtualclusterpolicystatus[$$VirtualClusterPolicyStatus$$]__| Status 反映 VirtualClusterPolicy 的观测状态。 + |  | 
+| *`status`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-virtualclusterpolicystatus[$$VirtualClusterPolicyStatus$$]__| Status 反映 VirtualClusterPolicy 的观测状态。 + |  | Optional: \{} +
+
 |===
 
 
@@ -785,29 +1182,50 @@ _出现在：_
 [cols="25a,55a,10a,10a", options="header"]
 |===
 | 字段 | 说明 | 默认值 | Validation
-| *`quota`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#resourcequotaspec-v1-core[$$ResourceQuotaSpec$$]__| Quota 指定了 ClusterPolicy 内集群的资源限制。 + |  | 
+| *`quota`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#resourcequotaspec-v1-core[$$ResourceQuotaSpec$$]__| Quota 指定了 ClusterPolicy 内集群的资源限制。 + |  | Optional: \{} +
+
 | *`limit`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#limitrangespec-v1-core[$$LimitRangeSpec$$]__| Limit 指定将应用于 VirtualClusterPolicy 中所有 Pod 的 LimitRange。 +
-以设置默认值和约束（最小/最大） + |  | 
-| *`defaultNodeSelector`* __object (keys:string, values:string)__| DefaultNodeSelector 指定适用于目标名称空间中所有集群（服务器 + 代理）的节点选择器。 + |  | 
-| *`defaultPriorityClass`* __字符串__| DefaultPriorityClass 指定适用于目标名称空间中所有集群的所有 Pod 的 priorityClassName。 + |  | 
+以设置默认值和约束（最小/最大） + |  | Optional: \{} +
+
+| *`defaultNodeSelector`* __object (keys:string, values:string)__| DefaultNodeSelector 指定适用于目标名称空间中所有集群（服务器 + 代理）的节点选择器。 + |  | Optional: \{} +
+
+| *`defaultPriorityClass`* __字符串__| DefaultPriorityClass 指定应用于目标名称空间中集群的 priorityClassName。 +
+设置后，它将覆盖 Cluster 的 priorityClass，作用于服务器和代理 Pod，在 "shared" 模式下还作用于工作负载。 + |  | Optional: \{} +
+
 | *`defaultServerAffinity`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#affinity-v1-core[$$Affinity$$]__| DefaultServerAffinity 指定应用于目标名称空间中所有集群的服务器 Pod 的亲和性规则。 +
-这包括节点亲和性规则和 Pod 亲和性/反亲和性规则。 + |  | 
+这包括节点亲和性规则和 Pod 亲和性/反亲和性规则。 + |  | Optional: \{} +
+
 | *`defaultAgentAffinity`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#affinity-v1-core[$$Affinity$$]__| DefaultAgentAffinity 指定应用于目标名称空间中所有集群的代理 Pod 的亲和性规则。 +
-这包括节点亲和性规则和 Pod 亲和性/反亲和性规则。 + |  | 
+这包括节点亲和性规则和 Pod 亲和性/反亲和性规则。 + |  | Optional: \{} +
+
 | *`allowedMode`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-clustermode[$$ClusterMode$$]__| AllowedMode 指定允许的集群配置模式。 + | shared | Enum: [shared virtual hcp] +
+Optional: \{} +
 
-| *`disableNetworkPolicy`* __布尔数据类型__| DisableNetworkPolicy 指示是否禁用为集群隔离创建默认网络策略。 + |  | 
+| *`disableNetworkPolicy`* __布尔数据类型__| DisableNetworkPolicy 指示是否禁用为集群隔离创建默认网络策略。 + |  | Optional: \{} +
+
 | *`podSecurityAdmissionLevel`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-podsecurityadmissionlevel[$$PodSecurityAdmissionLevel$$]__| PodSecurityAdmissionLevel 指定适用于名称空间中 Pod 的 Pod 安全准入级别。 + |  | Enum: [privileged baseline restricted] +
+Optional: \{} +
 
-| *`sync`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-syncconfig[$$SyncConfig$$]__| Sync 指定将从虚拟集群同步到主集群的资源类型。 + | {  } | 
-| *`runtimeClassName`* __字符串__| SecurityContext 指定要添加到 virtual 或 shared 模式下集群的代理和服务器 Pod 的 +
-自定义 SecurityContext。 + |  | 
-| *`securityContext`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#securitycontext-v1-core[$$SecurityContext$$]__| RuntimeClassName 为 virtual 或 shared 模式下集群的代理和服务器 Pod +
-指定备用运行时类。 + |  | 
+| *`sync`* __xref:{anchor_prefix}-github-com-rancher-k3k-pkg-apis-k3k-io-v1beta1-syncconfig[$$SyncConfig$$]__| Sync 指定将从虚拟集群同步到主集群的资源类型。 + | {  } | Optional: \{} +
+
+| *`runtimeClassName`* __字符串__| RuntimeClassName 为集群的代理和服务器 Pod +
+指定备用运行时类。 + |  | Optional: \{} +
+
+| *`securityContext`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#securitycontext-v1-core[$$SecurityContext$$]__| SecurityContext 指定要添加到集群的代理和服务器 Pod 的 +
+自定义 SecurityContext。 + |  | Optional: \{} +
+
 | *`hostUsers`* __布尔数据类型__| HostUsers 设置服务器 Pod 和代理 Pod 的用户命名空间。 +
 如果设置为 true 或未设置，Pod 将在主机用户命名空间中运行。 +
 如果设置为 false，则会为 Pod 创建新的 userns。 +
-此字段为 alpha 级别，仅在启用了 UserNamespacesSupport 特性的服务器上生效。 + |  | 
+此字段为 alpha 级别，仅在启用了 UserNamespacesSupport 特性的服务器上生效。 + |  | Optional: \{} +
+
+| *`allowedHostSchedulers`* __字符串数组__| AllowedHostSchedulers 是工作负载可以通过 "k3k.io/host-scheduler-name" 注解 +
+请求的主集群调度器列表。它仅适用于 shared 模式， +
+在该模式下，请求的调度器会被设置在同步到主集群的 Pod 上。 +
+请求的调度器不在此列表中的 Pod 不会被同步。 +
+此列表仅针对该注解进行检查，与 Pod 的 +
+spec.schedulerName 字段无关，该字段仍由虚拟集群处理。 + |  | Optional: \{} +
+
 |===
 
 
@@ -827,10 +1245,14 @@ _出现在：_
 [cols="25a,55a,10a,10a", options="header"]
 |===
 | 字段 | 说明 | 默认值 | Validation
-| *`observedGeneration`* __整数__| ObservedGeneration 是状态更新时的 generation。 + |  | 
-| *`lastUpdateTime`* __字符串__| LastUpdate 是上次更新状态的时间戳。 + |  | 
-| *`summary`* __字符串__| Summary 是状态的摘要。 + |  | 
-| *`conditions`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#condition-v1-meta[$$Condition$$] 数组__| Conditions 是为集群设置的各个状况。 + |  | 
+| *`observedGeneration`* __整数__| ObservedGeneration 是状态更新时的 generation。 + |  | Optional: \{} +
+
+| *`lastUpdateTime`* __字符串__| LastUpdate 是上次更新状态的时间戳。 + |  | Optional: \{} +
+
+| *`summary`* __字符串__| Summary 是状态的摘要。 + |  | Optional: \{} +
+
+| *`conditions`* __link:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#condition-v1-meta[$$Condition$$] 数组__| Conditions 是为集群设置的各个状况。 + |  | Optional: \{} +
+
 |===
 
 
