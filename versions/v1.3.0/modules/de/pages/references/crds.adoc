@@ -210,7 +210,7 @@ Muss mindestens 1 sein. Der Standardwert ist 1. + | 1 | Optional: \{} +
 
 | *`agents`* __Ganzzahl__ | Agents gibt die Anzahl der K3s-Pods an, die im Agenten- (Arbeiter) Modus ausgeführt werden sollen. +
 Muss 0 oder größer sein. Der Standardwert ist 0. +
-Dieses Feld wird im "shared"-Modus ignoriert. + | 0 | Optional: \{} +
+Dieses Feld wird im "shared"- und "hcp"-Modus ignoriert. + | 0 | Optional: \{} +
 
 | *`clusterCIDR`* __Zeichenfolge__ | ClusterCIDR ist der CIDR-Bereich für Pod-IPs. +
 Der Standardwert ist 10.42.0.0/16 im shared-Modus und 10.52.0.0/16 im virtual-Modus. +

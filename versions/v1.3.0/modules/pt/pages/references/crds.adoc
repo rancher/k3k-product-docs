@@ -210,7 +210,7 @@ Deve ser pelo menos 1. Padrão: 1. + | 1 | Optional: \{} +
 
 | *`agents`* __integer__ | Agentes especifica o número de pods K3s a serem executados no modo agente (trabalhador). +
 Deve ser 0 ou maior. Padrão: 0. +
-Este campo é ignorado no modo "shared". + | 0 | Optional: \{} +
+Este campo é ignorado nos modos "shared" e "hcp". + | 0 | Optional: \{} +
 
 | *`clusterCIDR`* __string__ | ClusterCIDR é o intervalo CIDR para IPs de pods. +
 Padrão: 10.42.0.0/16 no modo shared e 10.52.0.0/16 no modo virtual. +

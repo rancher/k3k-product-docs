@@ -210,7 +210,7 @@ Debe ser al menos 1. El valor predeterminado es 1. + | 1 | Optional: \{} +
 
 | *`agents`* __entero__ | Los agentes especifican el número de pods de K3s que se ejecutarán en modo agente (trabajador). +
 Debe ser 0 o mayor. El valor predeterminado es 0. +
-Este campo se ignora en modo "shared". + | 0 | Optional: \{} +
+Este campo se ignora en los modos "shared" y "hcp". + | 0 | Optional: \{} +
 
 | *`clusterCIDR`* __cadena__ | ClusterCIDR es el rango CIDR para las IPs de los pods. +
 El valor predeterminado es 10.42.0.0/16 en modo shared y 10.52.0.0/16 en modo virtual. +

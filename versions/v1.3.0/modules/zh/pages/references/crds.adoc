@@ -210,7 +210,7 @@ Optional: \{} +
 
 | *`agents`* __整数__| Agents 指定以代理（工作）模式运行的 K3s pod 数量。 +
 必须为 0 或更大。默认值为 0。 +
-在 "shared" 模式下，此字段被忽略。 + | 0 | Optional: \{} +
+在 "shared" 和 "hcp" 模式下，此字段被忽略。 + | 0 | Optional: \{} +
 
 | *`clusterCIDR`* __字符串__| ClusterCIDR 是 pod IP 的 CIDR 范围。 +
 在 shared 模式下默认值为 10.42.0.0/16，在 virtual 模式下默认值为 10.52.0.0/16。 +
