@@ -1,7 +1,7 @@
 = How to: Create a Virtual Cluster
 :description: Create a virtual cluster in K3K using Custom Resource Definitions or the K3K CLI to configure storage, persistence, high availability, and specific modes like
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2025-11-17
+:revdate: 2026-11-23
 :page-revdate: {revdate}
 
 This guide provides instructions on creating and managing virtual clusters in K3k and covers common use cases using both the *Custom Resource Definitions (CRDs)* and the *K3K CLI* so you can choose the method that fits your workflow.
@@ -129,11 +129,6 @@ k3kcli cluster create \
 ----
 
 == Use Case: Create a Virtual Cluster in `hcp` (Hosted Control Plane) mode
-
-[NOTE]
-====
-HCP mode is *experimental* in {product-name} v1.2.0.
-====
 
 In `hcp` mode the K3k controller runs an agentless K3s control plane in the host cluster, and you join your own external worker nodes via the standard K3s installer. See the full walkthrough -- including how to fetch the join token and run the installer on workers -- in xref:how-tos-for-user/create-hcp-virtual-cluster.adoc[Creating an HCP Virtual Cluster].
 
@@ -399,11 +394,19 @@ Once the virtual cluster is running, you can connect to it using the CLI:
 
 === CLI Method
 
+`k3kcli cluster create` adds the virtual cluster to your current kubeconfig as a context named `<namespace>/<name>`. Switch to this context to access the virtual cluster with `kubectl`:
+
 [,sh]
 ----
-k3kcli kubeconfig generate --namespace k3k-mycluster --name mycluster
-export KUBECONFIG=$PWD/mycluster-kubeconfig.yaml
+kubectl config use-context k3k-mycluster/mycluster
 kubectl get nodes
 ----
 
-This command generates a `kubeconfig` file, which you can use to access your virtual cluster via `kubectl`.
+If the context is missing, for example because you created the cluster with a `Cluster` resource, add it with `k3kcli kubeconfig generate`:
+
+[,sh]
+----
+k3kcli kubeconfig generate --no-out k3k-mycluster/mycluster
+----
+
+If you need a standalone kubeconfig file, for example to share access to the virtual cluster, add `--out <path>` to the command. For more information, see xref:advanced-usage.adoc#_managing_kubeconfig_contexts[Managing kubeconfig contexts].

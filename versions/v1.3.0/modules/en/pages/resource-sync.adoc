@@ -1,6 +1,6 @@
 = Resource Sync
 :description: Learn which resources K3k syncs between virtual and host clusters, why, and how to control sync behavior
-:revdate: 2026-04-29
+:revdate: 2026-11-23
 :page-revdate: {revdate}
 
 In `shared` mode, K3k virtual clusters run their workloads directly on the host cluster
@@ -16,7 +16,7 @@ This guide explains what resources are synced, why, and how to control sync beha
 By default, K3k syncs the essential resources needed for your workloads to run:
 
 - *Enabled:* Services, ConfigMaps, Secrets, PersistentVolumeClaims
-- *Disabled:* Ingresses, PriorityClasses, StorageClasses
+- *Disabled:* EndpointSlices, Ingresses, PriorityClasses, StorageClasses
 
 [IMPORTANT] 
 ====
@@ -76,6 +76,68 @@ available on the host cluster so traffic can reach your pods.
 - Disabling this will break networking for your workloads
 - only disable if you know what you're doing
 
+[#_endpointslices]
+=== EndpointSlices
+
+*Default: Disabled* | *Direction: Virtual → Host*
+
+EndpointSlices list the network endpoints (IP addresses and ports) that back a Service.
+Kubernetes normally creates and manages them automatically for Services that have a selector.
+For a Service without a selector, you create and manage its EndpointSlices yourself.
+When EndpointSlice sync is enabled, K3k syncs these manually managed EndpointSlices to the host cluster.
+The synced Service on the host then routes traffic to the endpoints you defined.
+
+*What gets synced:*
+
+K3k syncs only EndpointSlices that meet all of the following conditions:
+
+- They have the `+kubernetes.io/service-name+` label.
+- They are not managed by the Kubernetes EndpointSlice controller (the `+endpointslice.kubernetes.io/managed-by+` label is not `+endpointslice-controller.k8s.io+`).
+- They match the configured `+selector+` and `+labelSelector+`, if set.
+
+On the host, K3k translates the EndpointSlice name, the `+kubernetes.io/service-name+` label and any endpoint `+targetRef+` to the corresponding host resource names.
+
+[IMPORTANT]
+.EndpointSlice sync requires Services sync
+====
+If either `+services+` or `+endpointSlices+` sync is disabled, K3k does not sync new or updated EndpointSlices.
+It only removes the host copy when you delete the EndpointSlice in the virtual cluster.
+
+To sync EndpointSlices, enable both `+services+` and `+endpointSlices+` sync.
+====
+
+*Why disabled by default:*
+
+Most Services use a selector, and Kubernetes already generates their EndpointSlices.
+Enable this sync only when you manage EndpointSlices manually.
+
+*When to use:*
+
+- Services without a selector that point to external endpoints or to endpoints you manage yourself
+- A Service with multiple manually defined EndpointSlices, for example, for multiple endpoint IP addresses or ports
+- Kubernetes conformance tests in `shared` mode that rely on manually managed EndpointSlices
+
+*Example:*
+
+[source,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: my-cluster
+spec:
+  sync:
+    services:
+      enabled: true  # Required for EndpointSlice sync
+    endpointSlices:
+      enabled: true
+----
+
+You can also set `+spec.sync.endpointSlices+` in a VirtualClusterPolicy.
+When a policy is applied, the `+sync+` block of the policy replaces the `+sync+` block of the cluster as a whole.
+If the policy doesn't enable `+endpointSlices+`, EndpointSlices aren't synced, even when the cluster enables them.
+For more information, see <<_policy_level_configuration>>.
+
 === ConfigMaps
 
 *Default: Enabled* | *Direction: Virtual → Host*
@@ -101,8 +163,9 @@ spec:
   sync:
     configMaps:
       enabled: true
-      selector:
-        app: my-application
+      labelSelector:
+        matchLabels:
+          app: my-application
 ----
 
 === Secrets
@@ -131,8 +194,9 @@ spec:
   sync:
     secrets:
       enabled: true
-      selector:
-        sync-enabled: "true"
+      labelSelector:
+        matchLabels:
+          sync-enabled: "true"
 ----
 
 === PersistentVolumeClaims
@@ -284,7 +348,8 @@ Add `+k3k.io/sync-enabled+` label to StorageClasses on the host to control sync
 
 *Cluster-Level Selector (Optional):*
 
-Further filter which StorageClasses appear in your virtual cluster based on labels
+Further filter which StorageClasses appear in your virtual cluster with the `labelSelector` field of `spec.sync.storageClasses`.
+K3k evaluates the selector against the labels of the StorageClasses on the host cluster.
 
 *When to use:*
 
@@ -320,7 +385,7 @@ metadata:
 provisioner: custom.csi.driver
 ----
 
-*Example - Sync only specific StorageClasses using selector:*
+*Example - Sync only specific StorageClasses using a label selector:*
 
 [source,yaml]
 ----
@@ -343,8 +408,9 @@ spec:
   sync:
     storageClasses:
       enabled: true
-      selector:
-        tier: premium  # Only sync StorageClasses with tier=premium label
+      labelSelector:
+        matchLabels:
+          tier: premium  # Only sync StorageClasses with tier=premium label
 ----
 
 == Configuration Options
@@ -364,6 +430,8 @@ spec:
   sync:
     services:
       enabled: true
+    endpointSlices:
+      enabled: false  # Disabled by default
     configMaps:
       enabled: true
     secrets:
@@ -386,6 +454,9 @@ This is ideal for multi-tenant environments where you want consistent behavior.
 *Policy overrides cluster configuration:*
 
 When a policy is applied, its sync settings take precedence over individual cluster settings.
+The `sync` configuration of the policy replaces the `sync` configuration of the cluster as a whole.
+K3k doesn't merge the two, so label selectors defined in the cluster are ignored.
+Resource types that the policy doesn't list use their default settings.
 
 [source,yaml]
 ----
@@ -402,16 +473,33 @@ spec:
       enabled: true  # Enable external access for production
     storageClasses:
       enabled: true
-      selector:
-        tier: premium  # Only premium storage in production
+      labelSelector:
+        matchLabels:
+          tier: premium  # Only premium storage in production
 ----
 
 All clusters in the `+prod-clusters+` namespace inherit these settings.
 
-=== Using Label Selectors
+[#_using_label_selectors]
+=== Using label selectors
 
-Label selectors let you sync only specific resources based on labels.
-An empty selector syncs all resources of that type.
+Label selectors let you sync only specific resources based on their labels.
+Every resource type in `spec.sync` accepts a `labelSelector` field: `services`, `endpointSlices`, `configMaps`, `secrets`, `ingresses`, `persistentVolumeClaims`, `priorityClasses` and `storageClasses`.
+The same field is available in the `sync` configuration of a VirtualClusterPolicy.
+
+The `labelSelector` field uses the standard Kubernetes label selector format, with two optional fields:
+
+* `matchLabels`: A map of `key: value` pairs. A resource matches when it has every listed label with the exact value.
+* `matchExpressions`: A list of set-based requirements. Each requirement has a `key` and an `operator`.
+Depending on the operator, it also has a list of `values`.
+The supported operators are:
+** `In`: The label value is one of the listed values.
+** `NotIn`: The label is absent, or its value is not one of the listed values.
+** `Exists`: The resource has the label, regardless of its value. Don't set `values`.
+** `DoesNotExist`: The resource doesn't have the label. Don't set `values`.
+
+When you set both `matchLabels` and `matchExpressions`, a resource must satisfy all of them to be synced.
+An empty or omitted `labelSelector` syncs all resources of that type.
 
 *Example - Environment-specific ConfigMaps:*
 
@@ -421,8 +509,9 @@ spec:
   sync:
     configMaps:
       enabled: true
-      selector:
-        environment: production
+      labelSelector:
+        matchLabels:
+          environment: production
 ----
 
 *Example - CSI-specific StorageClasses:*
@@ -433,6 +522,84 @@ spec:
   sync:
     storageClasses:
       enabled: true
+      labelSelector:
+        matchLabels:
+          csi-driver: aws-ebs
+----
+
+*Example - Set-based selection with `matchExpressions`:*
+
+The following configuration syncs only the Secrets whose `env` label is `prod` or `staging`, and that don't have the `skip-sync` label:
+
+[source,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: my-cluster
+spec:
+  sync:
+    secrets:
+      enabled: true
+      labelSelector:
+        matchExpressions:
+        - key: env
+          operator: In
+          values:
+          - prod
+          - staging
+        - key: skip-sync
+          operator: DoesNotExist
+----
+
+For more information on the selector syntax, refer to the https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#label-selectors[Kubernetes label selectors documentation].
+
+*Invalid label selectors:*
+
+K3k validates the `labelSelector` fields of the cluster and of its VirtualClusterPolicy.
+For example, an unknown operator or an `Exists` requirement that sets `values` is invalid.
+If a selector is invalid, the cluster moves to the `Pending` phase, and its `Ready` condition is set to `False` with the `ValidationFailed` reason.
+The condition message identifies the invalid field, for example `sync.secrets.labelSelector is invalid`.
+
+[#_deprecated_selector_field]
+==== Deprecated `selector` field
+
+[IMPORTANT]
+.The `selector` field is deprecated
+====
+The `selector` field of each resource type in `spec.sync` is deprecated and will be removed in a future release.
+When the field is removed, filters defined with `selector` will no longer apply.
+
+To avoid this, use `labelSelector` instead.
+====
+
+The `selector` field only supports equality-based matching on a map of labels.
+It still works in this release.
+If you set both `selector` and `labelSelector` for the same resource type, K3k combines them: a resource must match both to be synced.
+
+To migrate, move the labels of the `selector` map under `labelSelector.matchLabels`.
+
+*Before - Deprecated `selector` field:*
+
+[source,yaml]
+----
+spec:
+  sync:
+    configMaps:
+      enabled: true
       selector:
-        csi-driver: aws-ebs
+        app: my-application
+----
+
+*After - `labelSelector` field:*
+
+[source,yaml]
+----
+spec:
+  sync:
+    configMaps:
+      enabled: true
+      labelSelector:
+        matchLabels:
+          app: my-application
 ----
