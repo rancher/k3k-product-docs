@@ -168,7 +168,6 @@ If set, this value overrides any value set on the cluster CR directly.
 For more information, see k8s docs: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity
 
 [#_allowing_custom_host_schedulers]
-[#_allowing_custom_host_schedulers]
 === Allowing custom host schedulers (`allowedHostSchedulers`)
 
 In shared mode, workloads can request a scheduler running on the host cluster with the `k3k.io/host-scheduler-name` Pod annotation. The `allowedHostSchedulers` field lists the host schedulers that virtual clusters in bound Namespaces can request. Pods that request a scheduler not in the list are not synced to the host cluster.
