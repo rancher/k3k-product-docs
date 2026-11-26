@@ -1,7 +1,7 @@
 = Advanced Usage
 :description: Learn to customize the Cluster resource fields and configure advanced k3k settings like shared and virtual modes, nodeSelector, and expose options
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-08-18
+:revdate: 2026-11-23
 :page-revdate: {revdate}
 
 This document provides advanced usage information for k3k, including detailed use cases and explanations of the `Cluster` resource fields for customization.
@@ -201,3 +201,125 @@ You can check the xref:/references/k3kcli.adoc[k3kcli documentation] for the ful
 * Using `--persistence-type ephemeral` will result in data loss if the nodes are restarted.
 * It is highly recommended to use `--persistence-type dynamic` with a configured storage class.
 ====
+
+[#_managing_kubeconfig_contexts]
+=== Managing kubeconfig contexts
+
+When a virtual cluster is ready, `k3kcli cluster create` adds it as a new context to your current kubeconfig. The context is named `<namespace>/<name>`. For example, a cluster named `mycluster` created in the default `k3k-mycluster` namespace gets the `k3k-mycluster/mycluster` context.
+
+`k3kcli` writes the context to the same kubeconfig file it reads, using the same precedence as `kubectl`:
+
+. The file passed with the `--kubeconfig` flag.
+. The first file listed in the `$KUBECONFIG` environment variable.
+. The default `$HOME/.kube/config` file.
+
+`k3kcli` adds the cluster, user, and context entries of the virtual cluster to this file. The other entries and the current context remain unchanged. `k3kcli` does not switch your current context, so `kubectl` keeps pointing to the host cluster until you select the new context.
+
+The following example shows the end of the `k3kcli cluster create` output:
+
+[,console]
+----
+INFO[0003] Extracting Kubeconfig for 'myshared' cluster
+WARN[0003] Writing a kubeconfig to the current directory is deprecated and will be removed in a future release. The cluster is now added as a context to your kubeconfig. Use --out to keep writing a standalone kubeconfig, or --no-out to silence this warning.
+INFO[0003] Wrote a standalone kubeconfig to '/home/user/k3k-myshared-myshared-kubeconfig.yaml'
+INFO[0003] Added the 'k3k-myshared/myshared' context in the current kubeconfig (/home/user/.kube/config)
+
+You can start using the cluster with:
+
+	kubectl config use-context k3k-myshared/myshared
+	kubectl cluster-info
+----
+
+[#_switching_between_clusters]
+==== Switching between clusters
+
+List the available contexts:
+
+[,console]
+----
+$ kubectl config get-contexts
+CURRENT   NAME                    CLUSTER                 AUTHINFO                NAMESPACE
+*         default                 default                 default
+          k3k-hcp/hcp             k3k-hcp/hcp             k3k-hcp/hcp
+          k3k-myshared/myshared   k3k-myshared/myshared   k3k-myshared/myshared
+----
+
+Switch to a virtual cluster:
+
+[,console]
+----
+$ kubectl config use-context k3k-hcp/hcp
+Switched to context "k3k-hcp/hcp".
+----
+
+To switch back to the host cluster, select its context again, for example `kubectl config use-context default`.
+
+To run a single command against a virtual cluster without changing the current context, use the `--context` flag:
+
+[,bash]
+----
+kubectl --context k3k-myshared/myshared get nodes
+----
+
+[#_standalone_kubeconfig_files]
+==== Standalone kubeconfig files
+
+Earlier versions of `k3kcli` wrote a standalone kubeconfig file named `<namespace>-<name>-kubeconfig.yaml` to the current directory. `k3kcli` still writes this file by default and prints a deprecation warning.
+
+[IMPORTANT]
+.Standalone kubeconfig file in the current directory is deprecated
+====
+A future release will stop writing a kubeconfig file to the current directory. Scripts that rely on this file will no longer find it.
+
+Use the context added to your kubeconfig, or pass `--out <path>` to write the file explicitly.
+====
+
+Use one of the following flags with `k3kcli cluster create` or `k3kcli kubeconfig generate` to control the standalone file:
+
+`--out <path>`::
+Writes a standalone kubeconfig to `<path>` and does not print the deprecation warning. Use this option when you need a separate file, for example to share access to the virtual cluster.
+
+`--no-out`::
+Does not write a standalone kubeconfig file and does not print the deprecation warning. The context is still added to your kubeconfig.
+
+You cannot use `--out` and `--no-out` together.
+
+[,bash]
+----
+# Add the context only
+k3kcli cluster create --no-out mycluster
+
+# Add the context and write a standalone file
+k3kcli cluster create --out ./mycluster-kubeconfig.yaml mycluster
+----
+
+The `--config-name` flag of `k3kcli kubeconfig generate` is deprecated. Use `--out` instead.
+
+[#_regenerating_a_kubeconfig]
+==== Regenerating a kubeconfig
+
+`k3kcli kubeconfig generate` handles kubeconfig files the same way as `k3kcli cluster create`. It adds the `<namespace>/<name>` context to your current kubeconfig and accepts the `--out` and `--no-out` flags. If the context already exists, its entries are overwritten. Use this command in the following cases:
+
+* To add the context for a cluster created with a `Cluster` resource.
+* To get new credentials, for example to rotate the certificates.
+
+[,bash]
+----
+k3kcli kubeconfig generate --no-out k3k-mycluster/mycluster
+----
+
+The cluster argument accepts either `<name>`, which uses the `k3k-<name>` namespace, or `<namespace>/<name>`. The `--name` flag is deprecated in favor of this argument.
+
+[#_removing_contexts]
+==== Removing contexts
+
+`k3kcli cluster delete` removes the context, cluster, and user entries of the deleted cluster from your current kubeconfig. If the removed context was the current context, `k3kcli` clears the current context.
+
+[,console]
+----
+$ k3kcli cluster delete k3k-myshared/myshared
+INFO[0001] Deleting 'myshared' cluster in namespace 'k3k-myshared'
+INFO[0001] Removed the 'k3k-myshared/myshared' context from the current kubeconfig (/home/user/.kube/config)
+----
+
+`k3kcli cluster delete` does not remove standalone kubeconfig files. Delete them manually.
