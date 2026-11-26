@@ -1,6 +1,6 @@
 = How to: Create an HCP (Hosted Control Plane) Virtual Cluster
 :description: Create an HCP virtual cluster by setting up external worker nodes and configuring the control plane in the host cluster
-:revdate: 2026-07-07
+:revdate: 2026-11-26
 :page-revdate: {revdate}
 
 In *HCP* (Hosted Control Plane) mode, K3k runs an agentless K3s control plane inside the host cluster, while you provide your own external worker nodes that join the cluster using the standard K3s installer script.
