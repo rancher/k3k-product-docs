@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Using Custom Host Schedulers in Shared Mode :: K3k</title>
+    <link rel="prev" href="custom-runtime-class.html">
+    <link rel="next" href="external-datastore.html">
+    <meta name="description" content="Let shared mode virtual cluster workloads use a custom host cluster scheduler with the allowedHostSchedulers field and a Pod annotation">
+    <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+<link rel="stylesheet" href="../../../../_/css/search.css">
+<link rel="icon" href="../../../../_/img/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="../../../../_/css/font-styles.css">
+<link rel="stylesheet" href="../../../../_/fonts/css/all.css">
+<link rel="stylesheet" href="../../../../_/css/site-extra.css">
+<link rel="stylesheet" href="../../../../_/css/vendor/tabs.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=SUSE:wght@100..800&display=swap&family=SUSE+Mono:ital,wght@0,100..800;1,100..800" rel="stylesheet">
+<link href="https://documentation.suse.com/docserv/res/fonts/poppins/poppins.css" rel="stylesheet">
+<!-- <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto&display=swap" rel="stylesheet"> -->
+<link rel="stylesheet" href="../../../../_/css/vendor/light.css">
+    <script>var uiRootPath = '../../../../_'</script>
+  </head>
+  <body class="article">
+<script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs'; mermaid.initialize({"startOnLoad":true});</script><header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-item">
+        <a class=" navbar-logo" href="../../../../" aria-label="K3k Documentation Home"><img class="logo"
+            src="../../../../_/img/logo-horizontal-positive-k3k.svg" alt="K3k logo"/></a>
+      </div>
+      <div class="navbar-item search hide-for-print">
+        <div id="search-field" class="field">
+          <label class="visual-search-label" for="search-input">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+          <input label="Search" aria-label="Search" id="search-input" type="text" placeholder="Search the docs" >
+          <label class="filter checkbox" style="display: none">
+            <input type="checkbox" data-facet-filter="component:k3k" checked> Only this project
+          </label>
+        </div>
+      </div>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link">
+            <img src="../../../../_/img/resources.png" class="langIcon Resources" alt="Resources" title="Resources">
+          </div>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs"><i class="fab fa-github"></i>&nbsp;K3k</a>
+            <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs/issues"><i class="fab fa-github"></i>&nbsp;GitHub Issue</a>
+            <!-- <div class="has-submenu">
+              <a class="navbar-item" href="#" ><i class="fas fa-file-alt"></i>&nbsp;Report Issue &nbsp;<i class="fas fa-chevron-right"></i></a>
+              <div class="submenu">
+                <a class="navbar-item" href="https://scc.suse.com">SCC (Recommended)</a>
+                <a class="navbar-item" href="https://github.com/rancher/k3k-product-docs/issues">GitHub Issue</a>
+              </div>
+            </div> -->
+            <a class="navbar-item" href="https://github.com/rancher/k3k/blob/main/docs/development.md"><i class="fas fa-user-edit"></i>&nbsp;Contribute</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link"><img src="../../../../_/img/language.png" class="langIcon Language" alt="Language"
+              title="Language"></div>
+          <div class="navbar-dropdown">
+            <!--  </div><div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div> -->
+              <a role="button" class="navbar-item" id="en" onclick="selectLanguage(this.id)">
+                <!--<img src="../../../../_/img/engFlag.svg" class="langIcon english">-->
+                &nbsp;English
+              </a>
+            <!-- LANGUAGESELECTOR -->
+          </div>
+        </div>
+        <!--
+        <div class="navbar-item">
+          <a href="https://twitter.com/SUSE">
+            <img alt="X-logo" class="x-logo" src="../../../../_/img/x-logo-white.png">
+          </a>
+        </div>
+        -->
+      </div>
+    </div>
+
+    <!--   <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+          </span>
+        </div>
+      </div> -->
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="k3k" data-version="1.3.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../introduction.html">K3k</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../introduction.html">Introduction</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../quickstart.html">Quick Start</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../architecture.html">Architecture</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../resource-sync.html">Resource Sync</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../advanced-usage.html">Advanced Usage</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../virtualclusterpolicy.html">VirtualClusterPolicy: Concepts</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle" aria-label="Toggle expand/collapse"></button>
+    <span class="nav-text">How-tos for User</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../how-tos-for-user/create-virtual-clusters.html">Creating a Virtual Cluster</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../how-tos-for-user/create-hcp-virtual-cluster.html">Creating an HCP Virtual Cluster</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../how-tos-for-user/expose-workloads.html">Exposing workloads outside a Virtual Cluster</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../how-tos-for-user/addons.html">Addons</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle" aria-label="Toggle expand/collapse"></button>
+    <span class="nav-text">How-tos for Admin</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="choose-mode.html">Choosing between Shared and Virtual Mode</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="adding-custom-cert.html">Adding custom certificates for K3s from K3k cluster</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="restrict-gpu-usage.html">Restrict GPU usage</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="secure-shared-mode.html">Secure shared mode</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="virtual-cluster-isolation.html">Virtual cluster isolation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="custom-runtime-class.html">Using a custom container runtime</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="custom-host-scheduler.html">Using custom host schedulers in shared mode</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="external-datastore.html">Configuring an external datastore</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle" aria-label="Toggle expand/collapse"></button>
+    <span class="nav-text">References</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../references/crds.html">Customer Resource Definitions (CRDs)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../references/k3kcli.html">k3kcli</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../how-tos-for-user/troubleshooting.html">Troubleshooting</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">K3k</span>
+    <span class="version">v1.3.0 (Dev)</span>
+  </div>
+  <ul class="components">
+        <li class="component is-current">
+          <div class="title"><a href="../../../1.2.0/en/introduction.html">K3k</a></div>
+          <ul class="versions">
+            <li class="version is-current">
+              <a href="../introduction.html">v1.3.0 (Dev)</a>
+            </li>
+            <li class="version is-latest">
+              <a href="../../../1.2.0/en/introduction.html">v1.2.0-latest</a>
+            </li>
+            <li class="version">
+              <a href="../../../1.1.0/en/introduction.html">v1.1.0</a>
+            </li>
+            <li class="version">
+              <a href="../../../1.0.2/en/introduction.html">v1.0.2</a>
+            </li>
+            <li class="version">
+              <a href="../../../v1.0.1/en/introduction.html">v1.0.1</a>
+            </li>
+            <li class="version">
+              <a href="../../../v1.0.0/en/introduction.html">v1.0.0</a>
+            </li>
+          </ul>
+        </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../v1.0.1/en/introduction.html" aria-label="Home" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../introduction.html">K3k</a></li>
+    <li>How-tos for Admin</li>
+    <li><a href="custom-host-scheduler.html">Using custom host schedulers in shared mode</a></li>
+  </ul>
+</nav>
+<div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">v1.3.0 (Dev)</button>
+  <div class="version-menu">
+    <a class="version is-current" href="custom-host-scheduler.html">v1.3.0 (Dev)</a>
+    <a class="version is-missing" href="../../../1.2.0/en/introduction.html">v1.2.0-latest</a>
+    <a class="version is-missing" href="../../../1.1.0/en/introduction.html">v1.1.0</a>
+    <a class="version is-missing" href="../../../1.0.2/en/introduction.html">v1.0.2</a>
+    <a class="version is-missing" href="../../../v1.0.1/en/introduction.html">v1.0.1</a>
+    <a class="version is-missing" href="../../../v1.0.0/en/introduction.html">v1.0.0</a>
+  </div>
+</div>
+  <div class="edit-this-page"><a href="https://github.com/rancher/k3k-product-docs/edit/main/versions/v1.3.0/modules/en/pages/how-tos-for-admin/custom-host-scheduler.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<aside class="toc sidebar" data-title="On this page" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>This is unreleased documentation for K3k v1.3.0 (Dev).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<h1 class="page">Using Custom Host Schedulers in Shared Mode</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>In shared mode, the Pods of a virtual cluster run on the host cluster. By default, the host cluster&#8217;s default scheduler places them on host nodes. Selected workloads can use a custom host scheduler instead, for example a batch or GPU-aware scheduler.</p>
+</div>
+<div class="paragraph">
+<p>Administrators control which host schedulers a virtual cluster can use with the <code>allowedHostSchedulers</code> field. Workloads then request one of these schedulers with the <code>k3k.io/host-scheduler-name</code> Pod annotation.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Shared mode only</div>
+<div class="paragraph">
+<p>This feature only applies to virtual clusters in <code>shared</code> mode. In <code>virtual</code> mode, Pods run on the virtual cluster&#8217;s own K3s agents and the field has no effect.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_how_scheduling_works_in_shared_mode"><a class="anchor" href="#_how_scheduling_works_in_shared_mode"></a>How scheduling works in shared mode</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A Pod created in a shared mode virtual cluster is scheduled twice:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>In the virtual cluster</strong>: The virtual cluster&#8217;s own scheduler, which runs in the K3s server, assigns the Pod to a virtual node.
+Each virtual node is backed by a SUSE Virtual Clusters Virtual Kubelet agent that runs on a host node. The Pod&#8217;s <code>spec.schedulerName</code> field applies to this step.</p>
+</li>
+<li>
+<p><strong>In the host cluster</strong>: The Virtual Kubelet creates a copy of the Pod in the virtual cluster&#8217;s host namespace. The host scheduler then places this host Pod on a host node. When creating the host Pod, the Virtual Kubelet does the following:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>It clears <code>spec.nodeName</code> so that the host scheduler can place the Pod.</p>
+</li>
+<li>
+<p>If the Pod has no affinity, it adds a preferred node affinity for the host node of the Virtual Kubelet agent. As a result, the host Pod usually lands on the same host node as its virtual node.</p>
+</li>
+<li>
+<p>It replaces the Pod&#8217;s own <code>nodeSelector</code> with the node selector of the <code>Cluster</code>. If a <code>VirtualClusterPolicy</code> sets a default node selector, the policy value is used instead.</p>
+</li>
+<li>
+<p>If the Pod requests an allowed scheduler with the <code>k3k.io/host-scheduler-name</code> annotation, it sets that scheduler in <code>spec.schedulerName</code> of the host Pod.</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Without the annotation, the host Pod uses the host cluster&#8217;s <code>default-scheduler</code>. For more information about the synchronization of resources, see <a href="../architecture.html#_shared_mode" class="xref page">Shared Mode</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_prerequisites"><a class="anchor" href="#_prerequisites"></a>Prerequisites</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>A SUSE Virtual Clusters controller installed on the host cluster. For installation instructions, see <a href="../quickstart.html" class="xref page">Quick Start</a>.</p>
+</li>
+<li>
+<p>A custom scheduler deployed and running on the host cluster. Note the scheduler name it uses, as set in its <code>KubeSchedulerConfiguration</code> profile <code>schedulerName</code>. For an example of deploying an additional scheduler, see the <a href="https://kubernetes.io/docs/tasks/extend-kubernetes/configure-multiple-schedulers/">Kubernetes documentation</a>.</p>
+</li>
+<li>
+<p>A virtual cluster in <code>shared</code> mode, or the permissions to create one.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_allow_host_schedulers"><a class="anchor" href="#_allow_host_schedulers"></a>Allow host schedulers for a virtual cluster</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can set <code>allowedHostSchedulers</code> on a <code>Cluster</code> resource, on a <code>VirtualClusterPolicy</code>, or on both. The list of allowed schedulers is determined as follows:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If the <code>VirtualClusterPolicy</code> bound to the namespace of the <code>Cluster</code> sets <code>allowedHostSchedulers</code>, the policy value is used.
+The value of the <code>Cluster</code> is ignored.</p>
+</li>
+<li>
+<p>Otherwise, the <code>allowedHostSchedulers</code> value of the <code>Cluster</code> is used.</p>
+</li>
+<li>
+<p>If neither sets the field, no host scheduler can be requested.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In a multi-tenant environment, users who can edit a <code>Cluster</code> resource can also change its <code>allowedHostSchedulers</code> field. To enforce the list of allowed schedulers centrally, set it on a <code>VirtualClusterPolicy</code>.</p>
+</div>
+<div class="sect2">
+<h3 id="_allow_on_cluster"><a class="anchor" href="#_allow_on_cluster"></a>On a Cluster</h3>
+<div class="paragraph">
+<p>Set <code>spec.allowedHostSchedulers</code> to the names of the host schedulers that workloads of this virtual cluster can request:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: mycluster
+  namespace: k3k-mycluster
+spec:
+  mode: shared
+  allowedHostSchedulers:
+  - custom-scheduler</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_allow_on_policy"><a class="anchor" href="#_allow_on_policy"></a>On a VirtualClusterPolicy</h3>
+<div class="paragraph">
+<p>Set <code>spec.allowedHostSchedulers</code> on the policy. The value applies to all virtual clusters in the namespaces bound to the policy:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Create the policy:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: batch-policy
+spec:
+  allowedMode: shared
+  allowedHostSchedulers:
+  - custom-scheduler
+  - gpu-scheduler</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Bind the policy to the namespace of the virtual cluster:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">kubectl label namespace k3k-mycluster policy.k3k.io/policy-name=batch-policy</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Confirm that the policy is applied to the <code>Cluster</code>:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">kubectl get cluster mycluster --namespace k3k-mycluster --output jsonpath='{.status.policy.allowedHostSchedulers}'</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>For more information about policies, see <a href="../virtualclusterpolicy.html" class="xref page">VirtualClusterPolicy: Concepts</a>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_request_host_scheduler"><a class="anchor" href="#_request_host_scheduler"></a>Request a host scheduler from a workload</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In the virtual cluster, add the <code>k3k.io/host-scheduler-name</code> annotation to the Pod. For workload resources such as Deployments, add the annotation to the Pod template:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+      annotations:
+        k3k.io/host-scheduler-name: custom-scheduler
+    spec:
+      containers:
+      - name: nginx
+        image: nginx</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Do not set <code>spec.schedulerName</code> to the host scheduler name. The <code>spec.schedulerName</code> field is handled by the virtual cluster, which does not run the host scheduler. If <code>spec.schedulerName</code> names a scheduler that does not exist in the virtual cluster, the Pod stays <code>Pending</code>. It is never synced to the host cluster.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="title">Non-default schedulers inside the virtual cluster</div>
+<div class="paragraph">
+<p>A Pod might set a <code>spec.schedulerName</code> other than <code>default-scheduler</code>, for example to use an additional scheduler deployed inside the virtual cluster. If that name is not in the list of allowed host schedulers, the Pod is not synced to the host cluster.</p>
+</div>
+<div class="paragraph">
+<p>To avoid this, add the scheduler name to <code>allowedHostSchedulers</code>. Without the <code>k3k.io/host-scheduler-name</code> annotation, the host Pod keeps the same <code>spec.schedulerName</code>. A scheduler with that name must then also run on the host cluster.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_verification"><a class="anchor" href="#_verification"></a>Verification</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Use the host cluster kubeconfig to list the host Pods of the virtual cluster. Host Pods are created in the namespace of the <code>Cluster</code> and labeled with the name of the virtual cluster:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">kubectl get pods --namespace k3k-mycluster --selector k3k.io/clusterName=mycluster</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Check the scheduler of the host Pod:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">kubectl get pod &lt;host-pod-name&gt; --namespace k3k-mycluster --output jsonpath='{.spec.schedulerName}'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The output shows the requested scheduler, for example <code>custom-scheduler</code>. Pods without the annotation show <code>default-scheduler</code>.</p>
+</div>
+</li>
+<li>
+<p>Optionally, check the events of the host Pod to confirm which scheduler placed it:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">kubectl get events --namespace k3k-mycluster --field-selector involvedObject.name=&lt;host-pod-name&gt;</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_troubleshooting"><a class="anchor" href="#_troubleshooting"></a>Troubleshooting</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_pod_not_synced"><a class="anchor" href="#_pod_not_synced"></a>The Pod is not synced to the host cluster</h3>
+<div class="paragraph">
+<p>If a Pod requests a scheduler that is not allowed, the Virtual Kubelet does not create the host Pod. The Pod does not start in the virtual cluster. Instead, a <code>Warning</code> event with the reason <code>ProviderCreateFailed</code> is recorded in the Pod&#8217;s namespace.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Use the virtual cluster kubeconfig to list the events in the Pod&#8217;s namespace:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">kubectl get events --namespace &lt;namespace&gt; --field-selector reason=ProviderCreateFailed</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The event message contains the following text:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>scheduler "&lt;scheduler-name&gt;" is not allowed for this cluster</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Fix the issue in one of the following ways:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Correct the <code>k3k.io/host-scheduler-name</code> annotation of the workload.</p>
+</li>
+<li>
+<p>Add the scheduler to <code>allowedHostSchedulers</code>. If the bound <code>VirtualClusterPolicy</code> sets this field, update the policy, because the policy value takes precedence.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>If the Pod is still not synced, delete it. Its controller re-creates it, or you can re-create it manually.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_pod_pending_on_host"><a class="anchor" href="#_pod_pending_on_host"></a>The host Pod stays pending</h3>
+<div class="paragraph">
+<p>If the host Pod exists but stays <code>Pending</code>, check that the custom scheduler is running on the host cluster. Also check that its name matches the requested name exactly. A host Pod that references a scheduler that does not exist is never scheduled.</p>
+</div>
+<div class="paragraph">
+<p>The host Pod keeps the node selector and node affinity set by the Virtual Kubelet. Make sure that the custom scheduler can place Pods on nodes that match these constraints.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_additional_information"><a class="anchor" href="#_additional_information"></a>Additional information</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>For the full list of <code>Cluster</code> and <code>VirtualClusterPolicy</code> fields, see <a href="../references/crds.html" class="xref page">Custom Resource Definitions (CRDs)</a>.</p>
+</li>
+<li>
+<p>For guidance on choosing a mode, see <a href="choose-mode.html" class="xref page">How to Choose Between Shared, Virtual, and HCP Mode</a>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="custom-runtime-class.html">Using a custom container runtime</a></span>
+  <span class="next"><a href="external-datastore.html">Configuring an external datastore</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+<script src="../../../../_/js/vendor/lunr.js"></script>
+<script src="../../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../../.." data-snippet-length="100" data-stylesheet="../../../../_/css/search.css"></script>
+<script async src="../../../../search-index.js"></script>
+<script src="../../../../_/js/vendor/langSelection.js"></script>
+<script async src="../../../../_/js/vendor/tabs.js"></script>
+
+
+  </body>
+</html>
