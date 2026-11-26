@@ -1,7 +1,7 @@
 = How to: Create a Virtual Cluster
 :description: Create a virtual cluster in K3K using Custom Resource Definitions or the K3K CLI to configure storage, persistence, high availability, and specific modes like
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2025-11-17
+:revdate: 2026-11-26
 :page-revdate: {revdate}
 
 This guide provides instructions on creating and managing virtual clusters in K3k and covers common use cases using both the *Custom Resource Definitions (CRDs)* and the *K3K CLI* so you can choose the method that fits your workflow.
@@ -14,7 +14,10 @@ For full reference:
 * xref:/advanced-usage.adoc[Full example]
 ----
 
-NOTE: Some features are available only via the CRD interface.
+[NOTE]
+====
+Some features are available only via the CRD interface.
+====
 
 == Use Case: Create and Expose a Basic Virtual Cluster
 
@@ -39,6 +42,11 @@ spec:
 ----
 
 This creates a virtual cluster in `shared` mode and expose it via an ingress with the specified host name.
+
+[NOTE]
+====
+To expose the virtual cluster API with Traefik or Gateway API, see xref:how-tos-for-admin/expose-kubernetesapi.adoc[Exposing Kubernetes API with Traefik and Gateway API].
+====
 
 == Use Case: Create a Virtual Cluster with Persistent Storage (*Default*)
 

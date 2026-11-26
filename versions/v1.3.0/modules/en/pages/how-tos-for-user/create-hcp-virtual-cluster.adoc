@@ -1,6 +1,6 @@
 = How to: Create an HCP (Hosted Control Plane) Virtual Cluster
 :description: Create an HCP virtual cluster by setting up external worker nodes and configuring the control plane in the host cluster
-:revdate: 2026-07-07
+:revdate: 2026-11-26
 :page-revdate: {revdate}
 
 In *HCP* (Hosted Control Plane) mode, K3k runs an agentless K3s control plane inside the host cluster, while you provide your own external worker nodes that join the cluster using the standard K3s installer script.
@@ -24,6 +24,11 @@ HCP mode is *experimental* in {product-name} v1.2.0. The `k3kcli` prints a warni
 * An *externally reachable endpoint* for the virtual cluster's apiserver, exposed via `nodePort`, `loadBalancer`, or `ingress`. Without one, the apiserver is only reachable from inside the host cluster and external workers won't be able to join.
 * One or more external Linux machines that can reach that endpoint over the network. They need `curl` and `systemd`, the same as a standard K3s installation.
 * Each external worker must have a unique hostname and a unique routable IP. Workers behind NAT that share the same address will register as a single node.
+
+[NOTE]
+====
+For information about exposing the HCP virtual cluster API with Traefik or Gateway API, including considerations for external workers, see xref:how-tos-for-admin/expose-kubernetesapi.adoc[Exposing Kubernetes API with Traefik and Gateway API].
+====
 
 == Step 1: Create the HCP cluster
 
