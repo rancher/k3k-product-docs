@@ -1,6 +1,6 @@
 = Using a Custom Container Runtime
 :description: Configure a host cluster with crun and create a virtual cluster using it by setting the runtimeClassName field on the Cluster resource
-:revdate: 2026-04-28
+:revdate: 2026-11-23
 :page-revdate: {revdate}
 
 By default, {k3k-product-name} runs virtual cluster server and agent pods using the host cluster's default container runtime (typically `runc`). You can override this by setting the `runtimeClassName` field on the `Cluster` resource, which lets virtual clusters run on alternative runtimes, such as https://github.com/containers/crun[crun], https://katacontainers.io/[Kata Containers], or https://gvisor.dev/[gVisor].
@@ -77,20 +77,21 @@ The runtime class name must match a `RuntimeClass` that exists on the host clust
 
 == Verify the virtual cluster
 
-Once the server pod is ready, generate a kubeconfig with `k3kcli` and confirm the virtual cluster is reachable.
+Once the server pod is ready, add the virtual cluster to your kubeconfig with `k3kcli` and confirm the virtual cluster is reachable.
 
 [source,sh]
 ----
-k3kcli kubeconfig generate --name cruncluster --namespace test-x
+k3kcli kubeconfig generate --no-out test-x/cruncluster
 ----
 
-The command writes a kubeconfig file to the current directory and prints the path. Export it and query the control plane:
+The command adds a `test-x/cruncluster` context to your current kubeconfig. Use it to query the control plane:
 
 [source,sh]
 ----
-export KUBECONFIG=$(pwd)/test-x-cruncluster-kubeconfig.yaml
-kubectl cluster-info
+kubectl --context test-x/cruncluster cluster-info
 ----
+
+If you need a standalone kubeconfig file instead, add `--out <path>` to the `k3kcli kubeconfig generate` command. For more information, see xref:advanced-usage.adoc#_managing_kubeconfig_contexts[Managing kubeconfig contexts].
 
 A working virtual cluster returns output similar to:
 
