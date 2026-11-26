@@ -14,7 +14,10 @@ For full reference:
 * xref:/advanced-usage.adoc[Full example]
 ----
 
-NOTE: Some features are available only via the CRD interface.
+[NOTE]
+====
+Some features are available only via the CRD interface.
+====
 
 == Use Case: Create and Expose a Basic Virtual Cluster
 
@@ -39,6 +42,11 @@ spec:
 ----
 
 This creates a virtual cluster in `shared` mode and expose it via an ingress with the specified host name.
+
+[NOTE]
+====
+To expose the virtual cluster API with Traefik or Gateway API, see xref:how-tos-for-admin/expose-kubernetesapi.adoc[Exposing Kubernetes API with Traefik and Gateway API].
+====
 
 == Use Case: Create a Virtual Cluster with Persistent Storage (*Default*)
 

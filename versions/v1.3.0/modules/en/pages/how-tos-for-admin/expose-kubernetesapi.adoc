@@ -1,100 +1,222 @@
-= How-to: Expose Virtual Cluster Kubernetes API
-:description: Expose the Kubernetes API for virtual clusters to external networks by creating services like LoadBalancer or NodePort and configuring Ingress resources
+= Exposing Kubernetes API with Traefik and Gateway API
+:description: Expose a virtual cluster API server through Traefik or Gateway API using TLS passthrough
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2025-11-11
+:revdate: 2026-11-26
 :page-revdate: {revdate}
 
-This guide explains how to expose the Kubernetes API of the virtual clusters to external networks. Practices apply to both _virtual mode_ and _shared mode_.
+K3k supports built-in API server exposure through `spec.expose`:
 
-[NOTE]
+* `ClusterIP` (the default)
+* `Ingress` - for ingress controllers that support TLS passthrough, such as ingress-nginx.
+* `LoadBalancer`
+* `NodePort`
+
+For details about built-in methods, see xref:how-tos-for-user/create-virtual-clusters.adoc#_use_case_create_and_expose_a_basic_virtual_cluster[Create and Expose a Basic Virtual Cluster], xref:how-tos-for-user/create-hcp-virtual-cluster.adoc[Creating an HCP Virtual Cluster], and xref:advanced-usage.adoc#_expose[Advanced Usage: expose].
+
+This page describes two alternatives that route external traffic to the virtual cluster's default `ClusterIP` service:
+
+* *Traefik IngressRouteTCP*: The API requires TLS passthrough. Use `IngressRouteTCP` rather than `spec.expose.ingress` with a standard Ingress.
+* *Gateway API Gateway and TLSRoute*: Supports TLS passthrough. Create and manage the Gateway API resources yourself since K3k does not create them.
+
+[#_how_the_API_server_is_reached]
+== How the API server is reached
+
+K3k creates this service for each virtual cluster in the namespace of the `Cluster` resource:
+
+[cols="1,2"]
+|===
+|Property |Value
+
+|Name
+|`k3k-<cluster-name>-service`
+
+|Port
+|`443` (named `k3s-server-port`), forwarded to API server port `6443`
+
+|Type
+|`ClusterIP`, unless `spec.expose.loadBalancer` or `spec.expose.nodePort` is set
+|===
+
+For the alternatives on this page, leave `spec.expose` unset.
+
+[IMPORTANT]
 ====
-It is important to add the TLS-SAN arguments to the cluster, such that the IP address or host are not rejected.
+TLS passthrough is required. The K3s API server authenticates clients with mTLS certificates, so the TLS connection must reach the API server unmodified. A proxy that terminates TLS breaks `kubectl` access and agent authentication.
 ====
 
-[CAUTION]
+== Prerequisites
+
+* A DNS name. For example, `cluster.example.com`, that resolves to the ingress controller or Gateway.
+* Add the DNS name to `spec.tlsSANs`. If it is missing, clients fail with `x509: certificate is valid for ..., not cluster.example.com`.
++
+[,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: mycluster
+  namespace: k3k-mycluster
+spec:
+  mode: virtual
+  tlsSANs:
+    - cluster.example.com
+----
++
+[,bash]
+----
+k3kcli cluster create --namespace k3k-mycluster \
+  --tls-sans cluster.example.com mycluster
+----
+
+[IMPORTANT]
 ====
-Running `k3kcli cluster delete clustername` will delete the virtual cluster but will not cascade to the ingresses or services created using the following methods.
+When a virtual cluster is deleted, K3k does not delete an `IngressRouteTCP`, `Gateway` or `TLSRoute` that you created manually. You need to delete them yourself.
 ====
 
-== Ingress
+[#_traefik]
+== Traefik
 
-It is possible to expose the virtual cluster's Kubernetes API through an ingress controller present on the host. However, it is important to note that TLS termination must be performed at the virtual cluster, requiring some changes from normal ingress objects.
+Traefik is the default ingress controller of K3s and RKE2. For information on how to enable or configure Traefik on RKE2, see link:https://docs.rke2.io/networking/networking_services#ingress-controller[RKE2 ingress controller] and link:https://docs.rke2.io/reference/ingress_migration[Migration from ingress-nginx].
 
-=== Traefik
+Create the `IngressRouteTCP` in the namespace of the virtual cluster:
 
-In case of Traefik, the virtual cluster's API is exposed through an IngressRouteTCP resource. Here's an example configuration:
-
+[,yaml]
 ----
 apiVersion: traefik.io/v1alpha1
 kind: IngressRouteTCP
 metadata:
-  name: cluster-ingress-rt
+  name: k3k-mycluster-api
+  namespace: k3k-mycluster
+  annotations:
+    kubernetes.io/ingress.class: traefik
 spec:
   entryPoints:
     - websecure
   routes:
     - match: HostSNI(`cluster.example.com`)
       services:
-        - name: k3k-clustername-service
+        - name: k3k-mycluster-service # k3k-<cluster-name>-service
           port: 443
   tls:
     passthrough: true
 ----
 
-=== Ingress Nginx
-
-Ingress Nginx does not have SSL passthrough enabled out of the box and must be enabled with the --enable-ssl-passthrough flag. Refer to the ingress-nginx documentation {https://kubernetes.github.io/ingress-nginx/user-guide/tls/#ssl-passthrough}[here].
-
-Afterwards, it is possible to create a normal ingress resource with the annotation "nginx.ingress.kubernetes.io/ssl-passthrough". For example:
-
+[,bash]
 ----
-apiVersion: networking.k8s.io
-kind: Ingress
+kubectl apply --filename ingressroutetcp.yaml
+----
+
+* `HostSNI` must match a DNS name in `spec.tlsSANs`.
+* `tls.passthrough: true` forwards the encrypted connection to the API server.
+* The `kubernetes.io/ingress.class: traefik` annotation is required on RKE2. The RKE2 Traefik chart runs with `--providers.kubernetescrd.ingressClass=traefik`. Without the annotation, Traefik silently ignores the route and serves its default certificate. Traefik logs a deprecation warning for this annotation, but the route works.
+
+[#_gateway_api]
+== Gateway API
+
+Any Gateway API implementation that supports `TLSRoute` in `Passthrough` mode works. For information on how to install the CRDs or enable Gateway API on RKE2, see link: https://gateway-api.sigs.k8s.io/guides/getting-started/[Gateway API CRDs] and link:https://docs.rke2.io/networking/networking_services#gateway-api[Gateway API with Traefik on RKE2].
+
+. Find the `GatewayClass` name and the `TLSRoute` API version:
++
+[,bash]
+----
+kubectl get gatewayclass
+kubectl api-resources --api-group=gateway.networking.k8s.io
+----
+
+. Create the `Gateway` in the namespace of the virtual cluster:
++
+[,yaml]
+----
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
 metadata:
-  annotations:
-    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
-    nginx.ingress.kubernetes.io/backend-protocol: "https"
-  name: cluster-ingress
+  name: k3k-gateway
+  namespace: k3k-mycluster
 spec:
+  gatewayClassName: traefik
+  listeners:
+    - name: k3k-tls
+      protocol: TLS
+      port: 8443
+      hostname: cluster.example.com
+      tls:
+        mode: Passthrough
+      allowedRoutes:
+        kinds:
+          - kind: TLSRoute
+        namespaces:
+          from: Same
+----
+
+. Create the `TLSRoute`:
++
+[,yaml]
+----
+apiVersion: gateway.networking.k8s.io/v1
+kind: TLSRoute
+metadata:
+  name: k3k-mycluster-api
+  namespace: k3k-mycluster
+spec:
+  parentRefs:
+    - name: k3k-gateway
+      sectionName: k3k-tls
+  hostnames:
+    - cluster.example.com
   rules:
-  - host: cluster.example.com
-    http:
-      paths:
-      - backend:
-          service:
-            name: k3k-clustername-service
-            port:
-              number: 443
-        path: /
-        pathType: Prefix
+    - backendRefs:
+        - name: k3k-mycluster-service # k3k-<cluster-name>-service
+          port: 443
 ----
 
-== Service
-
-The services created at creation time of the virtual cluster cannot be modified. It is necessary to create a new service of the desired type (LoadBalancer or NodePort).
-
-[NOTE]
-====
-To have K3k manage the exposed Service directly instead (including custom annotations, e.g. for cloud load balancer configuration), use `spec.expose.loadBalancer` / `spec.expose.nodePort` with `spec.expose.annotations`. See xref:/advanced-usage.adoc#_expose[Advanced Usage: expose].
-====
-
-=== LoadBalancer
-If a load balancer is available to the host cluster, either from a cloud service provider or from an add-on such as MetalLB, it is possible to expose the virtual cluster's API over its own unique IP address.
-
-For an example cluster called _test_ in the namespace _k3k_test_, create a LoadBalancer service with the following command:
-
-[bash, shell]
+. Apply the resources and check their status:
++
+[,bash]
 ----
-kubectl -n k3k_test expose service k3k-test-service --type=LoadBalancer --name=k3k-test-servicelb
+kubectl apply --filename gateway.yaml --filename tlsroute.yaml
+kubectl get tlsroute k3k-mycluster-api --namespace k3k-mycluster \
+  --output jsonpath='{.status.parents[*].conditions}'
+kubectl get gateway k3k-gateway --namespace k3k-mycluster \
+  --output jsonpath='{.status.listeners[*].conditions}'
 ----
 
-=== NodePort
+The `TLSRoute` must report `Accepted` and `ResolvedRefs` with status `True`.
 
-In the absence of the above solutions, the virtual Kubernetes API can be exposed over a NodePort service using the IP address of any of the host nodes.
+* **Listener port:** Traefik binds a Gateway listener to the entry point with the same port inside the container. On RKE2, `websecure` listens on `8443` in the container and `443` on the host. A listener with `port: 443` is rejected with `PortUnavailable: Cannot find entryPoint for Gateway: no matching entryPoint for port 443 and protocol "TLS"`. For other implementations, refer to their documentation.
+* **Hostname:** Set `hostname` to the exact DNS name of the virtual cluster. Avoid wildcards. In testing, a wildcard TLS passthrough listener also captured host names meant for other passthrough routes on the same entry point, such as an `IngressRouteTCP`.
+* **`apiVersion`:** Set it to the `TLSRoute` version reported by `kubectl api-resources`. Some Gateway API versions ship `TLSRoute` only in the experimental channel.
+* **`ReferenceGrant`:** It is not needed when the `Gateway`, `TLSRoute` and service are in the same namespace.
 
-For an example cluster named _test_ in the namespace _k3k_test_, create a NodePort service using the following command:
+== Configure the kubeconfig
 
-[bash, shell]
+When `spec.expose` is not set, the generated kubeconfig points to the `ClusterIP`, which is not reachable from outside. `--kubeconfig-server` has no effect for `ClusterIP` services. Hence, change the server URL manually:
+
+[,bash]
 ----
-kubectl -n k3k_test expose service k3k-test-service --type=NodePort --name=k3k-test-servicenp
+k3kcli kubeconfig generate --namespace k3k-mycluster mycluster
+export KUBECONFIG=$PWD/k3k-mycluster-mycluster-kubeconfig.yaml
+CLUSTER_NAME=$(kubectl config view --minify \
+  --output jsonpath='{.clusters[0].name}')
+kubectl config set-cluster "$CLUSTER_NAME" --server=https://cluster.example.com
+kubectl get namespaces
 ----
+
+* The generated file name is `<namespace>-<cluster-name>-kubeconfig.yaml`.
+* `--name` is deprecated. Pass the cluster name as an argument.
+* Use `kubectl get namespaces` to verify the connection, not `kubectl get nodes`. A virtual-mode cluster with no agents has no nodes.
+
+== Mode-specific considerations
+
+[cols="1,3"]
+|===
+|Mode |Considerations
+
+|`shared`
+|No differences.
+
+|`virtual`
+|No differences.
+
+|`hcp`
+|External worker nodes join through the externally reachable API server endpoint, and K3k must know this endpoint because it manages the virtual cluster's `default/kubernetes` endpoints with it. K3k does not know the endpoint of a manually created `IngressRouteTCP` or `TLSRoute`. For external workers, use a built-in method (`spec.expose.nodePort` or `spec.expose.loadBalancer`). A Traefik or Gateway API route can also be added for `kubectl` access; add its DNS name to `spec.tlsSANs`.
+|===
