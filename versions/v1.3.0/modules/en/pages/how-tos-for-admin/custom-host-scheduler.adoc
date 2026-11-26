@@ -1,0 +1,206 @@
+= Using Custom Host Schedulers in Shared Mode
+:description: Let shared mode virtual cluster workloads use a custom host cluster scheduler with the allowedHostSchedulers field and a Pod annotation
+:revdate: 2026-11-23
+:page-revdate: {revdate}
+
+In shared mode, the Pods of a virtual cluster run on the host cluster. By default, the host cluster's default scheduler places them on host nodes. Selected workloads can use a custom host scheduler instead, for example a batch or GPU-aware scheduler.
+
+Administrators control which host schedulers a virtual cluster can use with the `allowedHostSchedulers` field. Workloads then request one of these schedulers with the `k3k.io/host-scheduler-name` Pod annotation.
+
+.Shared mode only
+[NOTE]
+====
+This feature only applies to virtual clusters in `shared` mode. In `virtual` mode, Pods run on the virtual cluster's own K3s agents and the field has no effect.
+====
+
+[#_how_scheduling_works_in_shared_mode]
+== How scheduling works in shared mode
+
+A Pod created in a shared mode virtual cluster is scheduled twice:
+
+. *In the virtual cluster*: The virtual cluster's own scheduler, which runs in the K3s server, assigns the Pod to a virtual node.
+Each virtual node is backed by a {k3k-product-name} Virtual Kubelet agent that runs on a host node. The Pod's `spec.schedulerName` field applies to this step.
+. *In the host cluster*: The Virtual Kubelet creates a copy of the Pod in the virtual cluster's host namespace. The host scheduler then places this host Pod on a host node. When creating the host Pod, the Virtual Kubelet does the following:
+* It clears `spec.nodeName` so that the host scheduler can place the Pod.
+* If the Pod has no affinity, it adds a preferred node affinity for the host node of the Virtual Kubelet agent. As a result, the host Pod usually lands on the same host node as its virtual node.
+* It replaces the Pod's own `nodeSelector` with the node selector of the `Cluster`. If a `VirtualClusterPolicy` sets a default node selector, the policy value is used instead.
+* If the Pod requests an allowed scheduler with the `k3k.io/host-scheduler-name` annotation, it sets that scheduler in `spec.schedulerName` of the host Pod.
+
+Without the annotation, the host Pod uses the host cluster's `default-scheduler`. For more information about the synchronization of resources, see xref:architecture.adoc#_shared_mode[Shared Mode].
+
+[#_prerequisites]
+== Prerequisites
+
+* A {k3k-product-name} controller installed on the host cluster. For installation instructions, see xref:quickstart.adoc[Quick Start].
+* A custom scheduler deployed and running on the host cluster. Note the scheduler name it uses, as set in its `KubeSchedulerConfiguration` profile `schedulerName`. For an example of deploying an additional scheduler, see the https://kubernetes.io/docs/tasks/extend-kubernetes/configure-multiple-schedulers/[Kubernetes documentation].
+* A virtual cluster in `shared` mode, or the permissions to create one.
+
+[#_allow_host_schedulers]
+== Allow host schedulers for a virtual cluster
+
+You can set `allowedHostSchedulers` on a `Cluster` resource, on a `VirtualClusterPolicy`, or on both. The list of allowed schedulers is determined as follows:
+
+* If the `VirtualClusterPolicy` bound to the namespace of the `Cluster` sets `allowedHostSchedulers`, the policy value is used.
+The value of the `Cluster` is ignored.
+* Otherwise, the `allowedHostSchedulers` value of the `Cluster` is used.
+* If neither sets the field, no host scheduler can be requested.
+
+In a multi-tenant environment, users who can edit a `Cluster` resource can also change its `allowedHostSchedulers` field. To enforce the list of allowed schedulers centrally, set it on a `VirtualClusterPolicy`.
+
+[#_allow_on_cluster]
+=== On a Cluster
+
+Set `spec.allowedHostSchedulers` to the names of the host schedulers that workloads of this virtual cluster can request:
+
+[source,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: Cluster
+metadata:
+  name: mycluster
+  namespace: k3k-mycluster
+spec:
+  mode: shared
+  allowedHostSchedulers:
+  - custom-scheduler
+----
+
+[#_allow_on_policy]
+=== On a VirtualClusterPolicy
+
+Set `spec.allowedHostSchedulers` on the policy. The value applies to all virtual clusters in the namespaces bound to the policy:
+
+. Create the policy:
++
+[source,yaml]
+----
+apiVersion: k3k.io/v1beta1
+kind: VirtualClusterPolicy
+metadata:
+  name: batch-policy
+spec:
+  allowedMode: shared
+  allowedHostSchedulers:
+  - custom-scheduler
+  - gpu-scheduler
+----
+
+. Bind the policy to the namespace of the virtual cluster:
++
+[source,sh]
+----
+kubectl label namespace k3k-mycluster policy.k3k.io/policy-name=batch-policy
+----
+
+. Confirm that the policy is applied to the `Cluster`:
++
+[source,sh]
+----
+kubectl get cluster mycluster --namespace k3k-mycluster --output jsonpath='{.status.policy.allowedHostSchedulers}'
+----
+
+For more information about policies, see xref:virtualclusterpolicy.adoc[VirtualClusterPolicy: Concepts].
+
+[#_request_host_scheduler]
+== Request a host scheduler from a workload
+
+In the virtual cluster, add the `k3k.io/host-scheduler-name` annotation to the Pod. For workload resources such as Deployments, add the annotation to the Pod template:
+
+[source,yaml]
+----
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+      annotations:
+        k3k.io/host-scheduler-name: custom-scheduler
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+----
+
+Do not set `spec.schedulerName` to the host scheduler name. The `spec.schedulerName` field is handled by the virtual cluster, which does not run the host scheduler. If `spec.schedulerName` names a scheduler that does not exist in the virtual cluster, the Pod stays `Pending`. It is never synced to the host cluster.
+
+.Non-default schedulers inside the virtual cluster
+[IMPORTANT]
+====
+A Pod might set a `spec.schedulerName` other than `default-scheduler`, for example to use an additional scheduler deployed inside the virtual cluster. If that name is not in the list of allowed host schedulers, the Pod is not synced to the host cluster.
+
+To avoid this, add the scheduler name to `allowedHostSchedulers`. Without the `k3k.io/host-scheduler-name` annotation, the host Pod keeps the same `spec.schedulerName`. A scheduler with that name must then also run on the host cluster.
+====
+
+[#_verification]
+== Verification
+
+. Use the host cluster kubeconfig to list the host Pods of the virtual cluster. Host Pods are created in the namespace of the `Cluster` and labeled with the name of the virtual cluster:
++
+[source,sh]
+----
+kubectl get pods --namespace k3k-mycluster --selector k3k.io/clusterName=mycluster
+----
+
+. Check the scheduler of the host Pod:
++
+[source,sh]
+----
+kubectl get pod <host-pod-name> --namespace k3k-mycluster --output jsonpath='{.spec.schedulerName}'
+----
++
+The output shows the requested scheduler, for example `custom-scheduler`. Pods without the annotation show `default-scheduler`.
+
+. Optionally, check the events of the host Pod to confirm which scheduler placed it:
++
+[source,sh]
+----
+kubectl get events --namespace k3k-mycluster --field-selector involvedObject.name=<host-pod-name>
+----
+
+[#_troubleshooting]
+== Troubleshooting
+
+[#_pod_not_synced]
+=== The Pod is not synced to the host cluster
+
+If a Pod requests a scheduler that is not allowed, the Virtual Kubelet does not create the host Pod. The Pod does not start in the virtual cluster. Instead, a `Warning` event with the reason `ProviderCreateFailed` is recorded in the Pod's namespace.
+
+. Use the virtual cluster kubeconfig to list the events in the Pod's namespace:
++
+[source,sh]
+----
+kubectl get events --namespace <namespace> --field-selector reason=ProviderCreateFailed
+----
++
+The event message contains the following text:
++
+----
+scheduler "<scheduler-name>" is not allowed for this cluster
+----
+
+. Fix the issue in one of the following ways:
+* Correct the `k3k.io/host-scheduler-name` annotation of the workload.
+* Add the scheduler to `allowedHostSchedulers`. If the bound `VirtualClusterPolicy` sets this field, update the policy, because the policy value takes precedence.
+
+. If the Pod is still not synced, delete it. Its controller re-creates it, or you can re-create it manually.
+
+[#_pod_pending_on_host]
+=== The host Pod stays pending
+
+If the host Pod exists but stays `Pending`, check that the custom scheduler is running on the host cluster. Also check that its name matches the requested name exactly. A host Pod that references a scheduler that does not exist is never scheduled.
+
+The host Pod keeps the node selector and node affinity set by the Virtual Kubelet. Make sure that the custom scheduler can place Pods on nodes that match these constraints.
+
+[#_additional_information]
+== Additional information
+
+* For the full list of `Cluster` and `VirtualClusterPolicy` fields, see xref:references/crds.adoc[Custom Resource Definitions (CRDs)].
+* For guidance on choosing a mode, see xref:how-tos-for-admin/choose-mode.adoc[How to Choose Between Shared, Virtual, and HCP Mode].
