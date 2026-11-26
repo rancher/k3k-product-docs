@@ -82,11 +82,6 @@ _"I'm testing a new admission controller and policy engine before rolling it out
 
 == HCP Mode
 
-[NOTE]
-====
-HCP mode is *experimental* in {product-name} v1.2.0.
-====
-
 *Best for:*
 
 * Users who want K3k to manage the control plane lifecycle but need *real, external* worker nodes

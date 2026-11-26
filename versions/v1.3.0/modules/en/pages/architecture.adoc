@@ -9,7 +9,7 @@ Virtual Clusters are isolated Kubernetes clusters provisioned on a physical clus
 K3k provides three modes for deploying virtual clusters:
 - Shared (default)
 - Virtual
-- HCP (Hosted Control Plane) -- experimental
+- HCP (Hosted Control Plane)
 
 [#_key_components_and_layering_roles]
 == Key Components and Layering Roles 
@@ -212,11 +212,6 @@ Beyond that, standard Kubernetes security best practices still apply, and K3k em
 [#_hcp_mode]
 == HCP Mode
 
-[NOTE] 
-====
-HCP mode is *experimental* in {product-name} v1.2.0.
-====
-
 The `hcp` (Hosted Control Plane) mode runs an agentless K3s control plane (apiserver, scheduler, controller-manager) as pods inside the host cluster, but unlike `virtual` mode it does *not* provision any worker pods. Worker nodes live outside the host cluster -- on bare metal, virtual machines, or edge devices that you manage -- and join the virtual cluster using the standard K3s installer (`curl -sfL https://get.k3s.io | K3S_URL=... K3S_TOKEN=... sh -`).
 
 This mode gives you the operational convenience of a K3k-managed control plane combined with real, isolated worker nodes. To make the API server reachable from outside the host cluster, an HCP cluster requires an externally reachable endpoint (`spec.expose.nodePort`, `spec.expose.loadBalancer`, or `spec.expose.ingress`) and a non-loopback entry in `spec.tlsSANs`.
@@ -332,6 +327,6 @@ External apiserver endpoint via NodePort/LoadBalancer/Ingress
 
 * *Resource Sharing:* The `shared` mode offers dynamic resource sharing within a namespace, which can be efficient but less predictable. The `virtual` mode provides dedicated resources to each virtual cluster, offering more control but requiring careful planning.
 
-* *Managed control plane with real workers:* The `hcp` mode is the right choice when you need a real (non-virtualized) worker fleet -- for example, bare-metal, edge, or VM-based workers -- but want K3k to manage the control plane lifecycle for you. It requires an externally reachable apiserver endpoint and is currently experimental.
+* *Managed control plane with real workers:* The `hcp` mode is the right choice when you need a real (non-virtualized) worker fleet -- for example, bare-metal, edge, or VM-based workers -- but want K3k to manage the control plane lifecycle for you. It requires an externally reachable apiserver endpoint.
 
 For more information on how to choose the right mode, see xref:./how-tos-for-admin/choose-mode.adoc[Choose Mode].
