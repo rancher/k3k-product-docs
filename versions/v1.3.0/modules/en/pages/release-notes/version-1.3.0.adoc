@@ -1,0 +1,47 @@
+= SUSE Virtual Cluster v1.3.0 Release Highlights
+:description: Find out what's new in SUSE Virtual Cluster v1.3.0, including etcd snapshot and restore, generally available HCP mode and custom host schedulers
+:revdate: 2026-11-23
+:page-revdate: {revdate}
+
+== New Features
+
+* *Etcd snapshot and restore for virtual clusters* -- the new `EtcdSnapshot` resource takes on-demand snapshots of the etcd datastore of a virtual cluster. You can store snapshots locally or in an S3-compatible object store, with optional compression. The new `EtcdRestore` resource restores a cluster from one of those snapshots. See xref:how-tos-for-admin/etcd-snapshots.adoc[Creating Etcd Snapshots of a Virtual Cluster] and xref:how-tos-for-admin/etcd-restore.adoc[Restoring a Virtual Cluster from an Etcd Snapshot].
+* *HCP mode is generally available* -- Hosted Control Plane (HCP) mode is no longer experimental, and `k3kcli cluster create --mode hcp` no longer shows an experimental warning. See xref:how-tos-for-user/create-hcp-virtual-cluster.adoc[Creating an HCP Virtual Cluster].
+* *HCP provisioning from the Rancher UI* -- you can now select HCP as the mode when you create a virtual cluster or a VirtualClusterPolicy. HCP clusters have a new *Registration* tab with the command to register external worker nodes. See xref:how-tos-for-user/create-hcp-virtual-cluster.adoc[Creating an HCP Virtual Cluster].
+* *Custom host schedulers in shared mode* -- virtual cluster pods can request a host cluster scheduler with the `k3k.io/host-scheduler-name` annotation. The scheduler must be listed in the `allowedHostSchedulers` field of the Cluster or VirtualClusterPolicy. See xref:how-tos-for-admin/custom-host-scheduler.adoc[Using Custom Host Schedulers in Shared Mode].
+* *LoadBalancer class for the expose Service* -- set `loadBalancerClass` in `expose.loadBalancer` to choose which load balancer implementation serves the virtual cluster API server. See xref:advanced-usage.adoc[Advanced Usage].
+* *EndpointSlice sync in shared mode* -- shared-mode virtual clusters can sync manually managed EndpointSlices, such as those of Services without a selector, to the host cluster. This sync is disabled by default and also requires Services sync to be enabled. See xref:resource-sync.adoc[Resource Sync].
+* *Set-based label selectors for synced resources* -- the new `labelSelector` field supports `matchLabels` and `matchExpressions` to filter synced resources. The equality-based `selector` field is deprecated. See xref:resource-sync.adoc[Resource Sync].
+* *kubeconfig context management in k3kcli* -- `k3kcli` now adds a context to your current kubeconfig for each new virtual cluster, so you can switch clusters with `kubectl config use-context`. It removes the context when you delete the cluster. Writing a standalone kubeconfig file to the current directory is deprecated. Use `--out` to write the file to a chosen directory, or `--no-out` to skip it. The `--config-name` flag is deprecated in favor of `--out`.
+* *k3kcli autocompletion for `cluster update`* -- `k3kcli cluster update` now supports shell autocompletion, like the other commands.
+* *Bound service account tokens in shared mode* -- workloads in shared-mode virtual clusters now receive bound service account tokens, with an issuer and automatic refresh, instead of legacy tokens.
+* *Ingress status sync in shared mode* -- the load balancer status that the host ingress controller sets on a synced Ingress is now copied back to the Ingress in the virtual cluster.
+* *Policy default priority class for server and agent pods* -- when a VirtualClusterPolicy sets `defaultPriorityClass`, the server, agent and restore pods of its virtual clusters use that priority class. It overrides the `priorityClass` of the Cluster. See xref:virtualclusterpolicy.adoc[VirtualClusterPolicy: Concepts].
+* *K3s version in the HCP join instructions* -- the worker node join instructions that `k3kcli` prints for HCP clusters now set `INSTALL_K3S_VERSION` to match the control plane version.
+
+== Core Improvements
+
+* *StatefulSet for virtual mode agents* -- agents in virtual mode are now deployed as a StatefulSet, which gives them stable node names. Existing clusters that use a Deployment keep working, and k3k emits a deprecation event for them.
+* *Improved LoadBalancer exposure* -- the LoadBalancer address is now added to the server TLS Subject Alternative Names (SANs) and used in the generated kubeconfig. A custom `serverPort` is added as an extra port on the Service instead of replacing port 443.
+* *Readiness probe for the shared-mode agent* -- the shared-mode agent now has a readiness probe and monitors its connection to the virtual cluster API server. This makes the agent more reliable, for example, after a snapshot restore.
+* *Refreshed Rancher UI forms* -- the virtual cluster and policy forms use the refreshed Rancher UI components and include more detailed field descriptions. The agent count field is shown only for virtual mode.
+* *Version-matched k3k installation from the Rancher UI* -- the btn:[Install K3k] button now installs the newest stable k3k version that matches the major and minor version of the UI extension.
+
+== Bug Fixes & Security
+
+* *Fixed mount propagation in virtual mode* -- pods that use `HostToContainer` or `Bidirectional` mount propagation, such as node-exporter, now start in virtual-mode clusters.
+* *Fixed `kubectl logs` and `kubectl exec` on HCP clusters with multiple servers.*
+* *Fixed `kubectl port-forward` in shared mode.*
+* *Fixed the Service CIDR lookup in shared mode on Kubernetes 1.33 and later* -- the Service sync now works on host clusters that use a non-default Service range, such as Amazon EKS.
+* *Fixed the `--cluster-cidr` controller flag being ignored for clusters without a VirtualClusterPolicy* -- the isolation NetworkPolicy now excludes the configured cluster CIDR.
+* *Fixed event syncer errors for deleted pods* in shared mode.
+* *Fixed virtual Services and Ingresses stuck in deletion* when the host copy was already gone.
+* *Fixed sync configuration of an applied VirtualClusterPolicy being ignored* -- the policy sync settings now take precedence over the settings of the Cluster.
+* *Fixed the VirtualClusterPolicy `nodeSelector` not being applied* to virtual cluster pods.
+* *Fixed PriorityClass sync failing on updates* in shared mode.
+* *Fixed the server liveness probe in high-availability clusters* -- a server whose etcd member was removed now restarts instead of staying `NotReady`.
+* *Fixed the policy showing as "No policy" on the cluster edit page in the Rancher UI.*
+* *Fixed section background colors changing in the Rancher UI after installing the UI extension.*
+* *Security updates* -- updated Go, Kubernetes, etcd and K3s versions, and dependencies with known vulnerabilities. These include `golang.org/x/crypto`, `golang.org/x/net`, `google.golang.org/grpc`, OpenTelemetry and `github.com/klauspost/compress`.
+
+Full Changelogs: link:https://github.com/rancher/k3k/releases/tag/v1.3.0[k3k v1.3.0] | link:https://github.com/rancher/virtual-clusters-ui/releases/tag/virtual-clusters-1.3.0[UI Extension v1.3.0]
