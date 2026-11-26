@@ -1,7 +1,7 @@
 = How-to: Expose Virtual Cluster Kubernetes API
 :description: Expose the Kubernetes API for virtual clusters to external networks by creating services like LoadBalancer or NodePort and configuring Ingress resources
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2025-11-11
+:revdate: 2026-11-23
 :page-revdate: {revdate}
 
 This guide explains how to expose the Kubernetes API of the virtual clusters to external networks. Practices apply to both _virtual mode_ and _shared mode_.
@@ -80,6 +80,14 @@ To have K3k manage the exposed Service directly instead (including custom annota
 
 === LoadBalancer
 If a load balancer is available to the host cluster, either from a cloud service provider or from an add-on such as MetalLB, it is possible to expose the virtual cluster's API over its own unique IP address.
+
+[TIP]
+.K3k-managed LoadBalancer Service
+====
+With `spec.expose.loadBalancer`, K3k creates and manages the `LoadBalancer` Service. K3k adds the load-balancer address to the server TLS SANs and points the generated kubeconfig to it. The `loadBalancerClass` field selects a specific load-balancer implementation. See xref:/advanced-usage.adoc#_expose_loadbalancer[Advanced Usage: LoadBalancer].
+====
+
+A Service that you create manually, as in the following example, does not get these features. Add its address to `spec.tlsSANs` so that the server certificate accepts it.
 
 For an example cluster called _test_ in the namespace _k3k_test_, create a LoadBalancer service with the following command:
 

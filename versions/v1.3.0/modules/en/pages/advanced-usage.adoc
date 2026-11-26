@@ -157,6 +157,43 @@ spec:
 
 Annotations are reconciled on every update to the `Cluster` resource: adding, changing, or removing a key in `expose.annotations` updates the generated Service accordingly, and any annotations set by other controllers are preserved.
 
+[#_expose_loadbalancer]
+==== LoadBalancer
+
+`expose.loadBalancer` exposes the API server through a Service of type `LoadBalancer`. It accepts the following optional fields:
+
+* `serverPort`: an additional port on which the K3s server is exposed. The Service always keeps port `443`, because the internal components reach the server on it: the bootstrap process, other servers, agents, and pods. A custom `serverPort` is added as an extra port named `k3s-server-lb-port`. If you set it to `0` or a negative value, only port `443` is allocated.
+* `etcdPort`: the port on which etcd is exposed. The default is `2379`. If you set it to `0` or a negative value, etcd is not exposed.
+* `loadBalancerClass`: the class of the load-balancer implementation for the Service. If you do not set it, the default load-balancer implementation of the host cluster is used. This is useful when the host cluster runs more than one load-balancer implementation.
+
+[IMPORTANT]
+.`loadBalancerClass` cannot be changed after it is set
+====
+Kubernetes does not allow changing the `loadBalancerClass` of a Service while its type remains `LoadBalancer`. K3k therefore rejects any update that changes or removes `loadBalancerClass` once it is set.
+
+To avoid this, set `loadBalancerClass` when you create the cluster.
+====
+
+The following example uses the AWS Load Balancer Controller class to expose the API server through a Network Load Balancer on port `6443`. Replace `service.k8s.aws/nlb` with the class of the load-balancer implementation in your host cluster:
+
+[,yaml]
+----
+spec:
+  expose:
+    loadBalancer:
+      serverPort: 6443
+      loadBalancerClass: service.k8s.aws/nlb
+----
+
+When the cluster is exposed with a `LoadBalancer`, K3k does the following:
+
+* Waits for the load balancer to assign an address to the Service before configuring the server pods.
+* Adds the IP addresses and host names assigned by the load balancer to the TLS SANs of the server certificate. You do not need to add them to `spec.tlsSANs`.
+* Generates a kubeconfig that points to the first load-balancer address, using `serverPort` if it is set or `443` otherwise.
+* Rolls out the server pods when the load-balancer address changes or when you switch the expose type, because K3s reads its TLS SANs only at startup.
+
+`k3kcli cluster create` always exposes the cluster with a `NodePort` and has no flag for `expose.loadBalancer`. To use a `LoadBalancer`, create the `Cluster` resource with a manifest, or select *Load Balancer* under *Direct API Server Exposure* in the Rancher UI. The Rancher UI sets the ports but not `loadBalancerClass`, so set `loadBalancerClass` with a manifest. A `VirtualClusterPolicy` cannot set the expose configuration.
+
 === `clusterCIDR`
 
 The `clusterCIDR` field specifies the CIDR range for the pods of the cluster. The default value is `10.42.0.0/16` in shared mode, and `10.52.0.0/16` in virtual mode.
