@@ -1,7 +1,7 @@
 = Architecture
 :description: Learn about K3s virtual cluster architecture, including shared mode, Virtual HCP, and how K3s functions as the control plane
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-11-23
+:revdate: 2026-10-15
 :page-revdate: {revdate}
 
 Virtual Clusters are isolated Kubernetes clusters provisioned on a physical cluster. K3k leverages link:https://k3s.io/[K3s] as the control plane of the Kubernetes cluster because of its lightweight footprint.
