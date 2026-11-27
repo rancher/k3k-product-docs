@@ -113,7 +113,7 @@ kubectl apply --filename ingressroutetcp.yaml
 [#_gateway_api]
 == Gateway API
 
-Any Gateway API implementation that supports `TLSRoute` in `Passthrough` mode works. For information on how to install the CRDs or enable Gateway API on RKE2, see link: https://gateway-api.sigs.k8s.io/guides/getting-started/[Gateway API CRDs] and link:https://docs.rke2.io/networking/networking_services#gateway-api[Gateway API with Traefik on RKE2].
+Any Gateway API implementation that supports `TLSRoute` in `Passthrough` mode works. For information on how to install the CRDs or enable Gateway API on RKE2, see link:https://gateway-api.sigs.k8s.io/guides/getting-started/[Gateway API CRDs] and link:https://docs.rke2.io/networking/networking_services#gateway-api[Gateway API with Traefik on RKE2].
 
 . Find the `GatewayClass` name and the `TLSRoute` API version:
 +
