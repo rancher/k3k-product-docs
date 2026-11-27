@@ -193,11 +193,9 @@ When `spec.expose` is not set, the generated kubeconfig points to the `ClusterIP
 
 [,bash]
 ----
-k3kcli kubeconfig generate --namespace k3k-mycluster mycluster
-export KUBECONFIG=$PWD/k3k-mycluster-mycluster-kubeconfig.yaml
-CLUSTER_NAME=$(kubectl config view --minify \
-  --output jsonpath='{.clusters[0].name}')
-kubectl config set-cluster "$CLUSTER_NAME" --server=https://cluster.example.com
+k3kcli kubeconfig generate --namespace k3k-mycluster --no-out mycluster
+kubectl config set-cluster k3k-mycluster/mycluster --server=https://cluster.example.com
+kubectl config use-context k3k-mycluster/mycluster
 kubectl get namespaces
 ----
 
